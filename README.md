@@ -45,11 +45,10 @@ prompting-tips course and not a tour of every Claude Code feature.
 
 ## How to use it
 
-1. Open the site. Three ways, same files: the hosted page, or from the repo
-   root `python3 -m http.server 8000` and open
-   `http://localhost:8000/spec-driven-development/`, or open
-   `spec-driven-development/index.html` in a browser (progress ticks do not
-   persist over `file://` in Safari).
+1. Open the site. Three ways, same files: the hosted page, or from this
+   folder (the one holding this README) `python3 -m http.server 8000` and open
+   `http://localhost:8000/`, or open this folder's `index.html` in a browser
+   (progress ticks do not persist over `file://` in Safari).
 2. Do [Setup](setup.html) before Day 1.
 3. Each day: watch the opener, read the lessons in order, do each exercise
    right after its lesson, then the wrap-up. Each day works in one copy of the
@@ -61,7 +60,6 @@ prompting-tips course and not a tour of every Claude Code feature.
 
 ```
 README.md                              this file, the syllabus
-INTENT.md                              the brief: audience, scope, style, success criteria
 index.html, setup.html                 the site's front door and the Day 0 setup
 assets/                                one stylesheet, one script, one per-team env profile
 day-1-from-chat-to-spec/               index, lessons/, exercises/, wrap-up, starter/
@@ -70,8 +68,11 @@ day-3-choose-your-adventure/           same shape, with one tab per framework
 sandbox/                               LedgerKit in swift/ and kotlin/, shared fixtures/
 resources/videos.md                    every video with its date and channel
 resources/reading.md                   articles, docs, and repositories
-build/                                 authoring tooling, not course material
 ```
+
+The authoring repository also holds `INTENT.md` (the brief: audience, scope,
+style, success criteria) and `build/` (authoring tooling and checks). Neither
+is course material, and a published copy of the course leaves them out.
 
 ## A note on accuracy
 
