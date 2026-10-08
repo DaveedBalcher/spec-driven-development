@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2: Loops and your environment</title>
+<meta name="description" content="Day 2 index: the opening video, four lessons and four exercises that take you from watching every step to a run that stops on its own, a critic that reads its output, and permissions that match the environment you actually work in.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="index">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="0">
+<meta name="course:slot" content="d2-index">
+<meta name="course:video" content="uU5Gv2h8-9g">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-automation-01 cc-core-08 cc-core-25 cc-core-26 cc-core-27 cc-core-31 cc-core-32 cc-core-38 cc-core-41">
+  <h1>Day 2: Loops and your environment</h1>
+
+  <p class="meta-line"><a href="../index.html">3 Days of Spec-Driven Development</a> &middot; Day 2
+  of 3 &middot; four lessons, four exercises, a wrap-up &middot;
+  <span class="timing">about three hours: 159 minutes including the opener</span></p>
+
+  <blockquote class="quote">
+    <p>Trust, but verify.</p>
+    <cite>a Russian proverb, and the line Ronald Reagan made famous</cite>
+  </blockquote>
+
+  <p class="lede">Yesterday you drove every step: you wrote a spec, read a plan, approved it, and
+  checked the diff yourself. Today you let go of the steering wheel on purpose, which only works if
+  you know exactly what will make the run stop and what you will look at when it does. You will
+  build a runner with three exits and a gate you answer from evidence, put a fresh-context critic on
+  its output and route what it finds without growing your instructions, then write down the
+  environment you actually work in and encode it as permission rules and one narrow write path.
+  Everything today is framework-agnostic; tomorrow you pick a framework.</p>
+
+  <h2 id="opener">Watch this first</h2>
+
+  <div class="video" data-video-id="uU5Gv2h8-9g" data-start="1857" data-end="2273"
+       data-video-title="Claude Fable, Claude Tag, and Anthropic's Culture &mdash; Cat Wu &amp; Thariq Shihipar ft Simon Willison (AI Engineer, 2026-07-15)">
+    <span class="video-kicker">Opener &middot; 10 min</span>
+    <p class="video-title"><a
+      href="https://www.youtube.com/watch?v=uU5Gv2h8-9g&amp;t=1857s"
+      target="_blank" rel="noopener noreferrer">Claude Fable, Claude Tag, and Anthropic's Culture
+      &mdash; Cat Wu &amp; Thariq Shihipar ft Simon Willison</a></p>
+    <p class="video-meta">AI Engineer, 2026-07-15. Watch the chapter
+    <q>Safety, security, and using Auto Mode</q>, 30:57 to 37:53: seven minutes of video, and three
+    for writing down the two things below.</p>
+    <p class="video-meta"><strong>What to listen for.</strong> Two people from the Claude Code team
+    on handing an agent a long-running task and then not watching it. Write down what has to be true
+    before a run goes unattended, and what they look at afterwards to satisfy themselves that it was.
+    Lesson 2 turns them into a stop condition and a gate.</p>
+  </div>
+
+  <h2 id="before">Before you start</h2>
+
+  <p>Day 2 works in <code>day2-work</code>, a copy of your lane at the course root; the shipped
+  <code>sandbox/</code> is never edited. Exercise 1 opens with this block, pasted from the course
+  root: it makes <code>work/</code> at the course root, which is where your written answers go,
+  makes the copy, installs the runner skill, the Change B spec and the run-log template,
+  and leaves you inside <code>day2-work</code>. Do not run it yet; Exercise 1 has you paste it.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-cwd="."><code>mkdir -p work
+cp -R sandbox/swift day2-work &amp;&amp; cd day2-work
+mkdir -p .claude/skills/run-spec
+cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/
+cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/
+cp ../day-2-loops-and-your-environment/starter/run-log.template.md .
+ls .claude/skills/run-spec specs</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-cwd="."><code>mkdir -p work
+cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work
+mkdir -p .claude/skills/run-spec
+cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/
+cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/
+cp ../day-2-loops-and-your-environment/starter/run-log.template.md .
+ls .claude/skills/run-spec specs</code></pre>
+  </div>
+
+  <p>Start Claude Code there, because a session works in the directory you launch it from: it
+  reads the project's <code>CLAUDE.md</code> from
+  <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>, and a project skill from
+  <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. Every Day 2 command runs from inside
+  <code>day2-work</code>, except a setup block pasted from the course root, which says so. Starters
+  are at <code>../day-2-loops-and-your-environment/starter/</code>; answers go in
+  <code>../work/</code>.</p>
+
+  <p>Exercise 1 then confirms the copy is green, so any later red came from the run.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift"
+         data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+    <p>A fresh copy prints this verdict:</p>
+    <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds</code></pre>
+    <p>The skipped test is LEDGER-7's; <code>day2-work</code> starts from the shipped lane
+    whatever you did on Day 1.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+    <p>A fresh copy prints this verdict:</p>
+    <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+5 actionable tasks: …</code></pre>
+    <p><code>BUILD SUCCESSFUL</code> decides; the task counts differ on a repeat run. A green run
+    prints no test counts, and LEDGER-7's test runs only when an environment variable is set.</p>
+  </div>
+
+  <p>No step today depends on git, so a download works as well as a clone: runs are measured by diffing
+  against the shipped lane. To start an exercise over, use the Reset section at the bottom of its
+  page.</p>
+
+  <div class="callout note">
+    <span class="callout-title">What today needs</span>
+    <ul>
+      <li>Claude Code, signed in. <code>claude --version</code> prints your version; these pages
+      were checked against 2.1.280 on 2026-09-22.</li>
+      <li>Your lane's toolchain from Setup: Swift 6.2, or JDK 17 or later.</li>
+      <li><code>python3</code>, which Exercise 3 uses to check that a settings file parses.</li>
+      <li>A second terminal tab in <code>day2-work</code>, for checking the tree mid-run.</li>
+      <li>No account or credential: Exercise 4 writes to a local fixture directory.</li>
+    </ul>
+  </div>
+
+  <h2 id="order">The day in order</h2>
+
+  <p>Nine pages after the video. Lessons 1 and 2 share Exercise 1, Lesson 3 has Exercise 2,
+  and Lesson 4 has Exercises 3 and 4.</p>
+
+  <ol class="progress">
+    <li>
+      <input type="checkbox" id="seq-d2-l1" data-progress="d2-l1-read">
+      <label for="seq-d2-l1"><a href="lessons/01-four-places-drift-gets-in.html">Lesson 1: Spec,
+      plan, execute, verify, and the four places drift gets in</a>
+      <span class="timing">12 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-l2" data-progress="d2-l2-read">
+      <label for="seq-d2-l2"><a href="lessons/02-the-runner.html">Lesson 2: The runner: non-stop
+      until a stop condition, with limited gates</a> <span class="timing">12 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-e1" data-progress="d2-e1-done">
+      <label for="seq-d2-e1"><a href="exercises/01-run-change-b-with-a-runner.html">Exercise 1: Run
+      Change B with a runner and gates</a> <span class="timing">30 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-l3" data-progress="d2-l3-read">
+      <label for="seq-d2-l3"><a href="lessons/03-recursive-self-improvement.html">Lesson 3:
+      Recursive self-improvement: the output, the instructions, the workflow</a>
+      <span class="timing">12 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-e2" data-progress="d2-e2-done">
+      <label for="seq-d2-e2"><a href="exercises/02-make-it-critique-itself.html">Exercise 2: Make it
+      critique itself</a> <span class="timing">25 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-l4" data-progress="d2-l4-read">
+      <label for="seq-d2-l4"><a href="lessons/04-your-environment-is-part-of-the-spec.html">Lesson 4:
+      Your environment: profile, permissions, write path</a> <span class="timing">16 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-e3" data-progress="d2-e3-done">
+      <label for="seq-d2-e3"><a href="exercises/03-environment-profile-and-permissions.html">Exercise
+      3: Your environment profile and permissions</a> <span class="timing">15 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-e4" data-progress="d2-e4-done">
+      <label for="seq-d2-e4"><a href="exercises/04-extend-a-vetted-write-script.html">Exercise 4: Use
+      and extend a vetted write script</a> <span class="timing">15 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d2-wrap" data-progress="d2-wrap-up-done">
+      <label for="seq-d2-wrap"><a href="wrap-up.html">Day 2 wrap-up: recap, ten review questions,
+      three challenges</a> <span class="timing">12 min</span></label>
+    </li>
+  </ol>
+
+  <p class="progress-note" data-progress-note="">Ticks need JavaScript and stay in this browser.</p>
+
+  <h2 id="starter">Starter files</h2>
+
+  <p>Each exercise copies what it needs from <code>../day-2-loops-and-your-environment/starter/</code>
+  when it needs it, so there is nothing to install now.</p>
+
+  <ul>
+    <li><code>README.md</code> &mdash; what each file is for and where it is copied.</li>
+    <li><code>skills/run-spec/SKILL.md</code> &mdash; the runner: iteration cap, three exits,
+    gates.</li>
+    <li><code>specs/daily-summary.md</code> &mdash; the reference Change B spec, so Day 2 stands
+    alone.</li>
+    <li><code>agents/spec-auditor.md</code> &mdash; the auditor subagent: a fresh context, a
+    <code>tools:</code> line that lets it read but not edit, and a <code>model:</code> line.</li>
+    <li><code>reference/after-e1/</code> &mdash; a completed Exercise 1 result, if yours did not
+    finish.</li>
+    <li><code>acceptance/change-b/</code> &mdash; the hidden acceptance suite in both lanes, copied
+    in after your own run.</li>
+    <li><code>answers/</code> and <code>reveal/</code> &mdash; the reference findings and net-zero
+    <code>CLAUDE.md</code> revision Exercise 2 reveals.</li>
+    <li><code>env-profile.md</code> and <code>prediction-grid.md</code> &mdash; the blank profile and
+    the predict-then-observe grid Exercise 3 fills in.</li>
+    <li><code>settings.example.json</code> &mdash; a starting permissions file, deny list first,
+    explained in <code>settings.example.md</code>.</li>
+    <li><code>scripts/</code> and <code>fixtures/local-repo/</code> &mdash; the vetted write wrapper,
+    its allowlist and self-test, and the local directory it writes to.</li>
+    <li><code>run-log.template.md</code> &mdash; the one-line-per-iteration format the runner appends
+    to.</li>
+  </ul>
+
+  <h2 id="alongside">Videos and reading</h2>
+
+  <p>No video is required to finish an exercise.</p>
+
+  <ul>
+    <li><a href="../resources/videos.md">Recommended videos</a> &mdash; the opener and one clip per
+    lesson, with segments.</li>
+    <li><a href="../resources/reading.md">Reading</a> &mdash; the articles, docs and repositories
+    behind the lessons.</li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-automation-01</code> &mdash; a project skill lives at
+    <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code>, from
+    <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener noreferrer">Agent
+    Skills</a>.</li>
+    <li><code>cc-core-08</code> &mdash; a project's <code>CLAUDE.md</code> is read from
+    <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Memory</a>.</li>
+    <li><code>cc-core-41</code> &mdash; the directory you launch Claude Code in is the session's
+    primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Configure
+    permissions</a>, accessed 2026-09-23.</li>
+    <li><code>cc-core-25</code>, <code>cc-core-26</code>, <code>cc-core-27</code>,
+    <code>cc-core-38</code> &mdash; a subagent is YAML frontmatter and a Markdown body under
+    <code>.claude/agents/</code>; its <code>tools:</code> field lists the tools it may use and
+    <code>model:</code> names its model; it starts with a fresh, isolated context window and does
+    not see your conversation, from
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>.</li>
+    <li><code>cc-core-31</code>, <code>cc-core-32</code> &mdash; <code>claude --version</code>, and
+    the version checked against here, Claude Code 2.1.280 on 2026-09-22, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li>The test output quoted above was recorded on this machine on 2026-09-23, one run per lane,
+    in a fresh copy made by Exercise 1's setup block.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../day-1-from-chat-to-spec/wrap-up.html">Day 1 wrap-up</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="lessons/01-four-places-drift-gets-in.html">Lesson 1: Spec, plan, execute, verify, and the four places drift gets in</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where a page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

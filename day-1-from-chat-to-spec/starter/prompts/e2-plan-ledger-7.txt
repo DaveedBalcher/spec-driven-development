@@ -1,0 +1,7 @@
+Read LEDGER-7.md and the LedgerKit source, then propose a plan to fix it.
+
+Bounds: the fix belongs in the money formatting path - Money and TransactionFormatter and their tests. Do not change LedgerSummary, LedgerFilter, or the fixtures file. Do not change the assertions in the known-issue test - it is already correct, it is only gated off.
+
+Verification: the plan must name the exact command I will run to prove the fix, including how the gated test gets executed.
+
+Stop: if you believe the fix requires touching a file outside the money formatting path, say so in the plan instead of planning around it.

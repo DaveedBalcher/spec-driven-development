@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 3 wrap-up</title>
+<meta name="description" content="Day 3 wrap-up: what the day established about choosing and adopting a spec framework, ten review questions to answer from memory, and three challenges with no solutions.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="wrap-up">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="10">
+<meta name="course:slot" content="d3-wrap-up">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="openspec-01 openspec-04 openspec-13 openspec-14 lid-11 lid-25 lid-obs-02 lid-obs-04 lid-obs-05 lid-obs-10 lid-obs-11 openspec-obs-02 bmad-06 bmad-12 bmad-obs-01 bmad-obs-05 enterprise-11 cc-core-39 cc-core-32">
+  <h1>Day 3 wrap-up</h1>
+
+  <p class="meta-line"><a href="index.html">Day 3: Choose your adventure</a> &middot; Wrap-up
+  &middot; <span class="timing">10 min</span></p>
+
+  <p class="lede">Today you ran a vague brief through a framework built for a team, pushed a late
+  change through it, and wrote a card someone else can read.</p>
+
+  <h2 id="learned">What you learned</h2>
+
+  <ul>
+    <li>Lesson 1: a spec framework buys coordination, not quality.</li>
+    <li>Lesson 2: the three share five stages and part on three axes: artifacts, ceremony, and how
+    long a spec lives.</li>
+    <li>Lesson 3: each framework answers the same five questions, from what it installs to what
+    becomes of a spec after ship.</li>
+    <li>Lesson 4: choose by the failure you have, with <q>no framework</q> as a real fourth
+    answer.</li>
+    <li>Lesson 5: adopt on the next ticket, on the smallest subset, in artifacts a reviewer can read
+    without the tool.</li>
+  </ul>
+
+  <h2 id="review">Review</h2>
+
+  <p>Answer from memory; a question you cannot answer names the page to re-read.</p>
+
+  <ol>
+    <li>Name the four things a spec framework standardizes and one thing people expect it to fix
+    that it does not touch. (Lesson 1)</li>
+    <li>Which file makes a permission rule the team's rather than yours, and which file does
+    <q>don't ask again</q> write to? (Lesson 5)</li>
+    <li>In OpenSpec, which delta header should a late change to a shipped requirement use, and
+    what does archiving it do to that requirement in <code>openspec/specs/</code>, compared with an
+    ADDED requirement under a new name? (Exercise 3)</li>
+    <li>Where does a LID <code>@spec</code> annotation belong, and why not on every helper
+    function? (Lesson 3)</li>
+    <li>What do BMAD's six spec status values do that a folder of Markdown files does not? (Lesson 3)</li>
+    <li>Explain <q>living specs versus expiring specs</q> with one framework as the example. Which
+    does your team need? (Lesson 2)</li>
+    <li>Your framework went green but resolved an ambiguity without telling you. Which step today
+    catches that? (Exercise 2)</li>
+    <li>Day 3's brief had no acceptance criteria on purpose. Whose job was producing them, and what
+    would writing them yourself first have broken? (Exercise 2)</li>
+    <li>Which of Lesson 4's questions does <q>we changed this and did not know what depended on
+    it</q> land on, and what does the answer point at? (Lesson 4)</li>
+    <li>You are adopting on a module with no tests. What do you build first, and why does the
+    framework have to wait? (Lesson 5)</li>
+  </ol>
+
+  <h2 id="challenges">Challenges</h2>
+
+  <p>Homework beyond the day's three hours, with no reveals or solutions; one is enough.
+  Challenges 1 and 3 start from a fresh <code>day3-work</code>.</p>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-1">1. A second track, and a recommendation</h3>
+    <p>Take the third track, neither yours nor the one whose reference card Exercise 3 showed
+    you, through Exercises 1 to 3, fill a second card from that run, and write your team the
+    paragraph recommending one of the two: the failure it fixes, and when you will count its
+    signal again. If you ran OpenSpec, that is LID; if LID, BMAD; if BMAD, OpenSpec.</p>
+    <p>A new map and card start only where none exists, so work in this order: from inside
+    <code>day3-work</code>, move your first ones aside with the line below, then run the reset in
+    <a href="#close">Before you close the laptop</a>, then re-run Exercise 1's setup and the new
+    track's install-and-init.</p>
+    <pre data-lang="bash"><code>mv ../work/map.md ../work/map-first.md &amp;&amp; mv ../work/comparison-card.md ../work/comparison-card-first.md &amp;&amp; mv ../work/ambiguities.md ../work/ambiguities-first.md</code></pre>
+    <div class="tabs" data-show-all="true">
+      <div class="tabs-tools">
+        <div role="tablist" aria-label="Framework track you ran first" hidden>
+          <button type="button" role="tab" data-track="openspec" id="tab-c1-openspec"
+                  aria-controls="panel-c1-openspec" aria-selected="true">OpenSpec</button>
+          <button type="button" role="tab" data-track="lid" id="tab-c1-lid"
+                  aria-controls="panel-c1-lid" aria-selected="false">LID</button>
+          <button type="button" role="tab" data-track="bmad" id="tab-c1-bmad"
+                  aria-controls="panel-c1-bmad" aria-selected="false">BMAD</button>
+        </div>
+        <button type="button" data-show-all-toggle hidden>Show all three</button>
+      </div>
+
+      <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-c1-openspec"
+               aria-labelledby="tab-c1-openspec">
+        <p>If your first track was OpenSpec, there is nothing to turn off: its commands and skills
+        sit in <code>day3-work/.claude/</code>, which the reset replaces.</p>
+      </section>
+
+      <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-c1-lid"
+               aria-labelledby="tab-c1-lid">
+        <p>If your first track was LID, its plugins, installed at user scope, would load beside the
+        second, so disable both in the shell tab before you start the second track:</p>
+        <pre data-lang="bash"><code>claude plugin disable linked-intent-dev@jszmajda-lid
+claude plugin disable arrow-maintenance@jszmajda-lid</code></pre>
+        <p>Afterwards, run the same lines with <code>enable</code>. If you loaded LID through
+        Exercise 1's <q>Network blocked?</q> box instead, nothing was installed: skip both lines and
+        start <code>claude</code> without <code>--plugin-dir</code>.</p>
+      </section>
+
+      <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-c1-bmad"
+               aria-labelledby="tab-c1-bmad">
+        <p>If your first track was BMAD, there is nothing to turn off: its skills sit in
+        <code>day3-work/.claude/skills/</code>, which the reset replaces.</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-2">2. The smallest-subset adoption note</h3>
+    <p>Write the adoption note for your chosen framework: the three commands your team will run,
+    the artifacts you will commit, the parts you deliberately skip, and the one line of
+    <code>CLAUDE.md</code> it may cost, paid for by removing another. Keep it in
+    <code>../work/</code>.</p>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-3">3. Port Change C on the artifacts alone</h3>
+    <p>Port Change C to the other lane from your framework's artifacts alone: no reading your
+    implementation, no copying code. Where they fall short, note which line of which artifact was
+    missing. The check is the other lane's acceptance suite, copied in as in Exercise 2's step 9;
+    it needs that lane's toolchain from <a href="../setup.html">Setup</a>: Swift 6.2, or a JDK 17
+    or later.</p>
+    <p>From inside <code>day3-work</code>, run your track's first line before the reset and its
+    second after the reset and install-and-init (on LID, skip the mapping run); it deletes the
+    brief, so the port reads only the artifacts. On OpenSpec, the first line also drops the late
+    change Exercise 3 left unarchived, so the port does not see a half-done change.</p>
+    <div class="tabs" data-show-all="true">
+      <div class="tabs-tools">
+        <div role="tablist" aria-label="Framework track" hidden>
+          <button type="button" role="tab" data-track="openspec" id="tab-c3-openspec"
+                  aria-controls="panel-c3-openspec" aria-selected="true">OpenSpec</button>
+          <button type="button" role="tab" data-track="lid" id="tab-c3-lid"
+                  aria-controls="panel-c3-lid" aria-selected="false">LID</button>
+          <button type="button" role="tab" data-track="bmad" id="tab-c3-bmad"
+                  aria-controls="panel-c3-bmad" aria-selected="false">BMAD</button>
+        </div>
+        <button type="button" data-show-all-toggle hidden>Show all three</button>
+      </div>
+
+      <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-c3-openspec"
+               aria-labelledby="tab-c3-openspec">
+        <p>OpenSpec, where <code>openspec list</code> names the late change: put that name for
+        <code>&lt;late-change&gt;</code>, or drop the last <code>rm</code> if it prints <code>No
+        active changes found.</code></p>
+        <pre data-lang="bash"><code>rm -rf ../work/openspec &amp;&amp; cp -R openspec ../work/ &amp;&amp; rm -rf ../work/openspec/changes/&lt;late-change&gt;
+cp -R ../work/openspec/. openspec/ &amp;&amp; rm change-c-brief.md</code></pre>
+      </section>
+
+      <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-c3-lid"
+               aria-labelledby="tab-c3-lid">
+        <p>LID, whose <code>## LID</code> section ends <code>CLAUDE.md</code>:</p>
+        <pre data-lang="bash"><code>rm -rf ../work/docs &amp;&amp; cp -R docs ../work/ &amp;&amp; sed -n '/^## LID$/,$p' CLAUDE.md &gt; ../work/lid-section.md
+cp -R ../work/docs . &amp;&amp; cat ../work/lid-section.md &gt;&gt; CLAUDE.md &amp;&amp; rm change-c-brief.md</code></pre>
+      </section>
+
+      <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-c3-bmad"
+               aria-labelledby="tab-c3-bmad">
+        <p>BMAD:</p>
+        <pre data-lang="bash"><code>rm -rf ../work/_bmad-output &amp;&amp; cp -R _bmad-output ../work/
+cp -R ../work/_bmad-output/. _bmad-output/ &amp;&amp; rm change-c-brief.md</code></pre>
+      </section>
+    </div>
+  </section>
+
+  <div class="callout warning" id="close">
+    <span class="callout-title">Before you close the laptop</span>
+    <p><strong>Save.</strong> Your map, card and ambiguities list sit in <code>../work/</code>,
+    which no reset touches. Those are the keepers.</p>
+    <p><strong>Reset, for another attempt.</strong> Quit Claude Code, then from inside
+    <code>day3-work</code> run your lane's line; for challenge 3, first switch the lane toggle at
+    the top to the other lane.</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work</code></pre>
+    </div>
+
+    <p>Then re-run the copy lines of Exercise 1's setup block (everything after its
+    <code>cd day3-work</code>), or for challenge 3 those of
+    <a href="exercises/02-run-change-c.html#setup">Exercise 2's setup block</a>, which also copy
+    the cycle fixture, and the challenge track's install-and-init steps: BMAD's installer runs
+    again, and <code>/bmad-build</code> halts without <code>uv</code>. OpenSpec on your PATH and
+    the LID plugins at user scope survive.</p>
+    <p><strong>Done for good.</strong> Copy the keepers out of <code>work/</code>, Day 2's
+    included, then quit Claude Code and, from the course root, remove both folders:</p>
+    <pre data-lang="bash"><code>rm -rf day3-work work</code></pre>
+    <p>That leaves what was installed outside them. OpenSpec stays on your PATH until you run
+    <code>npm uninstall -g @fission-ai/openspec</code> (nothing to remove if you used the
+    <code>npx</code> form). If you ran LID, disable its plugins with Challenge 1's two
+    <code>disable</code> lines: on the build machine the two added about 1,090 tokens to every
+    session.</p>
+  </div>
+
+  <p>That is the course. Take your card to your team with one sentence naming the failure it
+  fixes; no reference card exists for your own track, so yours is the first.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-wrap-done" data-progress="d3-wrap-up-done">
+      <label for="d3-wrap-done">Day 3 finished: recap read, ten questions answered from
+      memory.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Framework documentation accessed 2026-09-22. Versions pinned for Day 3: OpenSpec 1.13.1, LID
+  commit 831c1959, BMAD 6.12.0. Entries marked observed were recorded on the build machine on
+  2026-09-22.</p>
+
+  <ul class="sources">
+    <li><code>openspec-13</code>, <code>openspec-14</code> &mdash; <code>## ADDED
+    Requirements</code> and <code>## MODIFIED Requirements</code>, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li>What <code>/opsx:archive</code>'s sync does with MODIFIED and ADDED requirements &mdash;
+    OpenSpec 1.13.1's own command text, in this course's snapshot at
+    <code>day-3-choose-your-adventure/starter/vendored/openspec-1.13.1/project-files/.claude/commands/opsx/</code>
+    (<code>archive.md</code>, <code>sync.md</code>).</li>
+    <li><code>openspec-01</code> &mdash; the global install that puts <code>openspec</code> on your
+    PATH, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    installation</a>.</li>
+    <li><code>openspec-04</code> &mdash; release 1.13.1, from
+    <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">the
+    OpenSpec latest release record</a>.</li>
+    <li><code>lid-11</code> &mdash; the <code>// @spec</code> format, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">the
+    LID repository's <code>AGENTS.md</code></a>, and its place on the topmost function that owns
+    the behavior, not every helper, from
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">the LID
+    README</a>.</li>
+    <li><code>lid-25</code> &mdash; commit 831c1959, from
+    <a href="https://api.github.com/repos/jszmajda/lid/commits/main" target="_blank" rel="noopener noreferrer">the
+    LID commit record</a>.</li>
+    <li><code>lid-obs-02</code> &mdash; observed: both LID plugins installed at user scope.</li>
+    <li><code>lid-obs-10</code> &mdash; observed: <code>claude plugin disable</code> on the
+    installed LID plugins, and with them disabled, starting Claude Code with
+    <code>--plugin-dir</code> pointing at the vendored LID plugins made their commands
+    resolve.</li>
+    <li><code>lid-obs-11</code> &mdash; observed: <code>claude plugin disable</code> and
+    <code>claude plugin enable</code> turn each installed plugin off and back on, as
+    <code>claude plugin --help</code> lists them.</li>
+    <li><code>lid-obs-04</code> &mdash; observed: the two LID plugins adding about 1,090 tokens to
+    every session.</li>
+    <li><code>lid-obs-05</code> &mdash; observed: the <code>## LID</code> section appended to
+    <code>CLAUDE.md</code>.</li>
+    <li><code>openspec-obs-02</code> &mdash; observed: <code>openspec init</code> writing the
+    <code>openspec/</code> folder.</li>
+    <li><code>bmad-obs-05</code> &mdash; observed: the BMAD install creating
+    <code>_bmad-output/</code>.</li>
+    <li><code>bmad-06</code> &mdash; <code>bmad-build</code> and <code>bmad-build-auto</code>
+    halting when <code>uv</code> is unavailable, from 6.11 on, from
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">the
+    BMAD changelog</a>.</li>
+    <li><code>bmad-12</code> &mdash; the six frontmatter status values, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">BMAD
+    autonomous development loops</a>.</li>
+    <li><code>bmad-obs-01</code> &mdash; observed: 6.12.0 as the published <code>latest</code> of
+    <code>bmad-method</code>.</li>
+    <li><code>enterprise-11</code> &mdash; <code>.claude/settings.json</code> as the committed file
+    shared with everyone in the project and <code>.claude/settings.local.json</code> as the personal
+    one, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+    <li><code>cc-core-39</code> &mdash; <q>Yes, and don't ask again</q> saving the rule to
+    <code>.claude/settings.local.json</code> at the root of the git repository, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="lessons/05-adopting-without-a-rewrite.html">Lesson 5: Adopting without a rewrite</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../index.html">Course home</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280, OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0 on
+    2026-09-22. Where this page names a command or a file, keep its linked source open.</p>
+  </div>
+</footer>
+</body>
+</html>

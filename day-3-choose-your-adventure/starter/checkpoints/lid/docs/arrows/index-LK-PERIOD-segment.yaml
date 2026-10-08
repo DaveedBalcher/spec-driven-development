@@ -1,0 +1,69 @@
+# The overlay entry for the statement-period leaf. Paste it into your
+# docs/arrows/index.yaml by hand; a copy would overwrite your own mapping run.
+#
+# Two shapes are here because two shapes exist. Open your index.yaml first and
+# match the one it uses.
+#
+# 1. `arrows:` (schema_version 2). This is what LID's own skill writes; the
+#    schema is in the vendored snapshot at
+#    lid/plugins/arrow-maintenance/skills/arrow-maintenance/references/index-schema.md.
+#    Paste the block below under `arrows:`, at the same indentation as the
+#    entries already there. `blockedBy` names the leaf that owns Transaction;
+#    use your own leaf's name, or [] if none does.
+
+  statement-period:
+    status: MAPPED
+    parent: null
+    sampled: 2026-09-22
+    audited: null
+    audited_sha: null
+    blocks: []
+    blockedBy: [transaction]
+    detail: statement-period.md
+    next: "Write the LK-PERIOD tests, then the code; every spec is still (no test yet)."
+    drift: "Change C: design and 22 EARS specs exist; no tests and no code yet."
+
+# 2. `segments:` list. The build machine's mapping run wrote this shape (its
+#    skill body did not load, so the file is LID-shaped rather than
+#    LID-generated). If your index.yaml has a `segments:` list with `prefix:`
+#    entries, paste this one instead, keeping the two-space indentation.
+
+  - prefix: LK-PERIOD
+    name: Statement periods
+    design: docs/intent/statement-period/statement-period-design.md
+    specs: docs/intent/statement-period/statement-period-specs.md
+    status: designed
+    # Change C. Design and specs exist; tests and code are the next phases.
+    # Every spec_links entry below is an active gap until they land.
+    code:
+      - Tests/LedgerKitTests/Fixtures/cycle-config.tsv
+    planned_code:
+      - Sources/LedgerKit/StatementCycle.swift
+      - Sources/LedgerKit/StatementPeriods.swift
+    tests: []
+    planned_tests:
+      - Tests/LedgerKitTests/StatementPeriodsTests.swift
+    depends_on: [LK-TXN]
+    spec_links:
+      LK-PERIOD-001: { code: [], tests: [] }
+      LK-PERIOD-002: { code: [], tests: [] }
+      LK-PERIOD-003: { code: [], tests: [] }
+      LK-PERIOD-004: { code: [], tests: [] }
+      LK-PERIOD-005: { code: [], tests: [] }
+      LK-PERIOD-006: { code: [], tests: [] }
+      LK-PERIOD-007: { code: [], tests: [] }
+      LK-PERIOD-008: { code: [], tests: [] }
+      LK-PERIOD-009: { code: [], tests: [] }
+      LK-PERIOD-010: { code: [], tests: [] }
+      LK-PERIOD-011: { code: [], tests: [] }
+      LK-PERIOD-012: { code: [], tests: [] }
+      LK-PERIOD-013: { code: [], tests: [] }
+      LK-PERIOD-014: { code: [], tests: [] }
+      LK-PERIOD-015: { code: [], tests: [] }
+      LK-PERIOD-016: { code: [], tests: [] }
+      LK-PERIOD-017: { code: [], tests: [] }
+      LK-PERIOD-018: { code: [], tests: [] }
+      LK-PERIOD-019: { code: [], tests: [] }
+      LK-PERIOD-020: { code: [], tests: [] }
+      LK-PERIOD-021: { code: [], tests: [] }
+      LK-PERIOD-022: { code: [], tests: [] }

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The spec and its criteria</title>
+<meta name="description" content="Day 1, Lessons 4 and 5: the four prompt parts written down in a file the agent reads before it guesses, with each criterion turned into a statement a command can prove wrong.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="4">
+<meta name="course:minutes" content="16">
+<meta name="course:slot" content="d1-l4">
+<meta name="course:video" content="Ib5GBkD555M">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="practitioners-04 practitioners-09 cc-core-19 cc-core-32">
+  <h1>The spec and its criteria</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Lessons 4 and 5 of 6, with
+  <a href="#lesson-5">Lesson 5</a> starting halfway down &middot; <span class="timing">16 min</span></p>
+
+  <p class="lede">You wrote most of a spec an hour ago and let it scroll off the screen: the
+  goal, bounds, verification and stop from Lessons 1 and 2 are its content, and what they lacked was
+  a path. Put them in a file, number the criteria, and give each one a command that turns red when
+  it is not true, and you have what the agent reads before it guesses and what you hold the diff
+  against afterwards.</p>
+
+  <div class="video" data-video-id="Ib5GBkD555M" data-start="898" data-end="1157"
+       data-video-title="Why Software Factories Fail (AI Engineer, 2026-07-23), 14:58 to 19:17">
+    <span class="video-kicker">Watch first &middot; 4 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=Ib5GBkD555M&amp;t=898s"
+      target="_blank" rel="noopener noreferrer">Why Software Factories Fail</a></p>
+    <p class="video-meta">AI Engineer, 2026-07-23. Segment 14:58 to 19:17, the closing two chapters:
+    planning up front, then what too many bad PRs cost. Watch for what the speaker writes down
+    before any code is generated, and for how specific it gets: not a description of the feature,
+    but the types, the call graph and the slices. Keep one question open while you watch: which of
+    the things he writes down would still be useful to a run that started tomorrow with no memory of
+    him.</p>
+  </div>
+
+  <p>Also worth four minutes, outside the lesson's sixteen:
+  <a href="https://www.youtube.com/watch?v=6mLYZF97oaU&amp;t=639s" target="_blank"
+  rel="noopener noreferrer">Spec-Driven Dev Is Back. But Not How You Think</a> (GOTO Conferences,
+  2026-04-27, Daniel Terhorst-North and Gojko Adzic), from 10:39. Watch for the moment the argument
+  turns from what a rule says to whether anything enforces it.</p>
+
+  <h2 id="file">From a prompt you typed to a file you keep</h2>
+
+  <p>A prompt lasts as long as its conversation, and <code>/clear</code> empties the conversation.
+  The same words in <code>specs/daily-summary.md</code> survive it, and survive a colleague
+  opening the repository next week.</p>
+
+  <p>Nothing about the content changes when you move it; the usual mistake is adding to it.
+  Background, rationale and the approach you abandoned tell the run neither what to do nor when to
+  stop, and they lengthen what a reviewer reads. Keep a sentence if it passes Lesson 6's test for a
+  line of <code>CLAUDE.md</code>: if you removed it, would the agent make a specific mistake you
+  can name?</p>
+
+  <h2 id="contains">What a spec contains</h2>
+
+  <p>Seven headings, and a spec that has them is finished: goal, non-goals, numbered acceptance
+  criteria, bounds, verification, stop conditions, definition of done. The new three are:
+  non-goals, in the next section; numbered criteria, further down
+  this page; and the definition of done, the list you check before calling the work finished. The
+  criterion-to-command grid is a sub-part of the numbered criteria, not an eighth heading, which is
+  why the template carries it as a <code>###</code> under them.</p>
+
+  <p>Everything else is commentary. The skeleton Exercise 3 copies in &mdash;
+  <code>../day-1-from-chat-to-spec/starter/specs/TEMPLATE.md</code> &mdash; ships those headings with angle-bracket guidance to delete as you fill them. Two name
+  paths and a command, so they differ by lane; here they are for Exercise 1's merchant-search
+  change:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="markdown"><code>## Bounds
+
+**In bounds &mdash; may change:**
+
+- Sources/LedgerKit/LedgerFilter.swift
+- Tests/LedgerKitTests/LedgerFilterTests.swift
+
+**Out of bounds &mdash; must not change:**
+
+- Sources/LedgerKit/Money.swift
+- Tests/LedgerKitTests/Fixtures/transactions.tsv
+- CLAUDE.md
+
+## Verification
+
+swift test        # Success: the run reports 0 failures.</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="markdown"><code>## Bounds
+
+**In bounds &mdash; may change:**
+
+- src/main/kotlin/ledgerkit/LedgerFilter.kt
+- src/test/kotlin/ledgerkit/LedgerFilterTest.kt
+
+**Out of bounds &mdash; must not change:**
+
+- src/main/kotlin/ledgerkit/Money.kt
+- Fixtures/transactions.tsv
+- CLAUDE.md
+
+## Verification
+
+./gradlew test    # Success: the run prints BUILD SUCCESSFUL.</code></pre>
+  </div>
+
+  <p>Paths, not prose. "Be careful around Money" is not a bound, because no diff can be checked
+  against it; every changed file is either on a list of paths or it is not.</p>
+
+  <p>That is also where a spec stops and Lesson 3's plan starts. The spec holds what the change
+  must achieve and its limits; the plan, which the agent writes after reading the code, holds the
+  steps, their order and the files to edit. Bounds say which files may change, not which ones
+  will.</p>
+
+  <h2 id="non-goals">Non-goals do more work than goals</h2>
+
+  <p>The goal tells the agent where to go; the non-goals tell it where to stop being helpful. An
+  agent that has read your code can see adjacent improvements nobody asked for, and one line
+  &mdash; do not change the output format of the existing summary &mdash; removes that class of
+  diff.</p>
+
+  <p>If you write only one non-goal, make it about the thing sitting next to the change. The
+  Change B brief in Exercise 3 hands you two, in product's words: no currency conversion,
+  and nothing about the screen.</p>
+
+  <p>Open questions land here too, but not only here. Does a day with only declined transactions
+  still appear? It must not sit in the file unanswered: the agent will answer it quietly, and you
+  will find the answer in the diff. Give it one of four destinations:</p>
+
+  <ul>
+    <li>a numbered criterion, when you can decide it;</li>
+    <li>a non-goal, when the answer is no;</li>
+    <li>a stop condition, when deciding it changes what a test asserts and nobody has decided
+    it;</li>
+    <li>back to whoever can decide it, when nobody can.</li>
+  </ul>
+
+  <h2 id="rerunnable">A spec is re-runnable</h2>
+
+  <p>The test of a spec is whether a session with no memory of your afternoon produces the same
+  change from it. Day 2 hands one to a runner that works without you in the room, and whatever you left implicit
+  becomes its improvisation.</p>
+
+  <h2 id="lives">Where the spec lives</h2>
+
+  <p>One file per change, next to the code: <code>specs/daily-summary.md</code> inside
+  <code>day1-work</code>, the copy of your lane Exercise 1 makes, where every command today runs. A
+  document that accumulates every change is one nobody re-reads.</p>
+
+  <p>A useful team norm: the spec is part of the pull request and is reviewed before the diff,
+  because the criteria say whether the change was worth making and the tests already say whether it
+  compiles.</p>
+
+  <h2 id="overhead">When a spec is overhead</h2>
+
+  <p>For a change under about twenty lines with a test that already fails, the failing test is the
+  spec: it states the criterion, and the diff is reviewable at a glance. A file for that change is
+  ceremony, and ceremony is how a practice gets dropped.</p>
+
+  <p>Write one when the change spans files, when someone else will run it, or when you will run it
+  more than once. When you cannot decide, write it.</p>
+
+  <h2 id="lesson-5">Lesson 5: Criteria a command can fail</h2>
+
+  <p>The spec is written. This half makes each of its numbered criteria something a run can
+  fail.</p>
+
+  <h2 id="the-test">The only test a criterion has to pass</h2>
+
+  <p>A criterion that cannot make a command exit non-zero is a hope: you can write it down, hand it
+  to an agent, and ship the opposite without anything going red. So read each criterion and ask
+  which command turns red if it is not true. If you can name the command and the assertion inside
+  it, you have a criterion; if you cannot, you have an aspiration, and an aspiration cannot be
+  violated.</p>
+
+  <p>Birgitta Böckeler calls the instructions you feed forward guides, and the feedback that makes
+  an agent correct itself sensors. Your spec is a guide; the command behind each criterion is the
+  sensor, and a run with no sensors goes wherever the guide points.</p>
+
+  <h2 id="numbered">Numbered and binary</h2>
+
+  <p>Number the criteria, so you can reject a plan by saying criterion 4 has no command beside it.
+  Binary means a run either satisfies a criterion or does not, with no interpretation between output
+  and verdict: "totals are accurate" needs a human to rule on what accurate covers, and
+  "LK-018 renders as -&euro;12,345.67" does not.</p>
+
+  <p>A criterion joined by "and" is usually two criteria wearing one number. "LK-014 renders as
+  <code>-&yen;128,000</code> and no other row changes" is proven by two different tests, so the grid
+  below splits it into criteria 1 and 2, and a red run tells you which half broke.</p>
+
+  <h2 id="failing-case">From behavior to a failing case</h2>
+
+  <p>The move that turns a behavior into a criterion is to pick the input that violates it and
+  write that input down: not the rule, the counterexample. LEDGER-7 arrived as "yen amounts show
+  cents", and the criterion is the fixture row LK-014, a JPY debit of 128,000 minor units, rendering
+  as <code>-&yen;128,000</code> and not <code>-&yen;1,280.00</code>.</p>
+
+  <p>You already watched that one fail. The gated run from Exercise 2, inside
+  <code>day1-work</code>, prints both:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="text" tabindex="0" role="region" aria-label="Swift known-issue failure"><code>&hellip;/Tests/LedgerKitTests/KnownIssueTests.swift:35: error:
+-[LedgerKitTests.KnownIssueTests testLEDGER7_JPYRendersWithTwoDecimalPlaces] :
+XCTAssertEqual failed: ("-&yen;1,280.00") is not equal to ("-&yen;128,000")
+ - LEDGER-7: LK-014 (JPY) rendered the wrong amount.
+  expected: -&yen;128,000
+  actual:   -&yen;1,280.00
+JPY has no minor unit, so Money.decimalPlaces(for: "JPY") should be 0
+and is 2. See KNOWN-ISSUES.md.</code></pre>
+    <p>The absolute path is shortened to <code>&hellip;</code> here.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="text" tabindex="0" role="region" aria-label="Kotlin known-issue failure"><code>KnownIssueTest &gt; LEDGER-7 the JPY row renders with decimal places it should not have() FAILED
+    org.opentest4j.AssertionFailedError: LEDGER-7: LK-014 is -128000 minor units
+    of JPY. The fixture expects "-&yen;128,000" and TransactionFormatter.amountText
+    produced "-&yen;1,280.00". Money.decimalPlaces returns 2 for JPY; JPY has no
+    minor unit. ==&gt; expected: &lt;-&yen;128,000&gt; but was: &lt;-&yen;1,280.00&gt;</code></pre>
+  </div>
+
+  <p>The violating case is the test: criterion and assertion are one sentence written twice.</p>
+
+  <h2 id="grid">The criterion-to-command grid</h2>
+
+  <p>A grid is the cheapest way to see which criteria are real: one row per number, the command
+  that fails if it is broken, and the test or assertion inside it. The template carries the same
+  grid without the Criterion column, because there the criterion text sits in
+  the numbered list right above it. One row per criterion, even when every row names the same test
+  command with a different test name; the row you cannot fill is the finding.</p>
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Criterion-to-command grid">
+  <table>
+    <caption>A grid for the LEDGER-7 fix, filled.</caption>
+    <thead>
+      <tr><th scope="col">#</th><th scope="col">Criterion</th><th scope="col">Command that fails if this is broken</th><th scope="col">Test or assertion</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>LK-014 renders as <code>-&yen;128,000</code></td><td><div class="lane-swift"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></div><div class="lane-kotlin"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test</code></div></td><td><div class="lane-swift"><code>KnownIssueTests.testLEDGER7_JPYRendersWithTwoDecimalPlaces</code></div><div class="lane-kotlin"><code>KnownIssueTest</code>, the JPY row test</div></td></tr>
+      <tr><td>2</td><td>Every non-JPY row renders exactly as it does now</td><td><div class="lane-swift"><code>swift test</code></div><div class="lane-kotlin"><code>./gradlew test</code></div></td><td><div class="lane-swift"><code>GoldenFixtureTests.testAmountTextMatchesTheFixture</code></div><div class="lane-kotlin"><code>GoldenFixtureTest</code>, the every-row amount test</div></td></tr>
+      <tr><td>3</td><td>The fixture file is not edited</td><td><div class="lane-swift"><code>diff ../sandbox/swift/Tests/LedgerKitTests/Fixtures/transactions.tsv Tests/LedgerKitTests/Fixtures/transactions.tsv</code></div><div class="lane-kotlin"><code>diff ../sandbox/kotlin/Fixtures/transactions.tsv Fixtures/transactions.tsv</code></div></td><td>no output, and an exit status of 0</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p>Plain <code>swift test</code> skips the LEDGER-7 test.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p>Plain <code>./gradlew test</code> does not run the LEDGER-7 test at all.</p>
+  </div>
+
+  <p>So the plain command cannot fail criterion 1, which is why criterion 1 names the gated form
+  and criterion 2 the plain one. Row 3 shows the column is not only tests: a diff against the shipped copy exits
+  non-zero the moment the fixture changes.</p>
+
+  <p>Row 2's command is the one you run most:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+  </div>
+
+  <p>Skip the grid and a green run ships behavior nobody asked for: the suite proves whichever
+  criteria had tests. The grid is the wrong tool for a throwaway spike you will delete, or a change that
+  asserts no behavior at all: with no criterion to hold, there is no row to fill, so run the suite
+  and move on.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 330" role="img" aria-labelledby="grid-title grid-desc">
+      <title id="grid-title">Criteria mapped to the checks that can fail them</title>
+      <desc id="grid-desc">A two-column mapping. On the left, three numbered criteria from the
+      LEDGER-7 spec and a fourth line that carries no number. On the right, three checks, each
+      naming a test and the command that runs it. Criterion 1, LK-014 renders minus 128,000 yen,
+      reaches the known-issue JPY test, run by the gated test command. Criterion 2, other rows
+      unchanged, reaches the golden fixture test, run by the plain test command. Criterion 3,
+      fixture file not edited, reaches a diff of the working copy's fixture against the shipped
+      sandbox copy. The fourth line, wording reads well, reaches nothing: it stops at a cross marked
+      nothing can fail this, and it is drawn unnumbered because a line with no check on its
+      right-hand side is one a green run would silently claim as passed if it sat in the numbered
+      list.</desc>
+
+      <defs>
+        <marker id="grid-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+      </defs>
+
+      <text x="6" y="16" font-size="15" fill="var(--muted)">criterion</text>
+      <text x="174" y="16" font-size="15" fill="var(--muted)">check that can fail it</text>
+      <line x1="4" y1="26" x2="356" y2="26" stroke="var(--border)" stroke-width="1"></line>
+
+      <rect x="4" y="42" width="150" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="66" font-size="15" font-weight="650" fill="var(--fg)">1</text>
+      <text x="34" y="66" font-size="15" fill="var(--fg)">LK-014 renders</text>
+      <text x="34" y="88" font-size="15" fill="var(--fg)">-&yen;128,000</text>
+
+      <rect x="174" y="42" width="182" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <line x1="174" y1="42" x2="174" y2="98" stroke="var(--fg)" stroke-width="3"></line>
+      <text x="186" y="66" font-size="15" fill="var(--fg)">known-issue JPY test</text>
+      <text x="186" y="88" font-size="15" fill="var(--muted)">gated test command</text>
+
+      <line x1="156" y1="70" x2="170" y2="70" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#grid-arrow)"></line>
+
+      <rect x="4" y="114" width="150" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="138" font-size="15" font-weight="650" fill="var(--fg)">2</text>
+      <text x="34" y="138" font-size="15" fill="var(--fg)">other rows</text>
+      <text x="34" y="160" font-size="15" fill="var(--fg)">unchanged</text>
+
+      <rect x="174" y="114" width="182" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <line x1="174" y1="114" x2="174" y2="170" stroke="var(--fg)" stroke-width="3"></line>
+      <text x="186" y="138" font-size="15" fill="var(--fg)">golden fixture test</text>
+      <text x="186" y="160" font-size="15" fill="var(--muted)">plain test command</text>
+
+      <line x1="156" y1="142" x2="170" y2="142" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#grid-arrow)"></line>
+
+      <rect x="4" y="186" width="150" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="210" font-size="15" font-weight="650" fill="var(--fg)">3</text>
+      <text x="34" y="210" font-size="15" fill="var(--fg)">fixture file</text>
+      <text x="34" y="232" font-size="15" fill="var(--fg)">not edited</text>
+
+      <rect x="174" y="186" width="182" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <line x1="174" y1="186" x2="174" y2="242" stroke="var(--fg)" stroke-width="3"></line>
+      <text x="186" y="210" font-size="15" fill="var(--fg)">fixture unchanged</text>
+      <text x="186" y="232" font-size="15" fill="var(--muted)">diff against sandbox/</text>
+
+      <line x1="156" y1="214" x2="170" y2="214" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#grid-arrow)"></line>
+
+      <rect x="4" y="258" width="150" height="56" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <text x="14" y="282" font-size="15" font-weight="650" fill="var(--accent)">unnumbered</text>
+      <text x="14" y="304" font-size="15" fill="var(--fg)">wording reads well</text>
+
+      <line x1="156" y1="286" x2="166" y2="286" stroke="var(--muted)" stroke-width="1.5"></line>
+      <line x1="172" y1="279" x2="186" y2="293" stroke="var(--muted)" stroke-width="1.5"></line>
+      <line x1="186" y1="279" x2="172" y2="293" stroke="var(--muted)" stroke-width="1.5"></line>
+      <text x="194" y="291" font-size="15" fill="var(--accent)">nothing can fail this</text>
+    </svg>
+    <figcaption>Each numbered criterion reaches a named check; the line with nothing on its right
+    must not carry a number.</figcaption>
+  </figure>
+
+  <h2 id="unfalsifiable">Words that make a criterion unfalsifiable</h2>
+
+  <p>Some words reliably mark a line that cannot fail. Properly. Correctly. Reasonable.
+  Gracefully. Performant. Handles edge cases. Consistent with the rest of the codebase. Each one
+  moves the decision from a command to a conversation after the code is written.</p>
+
+  <p>Treat them as a lint on your own spec: ask which single input would be the counterexample, and
+  write that instead. When you cannot answer, the requirement is still open, and the honest move is
+  to send it back.</p>
+
+  <h2 id="manual">Criteria you cannot automate</h2>
+
+  <p>Some real requirements have no command: wording a support agent reads out loud, visual polish,
+  whether a screen reads like the rest of the app. No assertion decides these.</p>
+
+  <p>List them separately as manual criteria, each naming who checks it and what evidence counts: a
+  screenshot on the pull request, a five-minute pass on a device by an engineer who did not write
+  the change. Addy Osmani's spec structure does the same for actions, with an explicit "ask first"
+  tier.</p>
+
+  <p>Do not number them beside the automated ones, where a run that never looked at them claims
+  them as passed. Two lists, one of which a human signs.</p>
+
+  <h2 id="drafting">Let the agent draft, you decide</h2>
+
+  <p>Drafting criteria from a ticket is work an agent is good at: it surfaces the empty case, the
+  duplicate, the one that crosses a day boundary. The prompt hands over the ticket and one
+  constraint.</p>
+
+  <pre data-lang="text" tabindex="0" role="region" aria-label="Criteria drafting prompt"><code>Read LEDGER-7.md.
+
+Propose acceptance criteria for this fix as a numbered list. For each one,
+name the single command and the single test assertion that would fail if
+that criterion were not met, and say plainly when there is none.
+
+Do not write any implementation, do not change a file, and do not propose
+more than six criteria.</code></pre>
+
+  <p>Then you cut, and the cutting is yours: an agent drafts agreeable criteria, and the one that
+  constrains it &mdash; the fixture may not be edited &mdash; is the one you insist on. Exercise 3
+  turns this round: you write the four criteria for Change B, then have the agent name the command
+  and assertion for each and say which it cannot make fail.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Rewrite "euro amounts are formatted correctly" so it can fail.</summary>
+    <p>"LK-018 renders as <code>-&euro;12,345.67</code>." Then name the command and the assertion,
+    the golden fixture test, so there is a specific line that goes red when it is not true. If you
+    also want to say no other row changes, that is a second numbered criterion, not an "and" on
+    this one.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>You cannot think of a single non-goal for your change. What does that usually
+    mean?</summary>
+    <p>The goal is too broad to bound, so anything adjacent looks in scope. Split it into changes
+    you can draw a line around, or accept that the agent may touch whatever seems related and say
+    so: that is a decision, not an accident.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-l4-done" data-progress="d1-l4-read">
+      <label for="d1-l4-done">Lessons 4 and 5 read: I can name the seven headings without looking,
+      and the command and assertion that would fail for each row of the LEDGER-7 grid.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Test output on this page was recorded from this course's sandbox on 2026-09-22, in both lanes.
+  The cited sources were accessed the same day.</p>
+
+  <ul class="sources">
+    <li><code>practitioners-04</code> &mdash; guides and sensors as the two halves of an agent
+    harness, sensors being the feedback that triggers self-correction before human review.
+    <a href="https://se-radio.net/2026/07/se-radio-730-birgitta-boeckeler-on-harness-engineering-for-ai-agents/"
+    target="_blank" rel="noopener noreferrer">Birgitta Böckeler on harness engineering, SE Radio
+    730, 2026-07-22</a>.</li>
+    <li><code>practitioners-09</code> &mdash; the three-tier action-boundary structure with an
+    explicit "ask first" tier requiring human approval before the agent acts.
+    <a href="https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents"
+    target="_blank" rel="noopener noreferrer">Addy Osmani, how to write a good spec for AI agents,
+    2026-01-19</a>.</li>
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code> resets the session to empty context,
+    from <a href="https://code.claude.com/docs/en/commands" target="_blank"
+    rel="noopener noreferrer">Slash commands</a> (accessed 2026-09-22).</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank"
+    rel="noopener noreferrer">Claude Code changelog</a> (2026-09-22).</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/02-plan-mode-on-ledger-7.html">Exercise 2: LEDGER-7 in plan mode</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/03-write-the-spec-for-change-b.html">Exercise 3: Write the spec for Change B</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

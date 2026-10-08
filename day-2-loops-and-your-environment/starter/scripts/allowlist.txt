@@ -1,0 +1,4 @@
+# Repositories this wrapper may write to. One name per line.
+# A name that is not here should be refused, with a non-zero exit and a message
+# naming it. Making that true is Exercise 4.
+local-repo

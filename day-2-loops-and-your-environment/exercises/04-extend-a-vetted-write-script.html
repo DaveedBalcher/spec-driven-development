@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use and extend a vetted write script</title>
+<meta name="description" content="Day 2, Exercise 4: run the team's write wrapper against a local fixture, add the guardrail it is missing with a test that fails first, and encode the split in two permission rules.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="4">
+<meta name="course:minutes" content="15">
+<meta name="course:slot" content="d2-e4">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="enterprise-12 enterprise-13 enterprise-14 enterprise-07 enterprise-09 enterprise-11 cc-core-21 cc-core-22 cc-core-32 cc-core-39">
+  <h1>Use and extend a vetted write script</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot;
+  Exercise 4 of 4 &middot; <span class="timing">15 min</span></p>
+
+  <p class="lede">Run the team's write wrapper against a local fixture, add the one guardrail it is
+  missing with a test that fails before it and passes after, and point at the exact line where a
+  write leaves the agent's reach.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Every command on this page runs from inside <code>day2-work</code>, the copy of your lane at
+  the course root; the shipped <code>sandbox/</code> is never edited. Paste one block from the
+  course root. It makes the copy if it is missing and leaves your shell in <code>day2-work</code>
+  with the wrapper, its self-test and the fixture in place, and puts the starter settings example
+  at <code>.claude/settings.json</code>, the shared file a team commits, unless Exercise 3's is
+  already there. The lane ships a <code>settings.json</code> with no permission rules, and the
+  example replaces that one.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="post-pr-comment.sh"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/swift day2-work; } &amp;&amp; cd day2-work &amp;&amp; cp -R ../day-2-loops-and-your-environment/starter/scripts ../day-2-loops-and-your-environment/starter/fixtures . &amp;&amp; chmod +x scripts/*.sh &amp;&amp; mkdir -p .claude &amp;&amp; { grep -q '"permissions"' .claude/settings.json || cp ../day-2-loops-and-your-environment/starter/settings.example.json .claude/settings.json; } &amp;&amp; ls scripts fixtures/local-repo .claude</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="post-pr-comment.sh"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/kotlin day2-work; } &amp;&amp; cd day2-work &amp;&amp; cp -R ../day-2-loops-and-your-environment/starter/scripts ../day-2-loops-and-your-environment/starter/fixtures . &amp;&amp; chmod +x scripts/*.sh &amp;&amp; mkdir -p .claude &amp;&amp; { grep -q '"permissions"' .claude/settings.json || cp ../day-2-loops-and-your-environment/starter/settings.example.json .claude/settings.json; } &amp;&amp; ls scripts fixtures/local-repo .claude</code></pre>
+  </div>
+
+  <p>It lists the four files under <code>scripts</code>, the fixture, and the
+  <code>settings.json</code> under <code>.claude</code>. From here both lanes run identical
+  commands. The wrapper has no network path out of the box: a send appends to a file under <code>fixtures/local-repo</code>, laid out
+  like the REST path <code>repos/{owner}/{repo}/pulls/{pull_number}/comments</code>.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Read the wrapper's header before you run it. It states the five properties a reviewer
+      checks and names two places: <code>read_token</code>, the one function that reads the
+      credential, and <code>ALLOWED_ACTIONS</code>, the action list. That header is your map; skip
+      a full read.</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="--dry-run prints the exact request and sends nothing."><code>sed -n '5,18p' scripts/post-pr-comment.sh</code></pre>
+    </li>
+
+    <li>
+      <p>Run the self-test and confirm it is green before you change anything. A test suite you did
+      not watch pass is not a baseline.</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="PASS 7 checks"><code>bash scripts/post-pr-comment.test.sh</code></pre>
+      <p>The whole output is one line, and the exit status agrees with it, so the command can gate
+      a runner:</p>
+      <pre data-lang="text"><code>PASS 7 checks</code></pre>
+    </li>
+
+    <li>
+      <p>Dry-run the wrapper against the fixture. Read the <code>DRY RUN</code> line it prints:
+      that line, plus the body under it, is the entire contract between the agent and the outside
+      world.</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="DRY RUN: would POST repos/local-repo/pulls/1/comments"><code>bash scripts/post-pr-comment.sh --dry-run --repo local-repo --pr 1 --body "smoke test"</code></pre>
+      <pre data-lang="text"><code>DRY RUN: would POST repos/local-repo/pulls/1/comments
+smoke test</code></pre>
+      <p>Now run it against a repository nobody approved, and watch it agree to that too.</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="DRY RUN: would POST repos/not-on-the-list/pulls/1/comments"><code>bash scripts/post-pr-comment.sh --dry-run --repo not-on-the-list --pr 1 --body "smoke test"</code></pre>
+      <pre data-lang="text"><code>DRY RUN: would POST repos/not-on-the-list/pulls/1/comments
+smoke test</code></pre>
+      <p>The allowlist exists. One command says how far it gets:</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="allowlist.txt"><code>grep -n 'ALLOWED_REPOS' scripts/post-pr-comment.sh</code></pre>
+      <p>One hit: the line that reads <code>allowlist.txt</code> into a variable. Nothing ever
+      consults it. The wrapper declares an allowlist and never checks it, a defect that survives
+      review because the file looks like it already has the guardrail.</p>
+    </li>
+
+    <li>
+      <p>Write the failing test first, in <code>scripts/post-pr-comment.test.sh</code>, in the block
+      marked for this exercise and above the final <code>if [ "$failures" -eq 0 ]; then</code>.
+      Assert that a repository outside <code>ALLOWED_REPOS</code> is refused: a non-zero exit, a
+      message naming the repository, and a refusal word in that message (<code>not allowed</code> or
+      <code>refus</code>), because the <code>DRY RUN</code> line already names the repository. Copy check 4 as the pattern, and call the wrapper with
+      <code>--dry-run</code>, as step 3 did, so the check never reaches the confirmation prompt.
+      Change no existing check. Then run the self-test and watch it go red. With the reference
+      check in place it prints:</p>
+      <pre data-lang="text"><code>FAIL a repository outside the allowlist should exit non-zero and name it (exit 0, got: DRY RUN: would POST repos/not-on-the-list/pulls/1/comments
+x)
+FAILED 1 of 8 checks</code></pre>
+      <p>Red first is the only evidence that your check can fail, and a check that cannot fail is
+      what this wrapper already had.</p>
+    </li>
+
+    <li>
+      <p>Start Claude Code in <code>day2-work</code> with <code>claude</code> and paste this prompt
+      in full.</p>
+      <pre data-lang="text"><code>Read scripts/post-pr-comment.sh and scripts/post-pr-comment.test.sh. Make the failing check 8 in the test file pass: the script must refuse any repository not listed in ALLOWED_REPOS, exit non-zero, and print a message saying the repository is not allowed and naming it. Change nothing outside scripts/, and do not change any existing test. When you are done, run bash scripts/post-pr-comment.test.sh and show me the full output.</code></pre>
+    </li>
+
+    <li>
+      <p>Run the self-test yourself, not the agent's account of it, and confirm the new case passes
+      with the seven old ones:</p>
+      <pre data-lang="bash"><code>bash scripts/post-pr-comment.test.sh</code></pre>
+      <pre data-lang="text"><code>PASS 8 checks</code></pre>
+      <p>Then run the two dry runs from step 3 again. <code>local-repo</code> still prints its
+      endpoint and body; <code>not-on-the-list</code> now prints a refusal naming itself and exits
+      non-zero. The reference guardrail's refusal:</p>
+      <pre data-lang="text"><code>post-pr-comment: repository not allowed: not-on-the-list (allowed: local-repo)</code></pre>
+    </li>
+
+    <li>
+      <p>Open <code>day2-work/.claude/settings.json</code>. It is not the personal <code>.claude/settings.local.json</code>, which a &ldquo;Yes, and don't ask
+      again&rdquo; approval writes at the root of the git repository, or beside
+      <code>.claude/settings.json</code> outside one. Encode the split there in two rules:
+      the wrapper is allowed by path, the raw command it wraps is denied.</p>
+      <pre data-lang="json"><code>{
+  "permissions": {
+    "deny": [
+      "Bash(gh pr comment:*)",
+      "Bash(gh api:*)"
+    ],
+    "allow": [
+      "Bash(bash scripts/post-pr-comment.sh:*)"
+    ]
+  }
+}</code></pre>
+      <p>Write the rule against the command you actually type. Every run on this page is
+      <code>bash scripts/post-pr-comment.sh</code>; Lesson 4 writes the pair for
+      <code>./scripts/post-pr-comment.sh</code>, a different command string.</p>
+      <p>Add those entries to the lists already in the file rather than replacing it. Deny is
+      evaluated before allow and the first match wins regardless of specificity, so the two raw
+      commands, as the agent writes them, are refused while the wrapper runs. Both denials are scoped: a bare
+      <code>"Bash"</code> in the deny list removes the tool altogether, including the command that
+      runs the wrapper.</p>
+    </li>
+
+    <li>
+      <p>Write a three-sentence paragraph in <code>../work/e4.md</code>, in your own words: where the write
+      left the agent's reach, what the agent saw, and what it never saw. If the third is hard,
+      open the <code>read_token</code> function.</p>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see this instead</h2>
+
+  <p><strong><code>bash: scripts/post-pr-comment.test.sh: No such file or directory</code>.</strong>
+  Your shell is not in <code>day2-work</code>, which a new terminal tab does, or the setup block
+  was never pasted. From the course root, <code>cd day2-work</code>. Paste the setup block only if
+  <code>ls scripts</code> finds nothing there: a second paste copies the starter scripts over your
+  edits.</p>
+
+  <p><strong>The self-test hangs with no output, or prints <code>PASS 8 checks</code> before any
+  guardrail exists.</strong> Your check calls the wrapper without <code>--dry-run</code>, so it
+  stopped at the confirmation prompt, which <code>$(...)</code> hides. Press Ctrl-C and add
+  <code>--dry-run</code>.</p>
+
+  <p><strong>The self-test still says <code>PASS 7 checks</code> after you added your check.</strong>
+  Your check is below the final <code>if [ "$failures" -eq 0 ]; then</code> block, which prints the
+  verdict and exits before reaching it. Move it above that line, into the block marked for this
+  exercise.</p>
+
+  <p><strong>The self-test still says <code>FAILED 1 of 8 checks</code> after the agent's change, and
+  the <code>FAIL</code> line reports <code>exit 0</code> with a <code>DRY RUN</code> endpoint in
+  it.</strong> The new guardrail landed after the <code>DRY_RUN</code> branch, which prints and exits
+  before the allowlist is ever consulted. A guardrail that only holds on a real send is not a
+  guardrail: the refusal has to happen before the dry run branches.</p>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Run this, from inside <code>day2-work</code></p>
+    <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="GUARDRAIL MISSING"><code>bash scripts/post-pr-comment.test.sh; t=$?; bash scripts/post-pr-comment.sh --dry-run --repo not-on-the-list --pr 1 --body probe &gt;/dev/null 2&gt;&amp;1; g=$?; bash scripts/post-pr-comment.sh --dry-run --repo local --pr 1 --body probe &gt;/dev/null 2&gt;&amp;1; s=$?; if [ "$t" -eq 0 ] &amp;&amp; [ "$g" -ne 0 ] &amp;&amp; [ "$s" -ne 0 ]; then echo "GUARDRAIL OK"; else echo "GUARDRAIL MISSING (self-test $t, refusal $g, near-miss $s)"; fi</code></pre>
+    <p>It runs the suite, asks the wrapper to write somewhere nobody approved and then to
+    <code>local</code>, a near miss that is a substring of <code>local-repo</code>, and prints one
+    verdict from the three exit statuses. Right after the setup block, before your change:</p>
+    <pre data-lang="text"><code>PASS 7 checks
+GUARDRAIL MISSING (self-test 0, refusal 0, near-miss 0)</code></pre>
+    <p>When you are finished it prints <code>PASS 8 checks</code> and <code>GUARDRAIL OK</code>.
+    The <code>GUARDRAIL</code> line is the one that matters: a suite is green either because the
+    guardrail works or because nothing asked it to.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> the check prints
+  <code>GUARDRAIL OK</code>, the self-test reports <code>PASS 8 checks</code> with all seven original
+  checks still in the file, <code>.claude/settings.json</code> carries the deny and allow rules, and
+  <code>../work/e4.md</code> holds your paragraph.</p>
+
+  <h2 id="reference">Reference answers</h2>
+
+  <p>Open these after your own check and run exist. The shapes below are not the only ones that
+  pass.</p>
+
+  <details class="reveal">
+    <summary>The reference test case</summary>
+    <p>Added in the marked block, above the final verdict:</p>
+    <pre data-lang="bash"><code># 8. A repository outside allowlist.txt is refused by name.
+out="$(bash "$WRAPPER" --dry-run --repo not-on-the-list --pr 1 --body x 2&gt;&amp;1)"; rc=$?
+if [ "$rc" -ne 0 ] &amp;&amp; printf '%s' "$out" | grep -q 'not-on-the-list' &amp;&amp; printf '%s' "$out" | grep -Eq 'not allowed|refus'; then pass
+else fail "a repository outside the allowlist should exit non-zero and name it (exit $rc, got: $out)"; fi</code></pre>
+    <p>Three assertions in one check, and all are deliberate. The non-zero exit is what a caller can
+    act on; the repository name in the message is what a person reading a log can act on. The name alone
+    proves nothing, because the <code>DRY RUN</code> line already contains it, so the check also
+    asks for the word of a refusal. The check
+    uses <code>--dry-run</code> on purpose, because a guardrail that a dry run can walk past is a
+    guardrail that never sees the argument it was written for.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The reference guardrail</summary>
+    <p>In <code>scripts/post-pr-comment.sh</code>, replacing the marked comment block &mdash; after
+    the action allowlist, before <code>ENDPOINT</code> is built and before the
+    <code>DRY_RUN</code> branch:</p>
+    <pre data-lang="bash"><code># Guardrail: the repository allowlist.
+case $'\n'"$ALLOWED_REPOS"$'\n' in
+  *$'\n'"$REPO"$'\n'*) : ;;
+  *) die "repository not allowed: $REPO (allowed: $(echo $ALLOWED_REPOS))" "$EX_REFUSED" ;;
+esac</code></pre>
+    <p>The newlines around both sides are what make it a line-by-line match rather than a substring
+    match, so a repository called <code>local</code> or <code>repo</code>, which is a substring
+    of <code>local-repo</code>, is refused rather than waved through. <code>$EX_REFUSED</code> is the wrapper's existing exit status for a refusal, which is
+    why check 4 and check 8 can report the same kind of failure in the same way. Placement is the
+    part most runs get wrong: above <code>ENDPOINT</code>, so that neither the dry run nor a real
+    send can reach the network path without passing the allowlist.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Why the allowlist is the guardrail that matters</summary>
+    <p>The wrapper's header lists five properties, and with yours there are six; only two of them
+    decide anything. A dry run shows you what
+    would happen, which is worth a great deal at the moment a person is reading the screen and
+    nothing at all at three in the morning in the fourth iteration of a runner. The confirmation
+    prompt has the same shape: it is an excellent control while somebody is there to answer it, and
+    <code>--yes</code> exists because often nobody is.</p>
+    <p>The action allowlist and the repository allowlist are different. They decide the same way
+    whether or not anyone is reading, they decide before the credential is ever read, and their
+    decision does not depend on how convincingly the caller asked. That is the property you want from
+    the thing standing between an unattended loop and other people's pull requests. The log line is
+    the third that survives an empty room, and it is evidence rather than control: it tells you
+    afterwards what left, which is what you will want on the morning you find out something did.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-e4-done" data-progress="d2-e4-done">
+      <label for="d2-e4-done">Exercise 4 done: the guardrail lands, the suite reports eight checks,
+      and the two permission rules are in the shared settings file.</label>
+    </li>
+  </ul>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Every Day 2 exercise resets the same way: quit Claude Code, then from inside
+  <code>day2-work</code> run the line for your lane. It replaces the copy with a fresh one from the
+  shipped lane.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/swift day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <p>It leaves <code>../work</code> alone, so your paragraph outlives it. A fresh copy is the
+  shipped lane and nothing else: <code>scripts/</code>, <code>fixtures/</code> and the
+  <code>.claude/settings.json</code> holding your two rules are gone, so copy what you want into
+  <code>../work</code> first, and re-run this page's setup block before you continue.</p>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>enterprise-12</code> &mdash; <code>gh pr comment &lt;number&gt; --body "&lt;text&gt;"</code>
+    is the CLI form of the write this wrapper stands in front of. From
+    <a href="https://cli.github.com/manual/gh_pr_comment" target="_blank" rel="noopener noreferrer">gh
+    pr comment</a>, accessed 2026-09-22.</li>
+    <li><code>enterprise-13</code>, <code>enterprise-14</code> &mdash; the REST endpoint
+    <code>POST /repos/{owner}/{repo}/pulls/{pull_number}/comments</code>, and the
+    <code>gh api</code> call that reaches it with the same fields. From
+    <a href="https://docs.github.com/en/rest/pulls/comments#create-a-review-comment-for-a-pull-request" target="_blank" rel="noopener noreferrer">Create
+    a review comment for a pull request</a> and
+    <a href="https://docs.github.com/en/rest/pulls/comments" target="_blank" rel="noopener noreferrer">Pull
+    request comments</a>, accessed 2026-09-22.</li>
+    <li><code>cc-core-21</code>, <code>enterprise-07</code> &mdash; a permission rule is
+    <code>Tool(pattern)</code>, as in <code>Bash(gh pr view *)</code>. <code>cc-core-22</code> &mdash;
+    rules are evaluated deny, then ask, then allow, and the first match wins regardless of
+    specificity. <code>enterprise-09</code> &mdash; a bare <code>Bash</code> in the deny list removes
+    the tool entirely, where a scoped rule blocks only what it matches. All from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>,
+    accessed 2026-09-22.</li>
+    <li><code>enterprise-11</code> &mdash; <code>.claude/settings.json</code> is the shared, committed
+    file; <code>.claude/settings.local.json</code> is personal and not shared. <code>cc-core-39</code>
+    &mdash; &ldquo;Yes, and don't ask again&rdquo; saves the rule to
+    <code>.claude/settings.local.json</code> at the root of the git repository, and outside one
+    beside <code>.claude/settings.json</code>. From
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>
+    and <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>,
+    accessed 2026-09-22.</li>
+    <li><code>cc-core-32</code> &mdash; the version checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>, 2026-09-22.</li>
+    <li>Terminal output here was recorded on 2026-09-23 in a fresh copy made by this page's setup
+    block.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="03-environment-profile-and-permissions.html">Exercise 3: Your environment profile and permissions</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../wrap-up.html">Day 2 wrap-up</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install your track and map what it wrote</title>
+<meta name="description" content="Day 3, Exercise 1: install and initialize one spec framework in a fresh copy of your lane, diff the copy against the shipped lane, and write a five-line map of what the framework put on disk.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="25">
+<meta name="course:slot" content="d3-e1">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="openspec-01 openspec-03 openspec-05 openspec-06 openspec-08 openspec-09 openspec-10 openspec-18 openspec-20 openspec-obs-01 openspec-obs-02 openspec-obs-03 openspec-obs-04 openspec-obs-06 openspec-obs-07 lid-01 lid-02 lid-03 lid-06 lid-08 lid-09 lid-12 lid-obs-02 lid-obs-05 lid-obs-06 lid-obs-07 lid-obs-09 lid-obs-10 bmad-01 bmad-05 bmad-06 bmad-07 bmad-11 bmad-12 bmad-18 bmad-19 bmad-obs-02 bmad-obs-03 bmad-obs-04 bmad-obs-05 bmad-obs-08 bmad-obs-11 bmad-obs-12 cc-core-01 cc-core-07 cc-core-32 cc-core-36 cc-core-37 cc-core-39">
+  <h1>Install your track and map what it wrote</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot;
+  Exercise 1 of 3 &middot; <span class="timing">25 min</span></p>
+
+  <p class="lede">By the end you will have your chosen framework installed and initialized in
+  <code>day3-work</code>, a fresh copy of your LedgerKit lane, and a five-line
+  <code>../work/map.md</code> you wrote yourself from the files: where specs live, what creates one,
+  what implements one, what happens after ship, and every file the tool touched outside its own
+  folder.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Paste one block from the course root. It makes <code>work/</code> for your answers, copies
+  your lane to <code>day3-work</code>, moves you into it, and copies in the Change C brief and the
+  blank map as <code>../work/map.md</code>, never over a map you have started. If
+  <code>day3-work</code> already exists, run <code>rm -rf day3-work</code> first: <code>cp -R</code>
+  into an existing folder nests a second copy inside it.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="change-c-brief.md"><code>mkdir -p work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md ../work/map.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="change-c-brief.md"><code>mkdir -p work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md ../work/map.md</code></pre>
+  </div>
+
+  <p>The block prints <code>../work/map.md</code> and <code>change-c-brief.md</code>.
+  <code>day3-work</code> is the day's project root, the folder holding <code>CLAUDE.md</code>, and
+  your framework is initialized in it. Setup blocks are pasted from the course root; every
+  other Day 3 command runs from inside <code>day3-work</code>; the starters are at <code>../day-3-choose-your-adventure/starter/</code> and arrive one
+  file at a time, so your framework never reads its own answer key.</p>
+
+  <p>The shipped <code>sandbox/</code> is never edited, so it is your before-picture: what a track
+  wrote is a <code>diff</code> of this folder against it. Keep two terminal tabs in
+  <code>day3-work</code>, one for the shell and one for Claude Code, started there with
+  <code>claude</code>.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Confirm the lane is green before anything is installed, and write the count down. It is
+      the baseline the self-check compares against.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift"
+             data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>In a fresh copy the line that decides it reads:</p>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds</code></pre>
+        <p>The baseline is 34 tests, with LEDGER-7 skipped by its gate.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p>The line that decides it is <code>BUILD SUCCESSFUL in …</code>. Gradle prints no test
+        count on success, so read it from the test report:</p>
+        <pre data-lang="bash" data-run="kotlin" data-expect="skipped=&quot;1&quot;"><code>cat build/test-results/test/TEST-*.xml | grep -c '&lt;testcase '
+grep -o 'skipped="[0-9]*"' build/test-results/test/TEST-ledgerkit.KnownIssueTest.xml</code></pre>
+        <p>It prints <code>85</code> and then <code>skipped="1"</code>: 85 tests, with LEDGER-7
+        skipped by its gate.</p>
+      </div>
+    </li>
+  </ol>
+
+  <p>Steps 2 to 4 depend on your track; pick its tab.</p>
+
+  <div class="tabs">
+    <div class="tabs-tools">
+      <div role="tablist" aria-label="Framework track" hidden>
+        <button type="button" role="tab" data-track="openspec" id="tab-openspec"
+                aria-controls="panel-openspec" aria-selected="true">OpenSpec</button>
+        <button type="button" role="tab" data-track="lid" id="tab-lid"
+                aria-controls="panel-lid" aria-selected="false">LID</button>
+        <button type="button" role="tab" data-track="bmad" id="tab-bmad"
+                aria-controls="panel-bmad" aria-selected="false">BMAD</button>
+      </div>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-openspec"
+             aria-labelledby="tab-openspec">
+      <h3 id="openspec">OpenSpec</h3>
+      <ol start="2">
+        <li>
+          <p>Check the runtime in the shell tab. OpenSpec's package requires Node 20.19.0 or
+          higher.</p>
+          <pre data-lang="bash"><code>node --version</code></pre>
+          <p><code>v20.19.0</code> or higher passes. Anything lower: upgrade Node or switch tabs;
+          the offline snapshot cannot run OpenSpec without it.</p>
+        </li>
+        <li>
+          <p>Install the CLI and confirm the version.</p>
+          <pre data-lang="bash"><code>npm install -g @fission-ai/openspec@1.13.1
+openspec --version</code></pre>
+          <p>It prints <code>1.13.1</code>, the version this page was checked against on
+          2026-09-22.</p>
+          <p>Can't install globally? Skip this step and put
+          <code>npx -y @fission-ai/openspec@1.13.1</code> wherever this tab says
+          <code>openspec</code>; step 4's init becomes
+          <code>npx -y @fission-ai/openspec@1.13.1 init --tools claude</code>, which picks Claude
+          Code for you. The <code>/opsx</code> commands call <code>openspec</code> by name, so if
+          Claude reports it missing, tell it to use the same npx form.</p>
+        </li>
+        <li>
+          <p>Initialize it in <code>day3-work</code>, the folder you are standing in, not the course
+          root. When it asks which tools to set up, choose Claude Code.</p>
+          <pre data-lang="bash"><code>openspec init
+openspec list</code></pre>
+          <p>Success is <code>6 skills and 6 commands in .claude/</code> in the init summary, then
+          <code>No active changes found.</code> from <code>openspec list</code>, which is what a
+          freshly initialized project looks like.</p>
+          <p>The first run also prints a note that OpenSpec collects anonymous usage stats, and
+          writes <code>~/.config/openspec/config.json</code> holding an anonymous id. That file sits
+          outside <code>day3-work</code>, so step 5's diff cannot see it and neither map will list
+          it unless you add it. To opt out, run <code>export OPENSPEC_TELEMETRY=0</code> in both
+          tabs before <code>openspec init</code>, restarting <code>claude</code> after it so the
+          <code>/opsx</code> commands inherit it; then init prints no note and writes no file
+          there.</p>
+        </li>
+      </ol>
+      <div class="callout note">
+        <p class="callout-title">Network blocked?</p>
+        <p>If npm can reach a local mirror, install the CLI from the tarball in the offline
+        snapshot instead of step 3; its <code>SNAPSHOT.md</code> has the line, and it needs the same
+        Node 20.19.0 or higher. Then run step 4.</p>
+        <p>Without a mirror, switch tabs now. The <code>/opsx</code> commands call the
+        <code>openspec</code> CLI before they write anything: <code>/opsx:propose</code>'s second
+        step runs <code>openspec context --json</code> and stops on any failure, so a copy of the
+        files cannot plan Exercise 2's change.</p>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-lid"
+             aria-labelledby="tab-lid">
+      <h3 id="lid">LID</h3>
+      <ol start="2">
+        <li>
+          <p>Nothing to check: LID installs as two Claude Code plugins.</p>
+        </li>
+        <li>
+          <p>Install, in the Claude Code tab, one line at a time.</p>
+          <pre data-lang="text"><code>/plugin marketplace add jszmajda/lid
+/plugin install linked-intent-dev@jszmajda-lid
+/plugin install arrow-maintenance@jszmajda-lid</code></pre>
+          <p>If an install asks for a scope, choose user scope: the plugins then sit outside
+          <code>day3-work</code>, beyond step 5's diff and the reset.</p>
+        </li>
+        <li>
+          <p>Initialize with the mapper for an existing codebase. First press Shift+Tab until the status bar reads
+          <code>⏵⏵ accept edits on</code>, so each draft is written without a separate file
+          approval; the skill's own stops still pause it.</p>
+          <pre data-lang="text"><code>/arrow-maintenance:map-codebase</code></pre>
+          <p>You are mapping, not reviewing: accept its proposals and approve each draft without
+          editing, except that you merge its segments into one. Answer its stops this way:</p>
+          <ul>
+            <li>Whole project or specific parts: whole project. Subagents: no.</li>
+            <li>After it reads every file, clusterings through different lenses: take Domain
+            concept if offered, otherwise the first.</li>
+            <li>Slicing: the coarsest it offers.</li>
+            <li>The final clustering, where the skill lets you combine segments: send the line
+            below, and confirm the merge if it asks.</li>
+            <li>For that one segment an arrow doc, a skeleton design doc and an EARS spec file,
+            then the high-level design: approve each.</li>
+          </ul>
+          <pre data-lang="text"><code>Merge these into one segment for the whole module: it is small, and I want three drafts to approve today rather than precise tracking. Treat the merged clustering as approved.</code></pre>
+          <p>It then adds its section to <code>CLAUDE.md</code> and ends by telling you to flesh
+          out the skeletons segment by segment. Stop there for today: the reference tree is a
+          skeleton too, and Exercise 2 takes one new segment down the arrow.</p>
+          <p>Budget about 20 minutes for this step: about five while it reads every file, a minute
+          or so at each of nine or ten stops, and a few more while it drafts the design doc, the
+          EARS file and the high-level design.</p>
+        </li>
+      </ol>
+      <div class="callout note">
+        <p class="callout-title">Network blocked?</p>
+        <p>Skip step 3. Quit Claude Code and start it with the vendored plugins loaded:</p>
+        <pre data-lang="bash"><code>claude --plugin-dir ../day-3-choose-your-adventure/starter/vendored/lid-831c1959/lid/plugins/linked-intent-dev \
+       --plugin-dir ../day-3-choose-your-adventure/starter/vendored/lid-831c1959/lid/plugins/arrow-maintenance</code></pre>
+        <p><code>--plugin-dir</code> loads a plugin from a folder for that session only, so start
+        every Day 3 session this way, step 7's included.</p>
+      </div>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-bmad"
+             aria-labelledby="tab-bmad">
+      <h3 id="bmad">BMAD</h3>
+      <ol start="2">
+        <li>
+          <p>Check both runtimes before you install anything. BMAD needs Node.js 20.12 or later,
+          and <code>uv</code> with Python 3.11 or later.</p>
+          <pre data-lang="bash"><code>node --version
+uv --version</code></pre>
+          <p><code>v20.12</code> or higher passes the first; below v20.12, use the network-blocked
+          box instead of step 3. Any version line passes the second; <code>uv</code> then fetches
+          the Python 3.11 or later that BMAD's scripts declare, which needs the network.
+          <code>command not found</code> for <code>uv</code> means <code>bmad-build</code> and
+          <code>bmad-build-auto</code> will halt in Exercise 2. Install <code>uv</code> now, or switch
+          tabs: the offline snapshot cannot supply it.</p>
+        </li>
+        <li>
+          <p>Install from <code>day3-work</code>. The installer is also the initialization.</p>
+          <pre data-lang="bash"><code>npx bmad-method install</code></pre>
+          <p>It checks <code>uv</code> (<code>Python UV check pass (uv … detected).</code>), then
+          asks for an installation directory pre-filled with the current folder: confirm it ends in
+          <code>day3-work</code>, and confirm it at <code>Install to this directory?</code>. Accept
+          the default modules, decline custom or community modules, choose Claude Code at
+          <code>Integrate with:</code>, and accept the defaults for any configuration questions that
+          follow. Success is
+          <code>claude-code configured: 29 skills → .claude/skills</code>.</p>
+        </li>
+        <li>
+          <p>Confirm the skills landed in this project.</p>
+          <pre data-lang="bash"><code>ls .claude/skills | grep -c '^bmad-'</code></pre>
+          <p>It prints <code>29</code>.</p>
+        </li>
+      </ol>
+      <p>For step 6, start with <code>_bmad/config.toml</code> and
+      <code>.claude/skills/bmad-build/</code>.</p>
+      <div class="callout note">
+        <p class="callout-title">Network blocked?</p>
+        <p>Copy the install output from the offline snapshot instead of steps 3 and 4, then count
+        the skills it copied:</p>
+        <div class="lane-block lane-swift">
+          <span class="lane-name">Swift lane</span>
+          <pre data-lang="bash" data-run="swift" data-expect="29"><code>cp -R ../day-3-choose-your-adventure/starter/vendored/bmad-6.12.0/project-files/. .
+mkdir -p _bmad-output
+ls .claude/skills | grep -c '^bmad-'</code></pre>
+        </div>
+        <div class="lane-block lane-kotlin">
+          <span class="lane-name">Kotlin lane</span>
+          <pre data-lang="bash" data-run="kotlin" data-expect="29"><code>cp -R ../day-3-choose-your-adventure/starter/vendored/bmad-6.12.0/project-files/. .
+mkdir -p _bmad-output
+ls .claude/skills | grep -c '^bmad-'</code></pre>
+        </div>
+        <p>It prints <code>29</code>: the skills are all there. <code>uv</code> is still yours to
+        provide, and so is a Python 3.11 or later for it to find: the snapshot's scripts declare
+        <code>requires-python = "&gt;=3.11"</code>, and <code>uv</code> cannot download one
+        offline.</p>
+      </div>
+    </section>
+  </div>
+
+  <ol start="5">
+    <li>
+      <p>Take the after-picture in the shell tab. <code>-r</code> compares the folders
+      recursively, <code>-q</code> names each difference without printing it, and each
+      <code>-x</code> leaves out a build-output folder. <code>.claude</code> is not left out,
+      because two of the three frameworks write there.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/swift .</code></pre>
+        <p>To see a modified <code>CLAUDE.md</code> in full:</p>
+        <pre data-lang="bash"><code>diff -u ../sandbox/swift/CLAUDE.md CLAUDE.md</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/kotlin .</code></pre>
+        <p>To see a modified <code>CLAUDE.md</code> in full:</p>
+        <pre data-lang="bash"><code>diff -u ../sandbox/kotlin/CLAUDE.md CLAUDE.md</code></pre>
+      </div>
+
+      <p><code>Only in .: &lt;name&gt;</code> is a file or folder the framework created
+      (<code>find &lt;name&gt; -type f</code> lists a folder's files), and
+      <code>Only in ./.claude: &lt;name&gt;</code> is one it added inside the <code>.claude</code>
+      folder the lane ships with its <code>settings.json</code>;
+      <code>Files ../sandbox/…/&lt;path&gt; and ./&lt;path&gt; differ</code> is an edit to a file
+      the lane shipped; <code>Only in .: change-c-brief.md</code> is yours.</p>
+    </li>
+
+    <li>
+      <p>Open the files the diff named and answer the five questions in
+      <code>../work/map.md</code>, one line under each, <code>not visible</code> where no file you
+      opened answers it. Do not paste the tool's README. The lane's own <code>specs/</code> folder is
+      the course's, not the framework's; it is not in the diff, so it does not answer line 1.</p>
+    </li>
+
+    <li>
+      <p>Now ask the agent the same five questions in a fresh session: quit Claude Code and start
+      <code>claude</code> again in <code>day3-work</code>. Paste your lane's prompt.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="text"><code>Run diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/swift . and read only the files it reports: a "Files … differ" line is a modified file; an "Only in" line is new, and for a new folder list its files with find, then read the ones that bear on the questions below. Skip change-c-brief.md, which I copied in. Do not read Sources/, src/, or any test folder. Answer in exactly five lines, no preamble and no closing remark: (1) the directory where specification files live, as a path; (2) the exact command that creates a new specification; (3) the exact command that implements one; (4) what happens to a specification after its change ships, in one clause; (5) every file you found that was created or modified outside the framework's own folder (openspec/, docs/, or _bmad/ and _bmad-output/), counting .claude/ as outside, as a list of paths, or the word none. If you cannot answer a line from a file you actually read, write "not visible" for that line.</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="text"><code>Run diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/kotlin . and read only the files it reports: a "Files … differ" line is a modified file; an "Only in" line is new, and for a new folder list its files with find, then read the ones that bear on the questions below. Skip change-c-brief.md, which I copied in. Do not read Sources/, src/, or any test folder. Answer in exactly five lines, no preamble and no closing remark: (1) the directory where specification files live, as a path; (2) the exact command that creates a new specification; (3) the exact command that implements one; (4) what happens to a specification after its change ships, in one clause; (5) every file you found that was created or modified outside the framework's own folder (openspec/, docs/, or _bmad/ and _bmad-output/), counting .claude/ as outside, as a list of paths, or the word none. If you cannot answer a line from a file you actually read, write "not visible" for that line.</code></pre>
+      </div>
+
+      <p>Paste its answer under <code>## The agent's five lines</code> in
+      <code>../work/map.md</code>. Where the two blocks disagree, trust the diff.</p>
+    </li>
+
+    <li>
+      <p>Run the self-check below. Installing a framework must not change a test result.</p>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="callout warning">
+    <p class="callout-title">Likely wrong turns</p>
+    <ul>
+      <li>The diff names only <code>change-c-brief.md</code> after a successful install. The
+      framework was initialized elsewhere, usually the course root, where <code>ls -a ..</code>
+      shows an <code>openspec/</code>, <code>_bmad/</code>, <code>_bmad-output/</code> or
+      <code>docs/</code> beside <code>sandbox/</code>, and on the LID tab an <code>AGENTS.md</code>,
+      with a <code>CLAUDE.md</code> link to it, holding a <code>## LID</code> section. Delete those, and under the course root's
+      <code>.claude/</code> delete only the framework's entries: <code>commands/opsx/</code>,
+      <code>skills/openspec-*</code> or <code>skills/bmad-*</code>. Then initialize again inside <code>day3-work</code>.</li>
+      <li><code>Unknown command: /arrow-maintenance:map-codebase</code> on the LID tab means this
+      session has not loaded the plugin. Quit, start <code>claude</code> again in
+      <code>day3-work</code>, and retry; if it is still unknown, use the network-blocked start.</li>
+      <li>The BMAD installer's directory field does not end in <code>day3-work</code>. You launched
+      it from another folder; quit it, <code>cd</code> into <code>day3-work</code>, and run it
+      again.</li>
+      <li>On the LID tab, <code>Only in ./.claude: settings.local.json</code> in the diff. If you answered
+      &ldquo;Yes, and don't ask again&rdquo; to a command in a download without git, Claude Code
+      saved that rule to <code>.claude/settings.local.json</code> in <code>day3-work</code> (in a
+      clone, at the repository root). It belongs in line 5.</li>
+      <li>A second failure in the known-issue run means the install wrote into source; the
+      command in your lane's box below shows where.</li>
+    </ul>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <p><code>diff -ru ../sandbox/swift/Sources Sources</code> and
+      <code>diff -ru ../sandbox/swift/Tests Tests</code> show what the install wrote into source and tests.
+      <code>Only in .: swift</code> means setup nested a copy in an existing
+      <code>day3-work</code>: reset, which leaves <code>../work/</code> alone.
+      <code>error: PCH was compiled with module cache path '…/sandbox/swift/.build/…'</code> in
+      step 1: run <code>rm -rf .build</code> and test again.</p>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p><code>diff -ru ../sandbox/kotlin/src src</code> shows what the install wrote into source.
+      <code>Only in .: kotlin</code> means setup nested a copy in an existing
+      <code>day3-work</code>: reset, which leaves <code>../work/</code> alone.</p>
+    </div>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Three checks decide it</p>
+    <p>First, the plain suite: your lane's test command from step 1 again, with the same result
+    and the same count. Second, the known-issue run fails on exactly one test, the JPY case.</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash" data-run="swift"
+           data-expect="Executed 34 tests, with 1 failure (0 unexpected)"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></pre>
+      <p>The error line names <code>testLEDGER7_JPYRendersWithTwoDecimalPlaces</code>, and the
+      verdict reads:</p>
+      <pre data-lang="text"><code>Test Suite 'All tests' failed at ….
+	 Executed 34 tests, with 1 failure (0 unexpected) in … (…) seconds</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash" data-run="kotlin" data-expect="85 tests completed, 1 failed"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test</code></pre>
+      <p>The verdict line is <code>BUILD FAILED in …</code>; above it:</p>
+      <pre data-lang="text"><code>KnownIssueTest &gt; LEDGER-7 the JPY row renders with decimal places it should not have() FAILED
+…
+85 tests completed, 1 failed</code></pre>
+    </div>
+
+    <p>Third, every path the diff names appears in your own answers. The <code>mine=</code> line
+    reads sections 1 to 5 of your map, not the agent's block; the loop prints one line per path,
+    <code>ok</code> or <code>MISSING</code>. A folder counts only with its trailing slash, as in
+    <code>openspec/</code>, so naming the tool is not the same as naming its folder.</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>mine=$(sed -n '/^## 1\./,/^## The agent/p' ../work/map.md)
+diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/swift . |
+  sed -e 's/^Only in \(.*\): \(.*\)$/\1\/\2/' -e 's/^Files .* and \(.*\) differ$/\1/' -e 's|^\./||' |
+  grep -vx 'change-c-brief.md' |
+  while read -r p; do
+    [ -d "$p" ] && p="$p/"
+    if printf '%s\n' "$mine" | grep -qF -- "$p"; then echo "ok       $p"; else echo "MISSING  $p"; fi
+  done</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>mine=$(sed -n '/^## 1\./,/^## The agent/p' ../work/map.md)
+diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/kotlin . |
+  sed -e 's/^Only in \(.*\): \(.*\)$/\1\/\2/' -e 's/^Files .* and \(.*\) differ$/\1/' -e 's|^\./||' |
+  grep -vx 'change-c-brief.md' |
+  while read -r p; do
+    [ -d "$p" ] && p="$p/"
+    if printf '%s\n' "$mine" | grep -qF -- "$p"; then echo "ok       $p"; else echo "MISSING  $p"; fi
+  done</code></pre>
+    </div>
+
+    <p>Pass is one <code>ok</code> line for each path and no <code>MISSING</code> line. No output
+    at all means the diff found nothing the framework wrote: see the first wrong turn. The
+    framework's own folders (BMAD has two) belong in line 1, the rest in line 5. A modified <code>CLAUDE.md</code> deserves the most attention: it loads into every
+    session, so you pay for it on every turn.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> all three checks pass and
+  <code>../work/map.md</code> holds your five lines with the agent's five beneath them.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <p>Open only your track's. Your map is right when it matches your own diff; these are one
+  machine's runs, in the Swift lane. Only LID's listing changes on the Kotlin lane, and its reveal
+  says how.</p>
+
+  <details class="reveal">
+    <summary>OpenSpec: the reference map, and what install and init wrote</summary>
+    <p>Recorded on the build machine on 2026-09-23 in a fresh copy of the Swift lane, with OpenSpec
+    1.13.1 and <code>openspec init</code> choosing Claude Code; the build's run on 2026-09-22 wrote
+    the same fifteen files.</p>
+    <pre data-lang="text"><code>1. openspec/specs/ holds the live requirements; a change's delta specs sit
+   under openspec/changes/&lt;change&gt;/specs/ until it is archived.
+2. /opsx:propose &lt;feature description&gt;
+3. /opsx:apply
+4. /opsx:archive files the change under openspec/changes/archive/ with a
+   date-prefixed name.
+5. .claude/commands/opsx/ (six commands) and .claude/skills/openspec-*/
+   (six skills); CLAUDE.md not modified, no AGENTS.md.</code></pre>
+    <p>Step 5's diff prints four lines. Those runs predate the <code>.claude/settings.json</code>
+    the lane now ships, so they printed a single <code>Only in .: .claude</code> line; this is the
+    same set of files diffed against today's lane:</p>
+    <pre data-lang="text"><code>Only in ./.claude: commands
+Only in ./.claude: skills
+Only in .: change-c-brief.md
+Only in .: openspec</code></pre>
+    <p>Every file inside them, marked by whether it sits in OpenSpec's own folder:</p>
+    <pre data-lang="text"><code>outside  .claude/commands/opsx/apply.md
+outside  .claude/commands/opsx/archive.md
+outside  .claude/commands/opsx/explore.md
+outside  .claude/commands/opsx/propose.md
+outside  .claude/commands/opsx/sync.md
+outside  .claude/commands/opsx/update.md
+outside  .claude/skills/openspec-apply-change/SKILL.md
+outside  .claude/skills/openspec-archive-change/SKILL.md
+outside  .claude/skills/openspec-explore/SKILL.md
+outside  .claude/skills/openspec-propose/SKILL.md
+outside  .claude/skills/openspec-sync-specs/SKILL.md
+outside  .claude/skills/openspec-update-change/SKILL.md
+inside   openspec/changes/archive/.gitkeep
+inside   openspec/config.yaml
+inside   openspec/specs/.gitkeep</code></pre>
+    <p>The published sources disagree about whether <code>openspec init</code> writes into
+    <code>AGENTS.md</code> or <code>CLAUDE.md</code>. Both runs recorded here wrote into neither,
+    which is two runs of one version on one machine, not a ruling. Record what your own diff
+    showed rather than matching this listing: if it shows a <code>CLAUDE.md</code> line, that line
+    is your finding.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>LID: the reference map, the design tree, and the section it added to
+    CLAUDE.md</summary>
+    <p>Observed on the build machine on 2026-09-22 in a copy of the Swift lane, and not re-run for
+    this page, because the mapping run needs a person to answer it. What LID writes into
+    <code>CLAUDE.md</code> could not be seen during research; this is the first observation of it.
+    In that run the plugin's own skill body did not load and the agent worked from the command's
+    description, so the tree is LID-shaped rather than LID-generated. An interactive run where the
+    skill loads may write, name and group the files differently: its skill file, for one, asks for
+    an arrow doc per segment at <code>docs/arrows/&lt;segment&gt;.md</code>, which this tree does
+    not have. On the Kotlin lane, the diff line names
+    <code>../sandbox/kotlin/CLAUDE.md</code> and the mapper reads <code>src/</code>.</p>
+    <pre data-lang="text"><code>1. docs/intent/&lt;segment&gt;/&lt;segment&gt;-specs.md, beside &lt;segment&gt;-design.md;
+   the high-level design is docs/high-level-design.md.
+2. No command of its own: the ## LID section sends any change through the
+   linked-intent-dev skill, down the arrow from the HLD to the leaf design
+   doc to its EARS specs. (/linked-intent-dev:update-lid is for drift and
+   mode changes, not features.)
+3. The same linked-intent-dev walk continues down the arrow: tests, then
+   code.
+4. It stays in place, its requirement marked [x] implemented;
+   /arrow-maintenance:arrow-maintenance audits it against the code later.
+5. CLAUDE.md, modified: a ## LID section appended at the end.</code></pre>
+    <p>The tree, all of it inside LID's own <code>docs/</code> folder: thirteen documents, five
+    leaves, 63 requirement IDs, and nothing under <code>Sources/</code> or
+    <code>Tests/</code>. That run kept its five segments; step 4 has you merge yours, so your tree
+    has one leaf.</p>
+    <pre data-lang="text"><code>docs/high-level-design.md
+docs/arrows/index.yaml
+docs/arrows/README.md
+docs/intent/transaction/transaction-{design,specs}.md
+docs/intent/money/money-{design,specs}.md
+docs/intent/ledger-filter/ledger-filter-{design,specs}.md
+docs/intent/ledger-summary/ledger-summary-{design,specs}.md
+docs/intent/golden-fixture/golden-fixture-{design,specs}.md</code></pre>
+    <p>Outside it, one file: <code>CLAUDE.md</code>, with 29 lines appended and no marker comments,
+    the heading being the only marker. In step 5's diff that is three lines, reproduced here with
+    placeholder files in the same places:</p>
+    <pre data-lang="text"><code>Files ../sandbox/swift/CLAUDE.md and ./CLAUDE.md differ
+Only in .: change-c-brief.md
+Only in .: docs</code></pre>
+    <p>The appended section, verbatim from that run:</p>
+    <pre data-lang="text"><code>## LID
+
+- Mode: Full
+- Version: 1.3.0
+- Prefix: LK
+- HLD: `docs/high-level-design.md`
+- Leaf design docs and EARS specs: `docs/intent/&lt;segment&gt;/&lt;segment&gt;-design.md`
+  and `docs/intent/&lt;segment&gt;/&lt;segment&gt;-specs.md`
+- Arrow overlay: `docs/arrows/index.yaml`
+
+This module is under linked-intent development. Any change that could touch
+code walks the arrow: HLD, then the owning leaf design doc, then its EARS
+specs, then tests, then code. Bug fixes included. Consult the
+`linked-intent-dev` skill before editing anything under `Sources/` or
+`Tests/`.
+
+Spec IDs are `LK-&lt;LEAF&gt;-NNN` with leaves `TXN`, `MONEY`, `FILTER`, `SUMMARY`
+and `FIXTURE`. IDs are stable: revise text, never renumber, never reuse a
+deleted ID.
+
+The code and tests carry no `@spec` annotations. Until a change adds them,
+`docs/arrows/index.yaml` is the only spec-to-code and spec-to-test linkage:
+update it in the same change as any spec, test or entry point it names, and
+run `/arrow-maintenance` afterwards.
+
+The LID documents are a brownfield skeleton mapped 2026-09-22. Rationale
+marked `[inferred]` was read from the code, not authored; confirm or correct
+it before building on it, and drop the marker when you do.</code></pre>
+    <p>Yours will name your own mapping date and may word the rest differently. Read it as
+    standing instructions you now pay for on every turn.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>BMAD: the reference map, and what the installer wrote</summary>
+    <p>Recorded on the build machine on 2026-09-23 in a fresh copy of the Swift lane with BMAD 6.12.0,
+    using the installer's non-interactive spelling with the default module and Claude Code, the
+    same command the build log used on 2026-09-22; both wrote 235 files. The installed footprint is not
+    documented in the sources this course cites, so this listing is one observation on one machine,
+    not a specification.</p>
+    <pre data-lang="text"><code>1. _bmad-output/, created empty; bmad-build's own step file names each spec
+   _bmad-output/implementation-artifacts/spec-&lt;slug&gt;.md. On the build
+   machine on 2026-09-22, handed Exercise 2's prompt and told to halt after
+   planning, it wrote a statement-periods/ folder there instead (SPEC.md,
+   stories.yaml, stories/). _bmad/ holds the framework, its scripts and its
+   layered config.
+2. /bmad-build "&lt;what you want built&gt;"
+3. /bmad-build itself: once you approve its plan, the same run implements it;
+   larger work runs bmad-sprint-planning, then bmad-build, then
+   bmad-code-review.
+4. It stays where it was written, and the status in its frontmatter moves
+   to done.
+5. .claude/skills/bmad-*/ (29 skill folders); CLAUDE.md not modified,
+   no AGENTS.md.</code></pre>
+    <p>Step 5's diff prints four lines. Those runs predate the <code>.claude/settings.json</code>
+    the lane now ships, so the first line read <code>Only in .: .claude</code>; this is the same
+    set of files diffed against today's lane:</p>
+    <pre data-lang="text"><code>Only in ./.claude: skills
+Only in .: _bmad
+Only in .: _bmad-output
+Only in .: change-c-brief.md</code></pre>
+    <p>Outside BMAD's own folders: <code>.claude/skills/</code>, holding 29
+    <code>bmad-*</code> skill folders and 214 files. Inside them, <code>_bmad-output/</code>, empty,
+    and <code>_bmad/</code>, 21 files, listed here to two levels deep (each
+    <code>v6-shims/</code> folder holds one <code>README.md</code>):</p>
+    <pre data-lang="text"><code>_bmad/_config/bmad-help.csv
+_bmad/_config/files-manifest.csv
+_bmad/_config/manifest.yaml
+_bmad/_config/skill-manifest.csv
+_bmad/bmm/config.yaml
+_bmad/bmm/module-help.csv
+_bmad/bmm/v6-shims/
+_bmad/config.toml
+_bmad/config.user.toml
+_bmad/core/config.yaml
+_bmad/core/module-help.csv
+_bmad/core/v6-shims/
+_bmad/custom/.gitignore
+_bmad/custom/config.toml
+_bmad/custom/config.user.toml
+_bmad/render/.gitignore
+_bmad/scripts/config_utils.py
+_bmad/scripts/memlog.py
+_bmad/scripts/render_skill.py
+_bmad/scripts/resolve_config.py
+_bmad/scripts/resolve_customization.py</code></pre>
+    <p>Four of those are the layered configuration, read in this order:
+    <code>_bmad/config.toml</code>, <code>config.user.toml</code>,
+    <code>custom/config.toml</code>, then <code>custom/config.user.toml</code>.</p>
+    <p>No <code>AGENTS.md</code> appeared, and no <code>&lt;!-- bmad:context --&gt;</code> region.
+    That marker comes from search synthesis, not a page this course fetched. On the build machine
+    it turned up only inside the <code>bmad-project-context</code> skill's own template, which
+    writes the region when you invoke that skill by name. If your diff does show an
+    <code>AGENTS.md</code>, open it and record what is in it.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Quit Claude Code, then from inside <code>day3-work</code> run your lane's line. It re-copies
+  the shipped lane, leaves you inside it, and leaves <code>../work/</code> untouched.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <p>Then re-run the setup block's copy lines (everything after its <code>cd day3-work</code>) and
+  your track's install-and-init steps. OpenSpec on your PATH and the LID plugins at user scope
+  survive the reset (without a global OpenSpec install, use the npx form again); BMAD lives in the project, so you run its installer again. Do not reset when you have finished:
+  Exercise 2 runs Change C through the framework installed here.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-e1-done" data-progress="d3-e1-done">
+      <label for="d3-e1-done">Exercise 1 finished: my track is installed in
+      <code>day3-work</code>, the tests are unchanged, and every path in the diff is in my
+      map.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>openspec-01</code> &mdash; the npm install command, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    installation</a>.</li>
+    <li><code>openspec-03</code> &mdash; the Node requirement, <code>&gt;=20.19.0</code>, from the
+    <a href="https://registry.npmjs.org/@fission-ai/openspec/latest" target="_blank" rel="noopener noreferrer">npm
+    registry entry for @fission-ai/openspec</a>.</li>
+    <li><code>openspec-05</code>, <code>openspec-06</code> &mdash; <code>openspec init</code> and the
+    folders it scaffolds, from
+    <a href="https://openspec.dev/docs/setup" target="_blank" rel="noopener noreferrer">OpenSpec
+    setup</a>.</li>
+    <li><code>openspec-08</code>, <code>openspec-09</code>, <code>openspec-10</code>,
+    <code>openspec-18</code> &mdash; <code>/opsx:propose</code>, <code>/opsx:apply</code>,
+    <code>/opsx:archive</code> and <code>openspec list</code>, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/getting-started.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    getting started</a>.</li>
+    <li><code>openspec-20</code> &mdash; archived changes under <code>changes/archive/</code> with a
+    date-prefixed name, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li><code>lid-01</code>, <code>lid-02</code>, <code>lid-03</code>,
+    <code>lid-06</code>, <code>lid-08</code>, <code>lid-09</code> &mdash; the three install lines,
+    config, drift and mode changes, the brownfield mapper and its
+    closing flesh-out prompt, and the audit, from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">LID
+    repository README</a>.</li>
+    <li><code>lid-12</code> &mdash; the <code>[x]</code> implemented marker, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">LID's
+    AGENTS.md</a>.</li>
+    <li><code>bmad-01</code>, <code>bmad-05</code> &mdash; the install command and the Node
+    requirement, from
+    <a href="https://docs.bmad-method.org/start/install-bmad/" target="_blank" rel="noopener noreferrer">Install
+    BMAD</a>.</li>
+    <li><code>bmad-06</code>, <code>bmad-11</code>, <code>bmad-18</code> &mdash; the
+    <code>uv</code> requirement with Python 3.11 or later and the halt without it, the three-skill chain, and the
+    configuration layers, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">BMAD
+    changelog</a>.</li>
+    <li><code>bmad-07</code> &mdash; the <code>/bmad-build</code> invocation, from
+    <a href="https://docs.bmad-method.org/start/build-your-first-change/" target="_blank" rel="noopener noreferrer">Build
+    your first change</a>.</li>
+    <li><code>bmad-12</code> &mdash; the status values, <code>done</code> among them, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">Autonomous
+    development loops</a>.</li>
+    <li><code>bmad-19</code> &mdash; the <code>bmad:context</code> region, a search-synthesized
+    claim, from
+    <a href="https://docs.bmad-method.org/explanation/project-context/" target="_blank" rel="noopener noreferrer">Project
+    context</a>.</li>
+    <li>The mapper's stops, its lenses and slicings, the combining of segments it allows at the
+    final clustering, its per-segment arrow docs, its flesh-out prompt as the terminal step, and
+    its one call to <code>update-lid</code>, from the vendored
+    <code>starter/vendored/lid-831c1959/lid/plugins/arrow-maintenance/skills/map-codebase/SKILL.md</code>
+    at LID commit 831c1959; a fresh bootstrap writing <code>AGENTS.md</code> with a
+    <code>CLAUDE.md</code> link to it, from that commit's
+    <code>plugins/linked-intent-dev/skills/update-lid/SKILL.md</code>. The <code>openspec</code> calls in <code>/opsx:propose</code>
+    (<code>allowed-tools: Bash(openspec:*)</code>, step 2's <code>openspec context --json</code>
+    and its stop on failure), from the vendored
+    <code>starter/vendored/openspec-1.13.1/project-files/.claude/commands/opsx/propose.md</code>
+    at OpenSpec 1.13.1. For step 6 on the BMAD tab, both paths checked in the vendored
+    <code>bmad-6.12.0</code> snapshot; the spec path and the status at <code>done</code>, from
+    <code>step-01-clarify-and-route.md</code> and <code>step-05-present.md</code> of the pinned
+    <code>bmad-build</code> skill under <code>starter/vendored/bmad-6.12.0/</code>; the Python 3.11
+    or later, from the <code>requires-python</code> line of that snapshot's
+    <code>_bmad/scripts/render_skill.py</code>.</li>
+    <li><code>cc-core-01</code>, <code>cc-core-37</code> &mdash; Shift+Tab from default to
+    acceptEdits and its status-bar label, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>; <code>cc-core-07</code> &mdash; default mode allows reads only without asking, and
+    acceptEdits adds file edits, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>; <code>cc-core-36</code> &mdash; <code>CLAUDE.md</code> files load at startup, before
+    your first message, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Context
+    window</a>; <code>cc-core-39</code> &mdash; where a &ldquo;Yes, and don't ask again&rdquo; rule is
+    saved, with and without git, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>;
+    <code>cc-core-32</code> &mdash; Claude Code 2.1.280, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li>Observed on the build machine on 2026-09-22 in copies of the Swift lane:
+    <code>openspec-obs-01</code>, <code>openspec-obs-02</code>, <code>openspec-obs-03</code>,
+    <code>openspec-obs-04</code>, <code>openspec-obs-06</code>, <code>openspec-obs-07</code>
+    (version 1.13.1, the fifteen files, the untouched <code>CLAUDE.md</code>, the tool prompt at
+    init, the empty <code>openspec list</code>, a change's delta specs under its
+    <code>specs/</code> folder); <code>lid-obs-02</code>,
+    <code>lid-obs-05</code>, <code>lid-obs-06</code>, <code>lid-obs-07</code>,
+    <code>lid-obs-09</code>, <code>lid-obs-10</code> (user-scope installs, the
+    <code>## LID</code> section, the mapped tree, the skill body that did not load, the
+    <code>Unknown command</code> reply, <code>--plugin-dir</code>); <code>bmad-obs-02</code>,
+    <code>bmad-obs-03</code>, <code>bmad-obs-04</code>, <code>bmad-obs-05</code>,
+    <code>bmad-obs-08</code>, <code>bmad-obs-11</code>, <code>bmad-obs-12</code> (the
+    <code>uv</code> check, <code>uv</code> provisioning the interpreter itself, and the directory prompt, the later prompts, the non-interactive
+    spelling, the 235 files, the <code>bmad:context</code> marker, the Change C spec folder, one
+    known-issue failure after every install).</li>
+    <li>The test output, the OpenSpec and BMAD listings and the diff lines on this page were
+    recorded on the build machine on 2026-09-23 in fresh copies made by this page's setup block, one per
+    lane for the tests and one Swift-lane copy per framework.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/03-meet-the-three.html">Lesson 3: Meet the three</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="02-run-change-c.html">Exercise 2: Run Change C through your track</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280, OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0.
+    Where this page quotes terminal output, it was recorded on the build machine on 2026-09-23 unless it
+    says otherwise.</p>
+  </div>
+</footer>
+</body>
+</html>

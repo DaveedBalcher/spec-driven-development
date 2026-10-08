@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adopting without a rewrite</title>
+<meta name="description" content="Day 3, Lesson 5: adopting a spec framework on the next ticket, on the smallest subset, in files a reviewer can read without the tool, and planning for a network that will not let you install it.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="5">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d3-l5">
+<meta name="course:video" content="YHPMs252Opc">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="lid-08 lid-09 lid-11 lid-12 lid-13 lid-obs-02 lid-obs-05 lid-obs-06 lid-obs-07 lid-obs-10 openspec-01 openspec-03 openspec-08 openspec-09 openspec-10 openspec-13 openspec-14 openspec-15 openspec-18 openspec-19 openspec-obs-02 openspec-obs-03 bmad-01 bmad-05 bmad-06 bmad-11 bmad-12 bmad-13 bmad-18 bmad-obs-02 bmad-obs-05 bmad-obs-06 bmad-obs-11 cc-core-12 cc-core-15 cc-core-23 cc-core-36 cc-core-32 cc-core-39 cc-core-40 enterprise-11">
+  <h1>Adopting without a rewrite</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot; Lesson 5 of 5
+  &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">Adopt a spec framework on the next ticket, on the smallest subset that answers
+  your failure, in files your team can read without the tool, and plan for a network that will
+  not let you install it.</p>
+
+  <div class="video" data-video-id="YHPMs252Opc" data-start="466" data-end="692"
+       data-video-title="OpenSpec on a Real Project: What the Demos Don’t Show (Dmitrii Balakin, 2026-07-18)">
+    <span class="video-kicker">Watch first &middot; 4 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=YHPMs252Opc&amp;t=466s"
+      target="_blank" rel="noopener noreferrer">OpenSpec on a Real Project: What the Demos Don&rsquo;t
+      Show</a></p>
+    <p class="video-meta">Dmitrii Balakin, 2026-07-18, 3 min 46 s, from 7:46. Listen for what
+    Balakin says review-before-code bought him and what the pile of Markdown files cost, and hold
+    that list against this lesson's subset section. Note where his specs drifted from the code,
+    because that is where your own adoption will stall. It is one engineer, one project and one of
+    the three tracks, so treat it as a field report, not a recommendation.</p>
+  </div>
+
+  <h2 id="next-ticket">Adopt on the next ticket, not on the backlog</h2>
+
+  <p>The rewrite instinct waits until everything has a spec. But nobody
+  reads a spec for code that already works, and the first evidence arrives a week later. Put the
+  next ticket through the framework and leave the rest alone. Five tickets give you five real
+  artifacts, an opinion you can defend, and something for the two-week signal from Lessons 1 and 2 to count.</p>
+
+  <h2 id="map">Map what exists before you write anything new</h2>
+
+  <p>The one exception is a map the machine writes, and only LID writes one.</p>
+
+  <div class="tabs">
+    <div role="tablist" aria-label="Framework track" hidden>
+      <button type="button" role="tab" data-track="openspec" id="tab-map-openspec"
+              aria-controls="panel-map-openspec">OpenSpec</button>
+      <button type="button" role="tab" data-track="lid" id="tab-map-lid"
+              aria-controls="panel-map-lid">LID</button>
+      <button type="button" role="tab" data-track="bmad" id="tab-map-bmad"
+              aria-controls="panel-map-bmad">BMAD</button>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-map-openspec"
+             aria-labelledby="tab-map-openspec">
+      <p>OpenSpec's specs cover only the change in hand, so it needs no map.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-map-lid"
+             aria-labelledby="tab-map-lid">
+      <p>LID's <code>/arrow-maintenance:map-codebase</code> reverse-engineers an existing codebase's design
+      tree for you to reconcile. On the build machine (LID 831c1959, 2026-09-22) it wrote thirteen
+      documents carrying 63 EARS requirement IDs and changed no source or test file; the skill's own
+      instructions did not load in that run, so the tree is LID-shaped rather than LID-generated.</p>
+
+      <p>Fix its wrong inferences before you cite its IDs in code.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-map-bmad"
+             aria-labelledby="tab-map-bmad">
+      <p>BMAD's specs cover only the change in hand, so it needs no map.</p>
+    </section>
+  </div>
+
+  <h2 id="subset">The subset you keep</h2>
+
+  <p>Adoptions die in a framework's long tail. Write your subset down, because the default is all
+  of it.</p>
+
+  <div class="tabs">
+    <div role="tablist" aria-label="Framework track" hidden>
+      <button type="button" role="tab" data-track="openspec" id="tab-subset-openspec"
+              aria-controls="panel-subset-openspec">OpenSpec</button>
+      <button type="button" role="tab" data-track="lid" id="tab-subset-lid"
+              aria-controls="panel-subset-lid">LID</button>
+      <button type="button" role="tab" data-track="bmad" id="tab-subset-bmad"
+              aria-controls="panel-subset-bmad">BMAD</button>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-subset-openspec"
+             aria-labelledby="tab-subset-openspec">
+      <p><strong>OpenSpec:</strong> the change folder, the three delta headers a first change needs (<code>## ADDED
+      Requirements</code>, <code>## MODIFIED Requirements</code>, <code>## REMOVED
+      Requirements</code>), and <code>/opsx:propose</code>, <code>/opsx:apply</code> and
+      <code>/opsx:archive</code>. Its other commands and the inspection CLI can wait.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-subset-lid"
+             aria-labelledby="tab-subset-lid">
+      <p><strong>LID:</strong> EARS requirements with semantic IDs and their <code>[x]</code>,
+      <code>[ ]</code> and <code>[D]</code> status markers (implemented, gap, deferred), and a
+      <code>// @spec</code> line comment on the topmost function that owns the behavior. Save the
+      drift audit, <code>/arrow-maintenance:arrow-maintenance</code>, for before a review relies on
+      the map's IDs.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-subset-bmad"
+             aria-labelledby="tab-subset-bmad">
+      <p><strong>BMAD:</strong> <code>SPEC.md</code>, <code>stories.yaml</code> and one file per
+      story, the <code>ready-for-dev</code> status, <code>/bmad-build</code>, and
+      <code>bmad-code-review</code> for repairs. The rest of the 29 skills, sprint planning included,
+      wait for epic-sized work.</p>
+    </section>
+  </div>
+
+  <h2 id="network">What survives a locked-down network</h2>
+
+  <p>Your track's &ldquo;Network blocked?&rdquo; box in Exercise 1 shows what survives when the
+  install source is blocked.</p>
+
+  <div class="tabs">
+    <div role="tablist" aria-label="Framework track" hidden>
+      <button type="button" role="tab" data-track="openspec" id="tab-net-openspec"
+              aria-controls="panel-net-openspec">OpenSpec</button>
+      <button type="button" role="tab" data-track="lid" id="tab-net-lid"
+              aria-controls="panel-net-lid">LID</button>
+      <button type="button" role="tab" data-track="bmad" id="tab-net-bmad"
+              aria-controls="panel-net-bmad">BMAD</button>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-net-openspec"
+             aria-labelledby="tab-net-openspec">
+      <p>OpenSpec comes from the public npm registry and needs Node 20.19.0 or higher. Its
+      tarball installs only if npm reaches a local mirror, because the <code>/opsx</code> commands call
+      the <code>openspec</code> CLI before they write anything.</p>
+
+      <p>Turn OpenSpec's telemetry off:</p>
+
+      <pre data-lang="bash"><code>openspec config set telemetry.enabled false</code></pre>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-net-lid"
+             aria-labelledby="tab-net-lid">
+      <p>LID comes from a plugin marketplace on GitHub. It runs from the vendored plugins with
+      <code>--plugin-dir</code>.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-net-bmad"
+             aria-labelledby="tab-net-bmad">
+      <p>BMAD comes from the public npm registry and needs Node 20.12 or later and
+      <code>uv</code> with Python 3.11 or later, which <code>uv</code> downloads itself when the network allows;
+      <code>bmad-build</code> and <code>bmad-build-auto</code> halt without <code>uv</code>. Its files
+      copy in, but behind a blocked network <code>uv</code> and its Python must already be installed.</p>
+    </section>
+  </div>
+
+  <p>The lasting answer is a mirror: pin a version, mirror it, upgrade on purpose.</p>
+
+  <h2 id="readable">The artifacts have to be readable without the tool</h2>
+
+  <p>All three store specs as plain text, Markdown plus BMAD's <code>stories.yaml</code>, so a
+  reviewer without the tool can read them in a pull request, and adoption stays reversible. Test
+  one artifact from your Exercise 2 run: if a reviewer new to the framework could not approve or
+  reject it, the tool's vocabulary is now part of every review.</p>
+
+  <h2 id="committing">Committing it: the team file and your file</h2>
+
+  <div class="tabs">
+    <div role="tablist" aria-label="Framework track" hidden>
+      <button type="button" role="tab" data-track="openspec" id="tab-commit-openspec"
+              aria-controls="panel-commit-openspec">OpenSpec</button>
+      <button type="button" role="tab" data-track="lid" id="tab-commit-lid"
+              aria-controls="panel-commit-lid">LID</button>
+      <button type="button" role="tab" data-track="bmad" id="tab-commit-bmad"
+              aria-controls="panel-commit-bmad">BMAD</button>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-commit-openspec"
+             aria-labelledby="tab-commit-openspec">
+      <p>Commit the framework's own files: <code>openspec/</code> plus the commands and skills
+      <code>openspec init</code> wrote under <code>.claude/</code>.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-commit-lid"
+             aria-labelledby="tab-commit-lid">
+      <p>Commit the framework's own files: LID's <code>docs/</code> tree. LID's plugins stay at
+      user scope, one install per teammate.</p>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-commit-bmad"
+             aria-labelledby="tab-commit-bmad">
+      <p>Commit the framework's own files: <code>_bmad/</code>, its skills under
+      <code>.claude/skills/</code> and the spec folders under
+      <code>_bmad-output/implementation-artifacts/</code>.</p>
+
+      <p>BMAD has its own personal file: <code>_bmad/config.user.toml</code> holds your install
+      answers, and the installer writes your system username there and into two
+      <code>config.yaml</code> files. Check all three before the first commit, and keep
+      <code>config.user.toml</code> out, like the <code>settings.local.json</code> below.</p>
+    </section>
+  </div>
+
+  <p>Commit <code>.claude/settings.json</code> too, with the permission rules the framework's
+  commands need. &ldquo;Yes, and don't ask again&rdquo; on a shell command saves its rule to the
+  personal <code>.claude/settings.local.json</code>, which takes precedence, so a command that runs
+  unprompted for you may be allowed nowhere else until its rule moves into the committed
+  file.</p>
+
+  <h2 id="claude-md">Keeping <code>CLAUDE.md</code> from growing</h2>
+
+  <p>A framework can write into <code>CLAUDE.md</code>, which loads into every session and is paid
+  for on every turn. On the build machine (OpenSpec 1.13.1, BMAD
+  6.12.0, 2026-09-22) OpenSpec and BMAD left it untouched, and LID's <code>/arrow-maintenance:map-codebase</code> run appended a
+  29-line <code>## LID</code> section.</p>
+
+  <p>A line <code>@path/to/import</code> inside <code>CLAUDE.md</code> pulls in another file, so a
+  framework's directives can live in their own file, deletable in one edit.
+  Imported files load at launch too, so that changes organization, not cost. It also fails LID:
+  <code>update-lid</code> looks for its directives and <code>## LID</code> block in
+  <code>AGENTS.md</code> if it exists, otherwise in <code>CLAUDE.md</code> itself, and writes back
+  what it misses, so on the LID track the block stays in whichever of the two your project uses.</p>
+
+  <p>From inside <code>day3-work</code>, compare the shipped file with yours:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="180 ../sandbox/swift/CLAUDE.md"><code>wc -l ../sandbox/swift/CLAUDE.md CLAUDE.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="177 ../sandbox/kotlin/CLAUDE.md"><code>wc -l ../sandbox/kotlin/CLAUDE.md CLAUDE.md</code></pre>
+  </div>
+
+  <p>If your <code>CLAUDE.md</code> line counts more than the shipped file's, the framework owes
+  the difference under <a href="../../day-2-loops-and-your-environment/lessons/03-recursive-self-improvement.html#routing">Day
+  2's net-zero line cap</a>.</p>
+
+  <p>Only if your <code>CLAUDE.md</code> contains <code>@</code> imports, add each imported file
+  to the command, for example for a line <code>@docs/framework-directives.md</code>:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>wc -l ../sandbox/swift/CLAUDE.md CLAUDE.md docs/framework-directives.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>wc -l ../sandbox/kotlin/CLAUDE.md CLAUDE.md docs/framework-directives.md</code></pre>
+  </div>
+
+  <p>Then compare the shipped file's count with the sum of your files' counts. Skip wc's
+  <code>total</code> line: it adds the shipped file in too.</p>
+
+  <h2 id="rewrite">When not to adopt</h2>
+
+  <p>The biggest case: a module with no tests, like a payments module with no XCTest
+  target or only a flaky Gradle UI test. Every framework here assumes a
+  sensor that can tell the agent it is wrong; without one, it files specs nobody can check.</p>
+
+  <p>Adopt a test suite first. A team norm: no framework goes on a
+  module until its tests can fail for the reason the spec cares about.</p>
+
+  <p>Skip the framework, too, for a one-off script or throwaway code, where nobody will read the spec again,
+  and on a team that merges without review, where nobody reads it the first time.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your framework appends a dozen lines of directives to <code>CLAUDE.md</code>. What do
+    you do with them, and why does it matter more than it looks?</summary>
+    <p>Move them into their own file and pull it in with <code>@path/to/import</code>, so they are
+    readable in one place and removable in one edit, unless the framework reads them back from
+    <code>CLAUDE.md</code>, as LID's <code>update-lid</code> does. That alone saves nothing: <code>CLAUDE.md</code>
+    and the files it imports load into every session, and you pay for them on every turn. Day 2's
+    net-zero line cap applies across both files.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>You are told to adopt a spec framework on a module that has no tests. What do you do
+    first, and what is the reasoning?</summary>
+    <p>Write the tests first. Every framework assumes something that can tell the agent it got it
+    wrong; with no failing command available, the acceptance criteria cannot fail, and the framework
+    produces documents instead of checks.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-l5-done" data-progress="d3-l5-read">
+      <label for="d3-l5-done">Lesson 5 read, and I can name the subset my team would adopt and the
+      condition that sends us to tests first.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Framework documentation accessed 2026-09-22; Claude Code documentation accessed 2026-09-22 and
+  2026-09-23. Versions pinned for Day 3: OpenSpec 1.13.1, LID commit 831c1959, BMAD 6.12.0. Entries
+  marked observed were recorded on the build machine on 2026-09-22 in scratch copies of the Swift
+  lane.</p>
+
+  <ul class="sources">
+    <li><code>lid-08</code>, <code>lid-09</code>, <code>lid-obs-02</code>
+    &mdash; <code>/arrow-maintenance:map-codebase</code> for an existing codebase, the
+    <code>/arrow-maintenance:arrow-maintenance</code> drift audit, from
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">the LID
+    repository</a>; observed: the plugins installed at user scope on the build machine.</li>
+    <li><code>lid-11</code>, <code>lid-12</code>, <code>lid-13</code> &mdash; the
+    <code>// @spec</code> line comment, the <code>[x]</code>, <code>[ ]</code> and <code>[D]</code>
+    status markers, and the semantic ID shape, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">the
+    LID repository's <code>AGENTS.md</code></a>.</li>
+    <li><code>lid-obs-05</code>, <code>lid-obs-06</code>, <code>lid-obs-07</code> &mdash; observed:
+    the map wrote thirteen documents carrying 63 EARS IDs and no source or test change, and appended
+    a 29-line <code>## LID</code> section to <code>CLAUDE.md</code>; in that run the skill's own
+    body did not load.</li>
+    <li><code>lid-obs-10</code> &mdash; observed: with the marketplace plugins disabled, starting
+    Claude Code with <code>--plugin-dir</code> pointing at the vendored LID plugins made their
+    commands resolve.</li>
+    <li>Where <code>update-lid</code> looks for LID's directives and <code>## LID</code> block
+    (<code>AGENTS.md</code> if it exists, otherwise <code>CLAUDE.md</code>) and what it writes back
+    when they are missing &mdash; LID's own text at commit 831c1959, in this course's snapshot at
+    <code>day-3-choose-your-adventure/starter/vendored/lid-831c1959/lid/plugins/linked-intent-dev/skills/update-lid/SKILL.md</code>.</li>
+    <li><code>openspec-01</code> &mdash; the npm install command, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    installation</a>; <code>openspec-03</code> &mdash; the Node 20.19.0 floor, from
+    <a href="https://registry.npmjs.org/@fission-ai/openspec/latest" target="_blank" rel="noopener noreferrer">the
+    npm registry entry</a>.</li>
+    <li><code>openspec-08</code>, <code>openspec-09</code>, <code>openspec-10</code>,
+    <code>openspec-18</code> &mdash; propose, apply, archive and the inspection commands, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/getting-started.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    getting started</a>.</li>
+    <li><code>openspec-13</code>, <code>openspec-14</code>, <code>openspec-15</code> &mdash; the three
+    delta headers, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li>The <code>openspec</code> calls in <code>/opsx:propose</code> (<code>allowed-tools:
+    Bash(openspec:*)</code>, step 2's <code>openspec context --json</code> and its stop on
+    failure), from the vendored
+    <code>day-3-choose-your-adventure/starter/vendored/openspec-1.13.1/project-files/.claude/commands/opsx/propose.md</code>
+    at OpenSpec 1.13.1.</li>
+    <li><code>openspec-19</code> &mdash; the telemetry opt-out, from
+    <a href="https://github.com/Fission-AI/OpenSpec" target="_blank" rel="noopener noreferrer">the
+    OpenSpec repository</a>.</li>
+    <li><code>openspec-obs-02</code>, <code>openspec-obs-03</code> &mdash; observed:
+    <code>openspec init</code> wrote an <code>openspec/</code> folder and twelve files under
+    <code>.claude/</code> and left <code>CLAUDE.md</code> unmodified.</li>
+    <li><code>bmad-01</code>, <code>bmad-05</code> &mdash; the install command and the Node 20.12
+    floor, from
+    <a href="https://docs.bmad-method.org/start/install-bmad/" target="_blank" rel="noopener noreferrer">BMAD
+    installation</a>.</li>
+    <li><code>bmad-06</code>, <code>bmad-11</code>, <code>bmad-18</code> &mdash; <code>uv</code>
+    with Python 3.11 or later is required, and <code>bmad-build</code> and
+    <code>bmad-build-auto</code> halt without it; the sprint-planning, build, code-review chain; the
+    config layering that includes <code>_bmad/config.user.toml</code>, from
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">the
+    BMAD changelog</a> (v6.11.0).</li>
+    <li><code>bmad-obs-02</code> &mdash; observed: the installer's welcome text says
+    <code>uv</code> provisions the Python interpreter itself.</li>
+    <li>What <code>bmad-sprint-planning</code> reads (the epic files) and how
+    <code>/bmad-build</code> takes a <code>ready-for-dev</code> spec to implementation and then its
+    own review &mdash; BMAD 6.12.0's own skill text, in this course's snapshot at
+    <code>day-3-choose-your-adventure/starter/vendored/bmad-6.12.0/project-files/.claude/skills/</code>
+    (<code>bmad-sprint-planning/SKILL.md</code>,
+    <code>bmad-sprint-planning/references/generate-tracking.md</code>,
+    <code>bmad-build/step-01-clarify-and-route.md</code>).</li>
+    <li><code>_bmad/config.user.toml</code> as the personal install-answers file and the username
+    in three files &mdash; the file headers of <code>_bmad/config.toml</code> and
+    <code>_bmad/config.user.toml</code> and the notes in <code>SNAPSHOT.md</code>, in this course's
+    snapshot at <code>day-3-choose-your-adventure/starter/vendored/bmad-6.12.0/</code>.</li>
+    <li><code>bmad-12</code>, <code>bmad-13</code> &mdash; the frontmatter status values and the
+    <code>SPEC.md</code>, <code>stories.yaml</code> and per-story layout, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">BMAD
+    autonomous development loops</a>.</li>
+    <li><code>bmad-obs-05</code>, <code>bmad-obs-06</code>, <code>bmad-obs-11</code> &mdash;
+    observed: a default 6.12.0 install wrote <code>_bmad/</code> and 29 skills and left
+    <code>CLAUDE.md</code> unmodified, and the build skill wrote its spec folder under
+    <code>_bmad-output/implementation-artifacts/</code>.</li>
+    <li><code>cc-core-12</code>, <code>cc-core-15</code>, <code>cc-core-40</code> &mdash; the
+    <code>@path/to/import</code> syntax, path-scoped rule files under
+    <code>.claude/rules/</code>, and imports loading at launch, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Memory</a>.</li>
+    <li><code>cc-core-36</code> &mdash; <code>CLAUDE.md</code> files loaded at startup, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Context
+    window</a>.</li>
+    <li><code>cc-core-23</code>, <code>enterprise-11</code> &mdash; the shared and personal settings
+    files and their precedence, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+    <li><code>cc-core-39</code> &mdash; where &ldquo;Yes, and don't ask again&rdquo; saves a rule, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-32</code> &mdash; Claude Code 2.1.280, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/03-late-change-and-card.html">Exercise 3: A late change, then the card you hand your team</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../wrap-up.html">Day 3 wrap-up</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280, OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0 on 2026-09-22, with the
+    Claude Code documentation read on 2026-09-22 and 2026-09-23. Where this page names a command, a
+    file path or a settings key, keep its linked source open.</p>
+  </div>
+</footer>
+</body>
+</html>

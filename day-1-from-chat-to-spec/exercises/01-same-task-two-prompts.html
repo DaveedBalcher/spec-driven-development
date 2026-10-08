@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Same task, two prompts</title>
+<meta name="description" content="Day 1, Exercise 1: read one real task as a question, run it as a four-part assignment, and measure the difference from two diffs.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="20">
+<meta name="course:slot" content="d1-e1">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-19 cc-core-32 cc-core-41">
+  <h1>Same task, two prompts</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Exercise 1 of 4
+  &middot; <span class="timing">20 min</span></p>
+
+  <p class="lede">Take one real task two ways &mdash; read it the way you would ask chat, then run
+  it as the four-part assignment from Lessons 1 and 2 &mdash; and finish with two captured diffs and a five-row table
+  showing what the extra ninety seconds of prompt bought you.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Paste one block from the course root, the folder holding this course's
+  <code>index.html</code>. It copies your lane to <code>day1-work</code>, leaves your shell inside
+  the copy, and makes <code>work/</code> for your answers. You never edit <code>sandbox/</code>
+  itself.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>mkdir -p work
+cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+    <p>Prompt B also ships as
+    <code>../day-1-from-chat-to-spec/starter/prompts/e1-prompt-b.txt</code>.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>mkdir -p work
+cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+    <p>Prompt B also ships as
+    <code>../day-1-from-chat-to-spec/starter/prompts/e1-prompt-b-kotlin.txt</code>.</p>
+  </div>
+
+  <p>Every later command on this page, and every path inside the prompts, is written from inside
+  <code>day1-work</code>. Starter files are one level up, at
+  <code>../day-1-from-chat-to-spec/starter/&hellip;</code>, and answers go in <code>../work/</code>.
+  If <code>day1-work</code> is already there, step into it and run the reset at the bottom of this
+  page instead.</p>
+
+  <p>Start Claude Code in the copy with <code>claude</code>: a session starts in the directory you
+  launch it from. Prompt A is the same in both lanes and ships as
+  <code>../day-1-from-chat-to-spec/starter/prompts/e1-prompt-a.txt</code>.</p>
+
+  <p>Keep a second terminal tab open in <code>day1-work</code>: the session holds the tab you start
+  it in, so every other shell command on this page goes in the second.</p>
+
+  <p>Budget five minutes for the one agent run; the 20 minutes above assume Prompt A is read, not
+  run, and step 2 says why.</p>
+
+  <p>One thing about both prompts is deliberate: the premise is wrong. There is no Cafe Lumiere in
+  the fixtures &mdash; the caf&eacute; rows are <code>Caf&eacute; M&uuml;ller</code> &mdash; and
+  <code>LedgerFilter</code>'s merchant match already ignores case and diacritics. Vague bug reports arrive like this, and part of what you measure is whether the agent
+  reads the code first. The table measures scope and evidence, not whether the bug was real.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Confirm the starting state: your lane's test command passes.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift"
+             data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>A green run on this machine on 2026-09-22 printed the suite's pass line and its count
+        line:</p>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at 2026-09-22 19:41:49.214.
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.017 (0.021) seconds</code></pre>
+        <p>The run also prints <code>Test run with 0 tests in 0 suites passed after 0.001
+        seconds.</code> The suite is XCTest, so swift-testing has nothing of its own to run.
+        Timestamps and durations vary; the counts do not. The one skipped test is deliberate, and
+        you meet it in Exercise 2.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p>A first run in a fresh copy on this machine on 2026-09-22 printed:</p>
+        <pre data-lang="text"><code>BUILD SUCCESSFUL in 1s
+5 actionable tasks: 5 executed</code></pre>
+        <p>A Gradle configuration-cache hint prints with it; <code>BUILD SUCCESSFUL</code> is the
+        line that decides. The duration varies, and a re-run reports the tasks as up to date.</p>
+      </div>
+
+      <p>Then confirm the copy still matches the lane it came from. It prints nothing when the two
+      trees are identical, and you run it again after every reset:</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x .build ../sandbox/swift .</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin ../sandbox/kotlin .</code></pre>
+      </div>
+    </li>
+
+    <li>
+      <p>Read Prompt A, but do not paste it. It is the request as you would type it into chat, and
+      it names no file:</p>
+
+      <pre data-lang="text"><code>The merchant search in this project doesn't work very well - searching for cafe doesn't find Cafe Lumiere. Can you fix that?</code></pre>
+
+      <p>Run A is a non-event by design. With the premise wrong and nothing to check against, the
+      agent reads the code, finds the match already ignores case and diacritics, and changes
+      nothing &mdash; the third outcome in the second reveal below. Five minutes watching that buys
+      you nothing the reveal does not, so the untouched copy stands in for it as the reference run
+      A.</p>
+    </li>
+
+    <li>
+      <p>Capture run A from the untouched copy. The shipped lane one level up is the before picture
+      and <code>day1-work</code> the after, so one recursive diff is the record of a run; here it
+      writes an empty file, which is what a run that changed nothing records.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x .build ../sandbox/swift . &gt; ../work/run-a.diff</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin ../sandbox/kotlin . &gt; ../work/run-a.diff</code></pre>
+      </div>
+
+      <p><code>-N</code> makes a file the agent created show up as a whole-file addition, and
+      created files are the ones people forget to count. <code>-x</code> drops the build products.
+      Each changed file opens with a header line starting <code>diff</code>, so counting those lines
+      counts the files touched:</p>
+
+      <pre data-lang="bash"><code>grep -c '^diff ' ../work/run-a.diff</code></pre>
+    </li>
+
+    <li>
+      <p>In Claude Code, paste Prompt B exactly as written and approve edits as they come. Do not
+      correct it, take up its follow-up suggestions, or paste failures back to it: you are measuring
+      what the prompt produced, not what you rescued. If the session already holds an earlier
+      conversation, run <code>/clear</code> first so run B inherits nothing; Lesson 6 explains why
+      that is a budget decision and not only tidiness. Prompt B is the same request as Prompt A
+      with the four questions answered.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="text"><code>Goal: LedgerFilter's merchant match should ignore case and diacritics, so the query "cafe" matches the merchant "Cafe Lumiere" and the query "CAFE" matches it too.
+
+Bounds: you may change Sources/LedgerKit/LedgerFilter.swift and Tests/LedgerKitTests/LedgerFilterTests.swift and nothing else. Do not change Sources/LedgerKit/Money.swift, Sources/LedgerKit/TransactionFormatter.swift, Sources/LedgerKit/LedgerSummary.swift, the fixtures file, or CLAUDE.md.
+
+Verification: run swift test and show me the Executed line right under Test Suite 'All tests' passed (or failed). Add at least one test for the diacritic case and one for the case-insensitive case, using merchants that already exist in the fixtures.
+
+Stop: if the change needs a file outside those two paths, stop and tell me which file and why, without editing it. If the same test fails twice in the same way, stop and show me the failure.</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="text"><code>Goal: LedgerFilter's merchant match should ignore case and diacritics, so the query "cafe" matches the merchant "Cafe Lumiere" and the query "CAFE" matches it too.
+
+Bounds: you may change src/main/kotlin/ledgerkit/LedgerFilter.kt and src/test/kotlin/ledgerkit/LedgerFilterTest.kt and nothing else. Do not change src/main/kotlin/ledgerkit/Money.kt, src/main/kotlin/ledgerkit/TransactionFormatter.kt, src/main/kotlin/ledgerkit/LedgerSummary.kt, the fixtures file, or CLAUDE.md.
+
+Verification: run ./gradlew test and show me the BUILD line. Add at least one test for the diacritic case and one for the case-insensitive case, using merchants that already exist in the fixtures.
+
+Stop: if the change needs a file outside those two paths, stop and tell me which file and why, without editing it. If the same test fails twice in the same way, stop and show me the failure.</code></pre>
+      </div>
+    </li>
+
+    <li>
+      <p>Capture run B the same way, writing to <code>../work/run-b.diff</code>, then run your
+      lane's test command again and record the result.</p>
+    </li>
+
+    <li>
+      <p>Fill the five rows below in <code>../work/e1-table.md</code>. Rows one, two and five come off the captures, not your memory of the runs; row
+      three is the command you ran in steps 1 and 5, step 1's run standing for run A because its copy
+      is untouched; row four is the transcript, and no for run A, which had no session. Row five is insertions
+      plus deletions, with each file's two header lines left out:</p>
+
+      <pre data-lang="bash"><code>grep -vE '^(--- |\+\+\+ )' ../work/run-a.diff | grep -cE '^[+-]'</code></pre>
+
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Prompt comparison table">
+        <table>
+          <caption>Copy this into <code>../work/e1-table.md</code> and fill both columns.</caption>
+          <thead>
+            <tr><th scope="col">Row</th><th scope="col">Run A</th><th scope="col">Run B</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Files touched</th><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><th scope="row">Files touched outside the two in-bounds paths</th><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><th scope="row">Tests pass or fail, in your own run</th><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><th scope="row">Did the agent run the verification command itself</th><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><th scope="row">Lines changed</th><td>&mdash;</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Both captures spell the two in-bounds paths as the prompt named them, behind the prefix each
+      diff header adds: the sandbox path (<code>../sandbox/swift/</code> or
+      <code>../sandbox/kotlin/</code>) on the before side and <code>./</code> on the after side. Match
+      on the path's end, not the whole string:</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <p><code>Sources/LedgerKit/LedgerFilter.swift</code> and
+        <code>Tests/LedgerKitTests/LedgerFilterTests.swift</code>.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <p><code>src/main/kotlin/ledgerkit/LedgerFilter.kt</code> and
+        <code>src/test/kotlin/ledgerkit/LedgerFilterTest.kt</code>.</p>
+      </div>
+    </li>
+
+    <li>
+      <p>Open the reveal, check how each row is decided, then name in one sentence which prompt
+      part did the most work.</p>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="callout warning">
+    <p class="callout-title">Likely wrong turns</p>
+    <ul>
+      <li>An empty <code>run-b.diff</code> means the agent neither changed nor created a file. A
+      real result: reading the code and deciding the behaviour is correct is the outcome Prompt A
+      invites, and Prompt B can reach it too. Record zero files and carry on.</li>
+      <li><code>No such file or directory</code> when you write a capture means your shell is not
+      in the copy: <code>pwd</code> should end in <code>day1-work</code>, with
+      <code>../work</code> and <code>../sandbox</code> one level up.</li>
+      <li>To start a step over rather than debug the agent's edit, quit Claude Code, run the reset
+      at the bottom, and restart with <code>cd ../day1-work &amp;&amp; claude</code> in the first tab.
+      Your captures survive the reset.</li>
+    </ul>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <p>A line beginning <code>error:</code> instead of the count line means the package did not
+      compile, a different problem from a failing test: the agent's last edit is syntactically
+      broken, and the capture is where to look.</p>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p><code>BUILD FAILED</code> with a <code>FAILED</code> line naming a test class means a test
+      went red, and the HTML report path printed with it is worth opening on the first failure.</p>
+    </div>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Two commands decide it</p>
+    <p>The first shows both captures exist and how big each is. The
+    second prints every file run B touched that the prompt did not allow, and nothing when run B
+    stayed in bounds; it works in either lane, because both lanes' in-bounds files carry
+    <code>LedgerFilter</code> in their names.</p>
+    <pre data-lang="bash"><code>wc -l ../work/run-a.diff ../work/run-b.diff
+grep '^diff ' ../work/run-b.diff | grep -v LedgerFilter</code></pre>
+    <p>Each path it prints goes straight into row two. Run the same grep against
+    <code>run-a.diff</code> for run A.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> both captures exist, the grep above has
+  run against each, all five rows are filled from them and your own test runs, and the sentence
+  naming the prompt part that did the most work is written down.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <details class="reveal">
+    <summary>How each row is decided, and the two rows people fill in wrong</summary>
+    <p>Rows one, two and five are arithmetic on a file. <strong>Files touched</strong> is the number
+    of <code>diff</code> header lines in the capture; <strong>lines changed</strong> is what the
+    insertions-and-deletions grep in step 6 printed; <strong>out of bounds</strong> is what the
+    self-check grep printed. <strong>Tests pass or fail</strong> is your own run, after the agent
+    stopped, not its report of one.</p>
+    <p><strong>Row four is the one people get wrong.</strong> The mistake is answering yes because
+    the final message says the tests pass. A summary that reads "I ran the tests and they pass" is
+    the sentence that usually follows a change like this one, and it can be produced without any
+    command having run. The evidence that counts is a tool call in the transcript with output
+    attached to it. If you cannot find the call, the answer is no, whatever the summary said. Prompt
+    B asks for the command and names the output line that carries its result, the
+    <code>Executed</code> line in Swift and the <code>BUILD</code> line in Kotlin, for exactly this
+    reason: a request for the output is a request for the run.</p>
+    <p><strong>Row two is the other one.</strong> The mistake is reading a green suite as in bounds.
+    A vague prompt can touch four files, pass every test, and still be the change you did not want: a helper
+    extracted into <code>Money</code>, a signature widened in the formatter, a tidy in the summary
+    type while it was there. Nothing breaks, because none of those files had a failing test waiting
+    for them. Green says nothing about scope; the capture says everything about scope, and you
+    can read its header lines in one screen.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Reading your pair: the three outcomes, and which one you got</summary>
+    <p><strong>Run B stays in bounds and proves its change.</strong> The usual case. Most people name bounds as the
+    part that did the work, because that is the row that visibly changed. It is often verification: an
+    agent given a command to run and an output to show tends to make a change it can prove, and a
+    change it can prove is a smaller change.</p>
+    <p><strong>Run B also changes nothing.</strong> This happens, more often on a small
+    well-named task in a small repository than people expect, and it is not a failed exercise. The
+    four parts are insurance; insurance that did not pay out this time still cost ninety seconds.
+    What you have learned is what a task looks like when it was not needed, which is worth knowing,
+    because the next task will be bigger and you will not be able to tell in advance.</p>
+    <p><strong>Run A did nothing at all.</strong> The reference run A in step 2: zero files, and
+    the prompt's own wording invited it.
+    An agent that declines to change working code is behaving well; a prompt that could not tell you
+    whether the code worked is the finding.</p>
+    <p>No recorded run B capture ships with this exercise. Two runs of the same prompt differ, and
+    printing one machine's numbers here as the answer would be the mistake row four is about
+    &mdash; a claim standing in for a command you ran. Your own run B file is the evidence, and
+    the longer version of this note is in
+    <code>../day-1-from-chat-to-spec/starter/answers/e1-comparison.md</code>.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>One command, the sandbox reset every Day 1 exercise means: delete the copy, remake it from
+  the shipped lane, step back in. Quit Claude Code before you run it and start it again with
+  <code>cd ../day1-work &amp;&amp; claude</code> in the first tab. It never reaches <code>../work</code> or writes to <code>sandbox/</code>, so your captures
+  outlive it. Run it once more when you finish, and leave the copy reset for Exercise 2, which
+  continues in <code>day1-work</code>.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <p>When the day is finished, delete the copy from the course root with
+  <code>rm -rf day1-work</code>. Keep <code>work</code>: Day 2 and Day 3 write there too, and the
+  Day 3 wrap-up removes it when you are done for good.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-e1-done" data-progress="d1-e1-done">
+      <label for="d1-e1-done">Exercise 1 finished: two captures saved, five rows filled, one
+      sentence written.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code> resets the session to an empty context,
+    from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this exercise was run against, Claude Code
+    2.1.280 on 2026-09-22, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>cc-core-41</code> &mdash; the directory you launch Claude Code in is the session's
+    primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>,
+    accessed 2026-09-23.</li>
+    <li>The quoted test output was recorded on this machine on 2026-09-22, one run per lane in a
+    fresh copy. Both prompts ship verbatim in
+    <code>../day-1-from-chat-to-spec/starter/prompts/</code>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/01-chat-vs-agent.html#assignment">Lessons 1 and 2: Chat vs agent, and the
+    four-part prompt</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/03-plan-mode.html">Lesson 3: Seeing the diff before the diff with plan mode</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page quotes terminal output, it
+    was recorded on this machine on that date.</p>
+  </div>
+</footer>
+</body>
+</html>

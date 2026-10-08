@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pick by the failure you actually have</title>
+<meta name="description" content="Day 3, Lesson 4: choosing a spec framework by naming the failure your team keeps hitting, with four questions asked in order and no framework as a real answer.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="4">
+<meta name="course:minutes" content="15">
+<meta name="course:slot" content="d3-l4">
+<meta name="course:video" content="odbNXv9xXjc">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="openspec-04 lid-obs-01 bmad-obs-01 lid-11 lid-12 lid-13 lid-obs-04 openspec-06 openspec-13 openspec-14 openspec-15 openspec-20 openspec-obs-02 bmad-06 bmad-09 bmad-11 bmad-12 bmad-13 bmad-obs-05 bmad-obs-10 bmad-obs-11 practitioners-05 enterprise-11">
+  <h1>Pick by the failure you actually have</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot; Lesson 4 of 5
+  &middot; <span class="timing">15 min</span></p>
+
+  <p class="lede">Choose a spec framework by naming the failure your team keeps hitting, then take
+  the first framework built to answer it. Ask first whether your specs should live or expire, then
+  four questions in order: the first yes that answer allows wins, and "none" is a real answer.
+  Compare the failure you hit in Exercise 2 with the failure each question names.</p>
+
+  <div class="video" data-video-id="odbNXv9xXjc" data-start="0" data-end="300"
+       data-video-title="Lessons from Spec-driven Development, Simon Martinelli (AI Native Dev, 2026-07-22), 0:00 to 5:00">
+    <span class="video-kicker">Watch first &middot; 5 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=odbNXv9xXjc"
+      target="_blank" rel="noopener noreferrer">Lessons from Spec-driven Development &mdash; Simon
+      Martinelli</a></p>
+    <p class="video-meta">AI Native Dev, 2026-07-22. Segment 0:00 to 5:00. Listen for the failure
+    Martinelli opens with: a system he built fast with an AI tool for his sports club, which he
+    could neither explain nor adapt when a second customer asked for the same thing, because
+    nothing recorded what had been built. Then decide which of this
+    lesson's four questions his failure would answer yes to, and whether his specs are meant to
+    live or to expire.</p>
+  </div>
+
+  <h2 id="failure">Start from the failure, not the feature list</h2>
+
+  <p>Side by side, the three feature lists blur, as Lessons 1 and 2 showed: each gives you a spec file, a
+  command that moves it forward, and somewhere for it to go after the code ships. Failures do
+  not.</p>
+
+  <p>Write one sentence about the last change that went wrong for a reason that was
+  not a bug: the diff sent back for touching the networking layer, the module nobody knew
+  another screen depended on, the ticket three people read three ways. That sentence usually names
+  one of three failures; question four covers one that names none. Answer the live-or-expire
+  question (its section follows question four) first. Its answer overrides the four, not just
+  ties: if your specs expire, a yes to question one does not get you LID; if they live, a yes to
+  question three does not get you BMAD. Then ask these in order and stop at the first yes it
+  allows.</p>
+
+  <h2 id="q1">Question one: does your team need to say which requirement a line of code serves?</h2>
+
+  <p>If the recurring pain is "we changed this and did not know what depended on it", the failure
+  is traceability, and LID is built for it. Every requirement gets a semantic ID that reads as its
+  path through the design tree, flat as <code>FEATURE-NNN</code> and one segment longer per level.
+  LID's format marks each requirement <code>[x]</code> implemented, <code>[ ]</code> a gap, or
+  <code>[D]</code> deferred. The Change C checkpoint, <code>LK-PERIOD-001</code> to
+  <code>LK-PERIOD-022</code>, uses none: every spec is marked <code>(no test yet)</code>, so if
+  you ran the LID track in Exercise 2, check which form your run used. The link into code is a line comment on the topmost function that
+  owns the behavior:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="swift"><code>// @spec LK-PERIOD-007, LK-PERIOD-013
+public static func periods(for transactions: [Transaction], cycle: StatementCycle) -&gt; [StatementPeriod]</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="kotlin"><code>// @spec LK-PERIOD-007, LK-PERIOD-013
+fun periods(transactions: List&lt;Transaction&gt;, cycle: StatementCycle): List&lt;StatementPeriod&gt;</code></pre>
+  </div>
+
+  <p>Search for the ID and you reach the requirement and the code that serves it.
+  The price is daily: someone writes the annotation on every change, and on the build machine the
+  two LID plugins at commit 831c1959 added about 1,090 tokens to every session before
+  anything was typed. If your team would not write the annotations, answer no.</p>
+
+  <h2 id="q2">Question two: is the codebase already large, already shipping, and changing in small increments?</h2>
+
+  <p>If every spec attempt turns into a document about the whole system, the failure is scope,
+  and OpenSpec's unit answers it: a change folder whose delta spec says only what the change adds, modifies, or
+  removes, under <code>## ADDED Requirements</code>, <code>## MODIFIED Requirements</code>, and
+  <code>## REMOVED Requirements</code>. Archiving applies the delta to the live specs and moves the
+  folder into <code>changes/archive/</code> under a date-prefixed name; Exercise 3 runs that path.
+  A ticket that reworks one screen's pagination
+  owes nobody a description of the app.</p>
+
+  <h2 id="q3">Question three: is what is missing the planning, not the traceability?</h2>
+
+  <p>If work starts before anyone has decided scope, sequence, or who reviews it, the failure is
+  planning roles, and BMAD ships that structure: a spec broken into an ordered story set, planned
+  before anything is built. Adopt the shape, not the command names. BMAD needs <code>uv</code> and
+  permission to run shell commands; if your environment blocks either, BMAD does not start, and
+  Lesson 5 covers what survives a locked-down network.</p>
+
+  <h2 id="q4">Question four: none of the above</h2>
+
+  <p>With no yes, two answers are honest. One is OpenSpec for its light footprint: on the build
+  machine, choosing Claude Code, OpenSpec 1.13.1's <code>init</code> wrote fifteen files where BMAD
+  6.12.0's installer wrote 235, and each change stays in one folder until you archive it. The other,
+  if specs expire, is no framework: the Day 1 spec template,
+  <code>../day-1-from-chat-to-spec/starter/specs/TEMPLATE.md</code> (the starter's, not the
+  lane's own <code>specs/TEMPLATE.md</code>), in your team's <code>specs/</code> folder; the
+  <code>.claude/settings.json</code> from Day 2, committed so it applies to everyone in the project;
+  and Day 2's <code>run-spec</code> runner skill, shared with the team. Most such teams should
+  start with a month of no framework, to learn which failure recurs.</p>
+
+  <h2 id="cross-axis">The cross-axis: do you want your specs to live or expire?</h2>
+
+  <p>One preference overrides all four questions: whether a spec
+  lives on after its change ships or expires with it. If your team will re-read a requirement in
+  six months, when an auditor asks about a declined attempt on a statement, you need a
+  living spec tree: OpenSpec's archive-and-fold into <code>openspec/specs/</code>, or LID's design
+  tree.</p>
+
+  <p>If nobody will re-read it, a per-change document is fine and the lightest option that answers
+  your failure wins: BMAD's spec folder when planning is what is missing, OpenSpec or no framework
+  otherwise. Böckeler calls the two positions spec-anchored, a spec kept and evolved beside the
+  code, and spec-first, a spec that serves the change in front of it.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 434" role="img" aria-labelledby="choose-title choose-desc">
+      <title id="choose-title">Choosing a spec framework by failure</title>
+      <desc id="choose-desc">A band across the top asks first: will anyone re-read the spec in six months. If specs live, the choice is OpenSpec or
+      LID; if they expire, the lightest option that answers the failure wins, which for a planning
+      failure is BMAD. It overrules every branch. Below it, four questions stacked top to
+      bottom, joined by arrows labelled no. Question one: does the team need to trace code to its
+      requirement; yes exits right to LID. Question two: large, shipping, small increments; yes exits
+      right to OpenSpec. Question three: planning missing, not traceability; yes exits right to BMAD,
+      with a note that BMAD needs uv and shell access. Question four: none of the above; it exits
+      right to OpenSpec, or no framework.</desc>
+
+      <defs>
+        <marker id="choose-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="choose-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <rect x="4" y="4" width="352" height="80" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <text x="14" y="27" font-size="15" font-weight="650" fill="var(--fg)">First: will anyone re-read the</text>
+      <text x="14" y="49" font-size="15" font-weight="650" fill="var(--fg)">spec in six months?</text>
+      <text x="14" y="71" font-size="15" fill="var(--accent)">live: OpenSpec or LID</text>
+      <text x="346" y="71" text-anchor="end" font-size="15" fill="var(--accent)">expire: lightest that fits</text>
+
+      <line x1="60" y1="84" x2="60" y2="106" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#choose-arrow-accent)"></line>
+      <text x="70" y="101" font-size="15" fill="var(--muted)">then</text>
+
+      <rect x="4" y="108" width="196" height="50" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="129" font-size="15" fill="var(--fg)">1. Need to trace code</text>
+      <text x="14" y="150" font-size="15" fill="var(--fg)">to its requirement?</text>
+      <line x1="200" y1="133" x2="238" y2="133" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="221" y="126" text-anchor="middle" font-size="15" fill="var(--fg)">yes</text>
+      <rect x="240" y="113" width="116" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="298" y="138" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">LID</text>
+
+      <line x1="60" y1="158" x2="60" y2="188" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="70" y="179" font-size="15" fill="var(--fg)">no</text>
+
+      <rect x="4" y="190" width="196" height="50" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="211" font-size="15" fill="var(--fg)">2. Large, shipping,</text>
+      <text x="14" y="232" font-size="15" fill="var(--fg)">small increments?</text>
+      <line x1="200" y1="215" x2="238" y2="215" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="221" y="208" text-anchor="middle" font-size="15" fill="var(--fg)">yes</text>
+      <rect x="240" y="195" width="116" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="298" y="220" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">OpenSpec</text>
+
+      <line x1="60" y1="240" x2="60" y2="270" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="70" y="261" font-size="15" fill="var(--fg)">no</text>
+
+      <rect x="4" y="272" width="196" height="50" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="293" font-size="15" fill="var(--fg)">3. Planning missing,</text>
+      <text x="14" y="314" font-size="15" fill="var(--fg)">not traceability?</text>
+      <line x1="200" y1="297" x2="238" y2="297" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="221" y="290" text-anchor="middle" font-size="15" fill="var(--fg)">yes</text>
+      <rect x="240" y="277" width="116" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="298" y="302" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">BMAD</text>
+      <text x="298" y="336" text-anchor="middle" font-size="15" fill="var(--muted)">needs uv and</text>
+      <text x="298" y="354" text-anchor="middle" font-size="15" fill="var(--muted)">shell access</text>
+
+      <line x1="60" y1="322" x2="60" y2="372" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="70" y="352" font-size="15" fill="var(--fg)">no</text>
+
+      <rect x="4" y="374" width="196" height="50" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="14" y="404" font-size="15" fill="var(--fg)">4. None of the above</text>
+      <line x1="200" y1="399" x2="238" y2="399" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#choose-arrow-fg)"></line>
+      <text x="221" y="392" text-anchor="middle" font-size="15" fill="var(--fg)">then</text>
+      <rect x="240" y="369" width="116" height="60" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="298" y="394" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">OpenSpec, or</text>
+      <text x="298" y="416" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">no framework</text>
+    </svg>
+    <figcaption>Answer the band first: it overrules the questions below it. Then ask them in order
+    and stop at the first yes it allows.</figcaption>
+  </figure>
+
+  <h2 id="write-it-down">Write the decision down where it survives you</h2>
+
+  <p>Whatever you pick, put the decision in a committed file: the date, the failure it was chosen
+  to fix, and the signal Lessons 1 and 2 asked you to pick. Exercise 3's comparison card is this
+  file.</p>
+
+  <p>A choice held only in someone's head gets relitigated by the next person who reads a blog
+  post. A useful norm: whoever proposes switching frameworks brings that signal, counted.</p>
+
+  <h2 id="wrong-answer">When the tree gives the wrong answer</h2>
+
+  <p>The tree assumes you already run Days 1 and 2's habits. If your acceptance criteria still
+  cannot fail a command, every branch is wrong: LID gives each unfalsifiable criterion an ID,
+  OpenSpec archives it, and BMAD marks it <code>ready-for-dev</code>. The fix is upstream, in
+  Day 1's criteria; no framework applies it.</p>
+
+  <p>The tree also assumes one team. A framework chosen for five people and imposed on fifty is a
+  different decision, which this course does not cover. Take your card
+  to your team, not to your organization.</p>
+
+  <p>And for a one-line fix, a throwaway script, or an exploratory spike, skip any framework and
+  any spec: the change is done before a spec would pay for itself.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Two engineers on the same team complain about the same module. One says "every spec
+    attempt turns into a document about the whole system." The other says "we changed this and had
+    no idea what depended on it." A delta-shaped spec unit answers one of them. Which, and why does
+    it do nothing for the other?</summary>
+    <p>The first. A delta says only what this change adds, modifies, or removes, so the part of the
+    system that is not changing never has to be re-described. The second is a traceability
+    failure: a delta records what changed, not which requirement a given line of code serves. That
+    one wants semantic IDs on requirements and annotations in the
+    code.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Two teams give the same answers to all four questions but pick differently and both
+    are right. What did they disagree about?</summary>
+    <p>The cross-axis: whether their specs are meant to live or to expire. The team that will
+    re-read its requirements in six months chooses between OpenSpec's
+    archive-and-fold and LID's tree; the team that will not takes the lightest option that
+    answers its failure: BMAD when planning is missing, otherwise OpenSpec or no framework.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-l4-done" data-progress="d3-l4-read">
+      <label for="d3-l4-done">Lesson 4 read, and I can name my team's failure in one sentence and
+      the question it answers yes to.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Framework documentation accessed 2026-09-22. Versions pinned for Day 3:
+  <code>openspec-04</code>, OpenSpec 1.13.1, released 2026-09-17, from
+  <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">the
+  OpenSpec releases</a>; <code>lid-obs-01</code>, LID commit 831c1959, still the tip of its main
+  branch; <code>bmad-obs-01</code>, BMAD 6.12.0, the npm
+  package's latest tag. Entries marked observed were recorded on the build machine on
+  2026-09-22 in a scratch copy of the Swift lane.</p>
+
+  <ul class="sources">
+    <li><code>lid-11</code> &mdash; the <code>// @spec</code> line comment, placed on the topmost
+    function or module that owns the behavior, from Phase 6 of
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">the LID
+    README</a>.</li>
+    <li><code>lid-12</code>, <code>lid-13</code> &mdash; the <code>[x]</code>, <code>[ ]</code> and
+    <code>[D]</code> status markers, and the semantic ID shape as a root-to-leaf path through the
+    design tree, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">the
+    LID repository's <code>AGENTS.md</code></a>.</li>
+    <li><code>lid-obs-04</code> &mdash; observed: with both LID plugins installed at commit
+    831c1959, about 531 and 559 always-on tokens added to every session before any command ran,
+    read from <code>claude plugin details</code> for each.</li>
+    <li><code>openspec-13</code>, <code>openspec-14</code>, <code>openspec-15</code>,
+    <code>openspec-20</code> &mdash; the delta headers and the date-prefixed folder under
+    <code>changes/archive/</code> that an archived change moves to, with the delta applied to the live
+    specs, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li><code>openspec-06</code> &mdash; <code>openspec/specs/</code> as the folder
+    <code>openspec init</code> scaffolds for the live specs, from
+    <a href="https://openspec.dev/docs/setup" target="_blank" rel="noopener noreferrer">OpenSpec
+    setup</a>.</li>
+    <li><code>openspec-obs-02</code> &mdash; observed: <code>openspec init</code> choosing Claude Code
+    wrote fifteen files and modified none.</li>
+    <li><code>bmad-06</code>, <code>bmad-09</code>, <code>bmad-11</code> &mdash; BMAD's
+    <code>uv</code> requirement, from
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">the
+    BMAD changelog</a>; the <code>uv</code> halt is also in the pinned snapshot's
+    <code>bmad-build</code> skill under <code>starter/vendored/bmad-6.12.0/</code>.</li>
+    <li><code>bmad-12</code>, <code>bmad-13</code> &mdash; a spec broken into an ordered story set,
+    and the status values that include <code>ready-for-dev</code>, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">BMAD
+    autonomous development loops</a>.</li>
+    <li><code>bmad-obs-05</code>, <code>bmad-obs-10</code>, <code>bmad-obs-11</code> &mdash; observed:
+    a default BMAD 6.12.0 install choosing Claude Code wrote 235 files, a <code>/bmad-build</code>
+    session without permission to run shell commands halted before planning, and a
+    <code>/bmad-build</code> pass on Change C marked its spec <code>ready-for-dev</code>.</li>
+    <li><code>practitioners-05</code> &mdash; spec-first, spec-anchored and spec-as-source, from
+    <a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" target="_blank" rel="noopener noreferrer">Birgitta
+    Böckeler's article on spec-driven development tools</a> (2025-10-15).</li>
+    <li><code>enterprise-11</code> &mdash; <code>.claude/settings.json</code> as the committed file
+    shared with everyone in the project, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/02-run-change-c.html">Exercise 2: Run Change C through your track</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/03-late-change-and-card.html">Exercise 3: A late change, then the card you hand your team</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0 on 2026-09-22. Where
+    this page names a command or a file layout, keep its linked source open.</p>
+  </div>
+</footer>
+</body>
+</html>

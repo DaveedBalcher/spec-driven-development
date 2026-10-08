@@ -1,0 +1,29 @@
+# authoring state that is regenerated on every run
+build/state/critiques/
+build/state/run-log/
+build/evidence/
+
+# sandbox build products
+sandbox/swift/.build/
+sandbox/kotlin/build/
+sandbox/kotlin/.gradle/
+sandbox/kotlin/.kotlin/
+
+# scratch copies learners make next to the sandbox
+sandbox/**/run-log.md
+
+# Day 2 works in a full lane copy (day2-work/) that carries its own build products
+day2-work/
+
+# Day 1 works in a full lane copy (day1-work/, a plain copy with no git) and
+# writes its answers to work/; both are made by the exercises and removed by the
+# end-of-day cleanup, and neither belongs in this repository
+day1-work/
+/work/
+
+.DS_Store
+
+# per-day working copies learners make at the course root, and Setup's scratch copy
+day*-work/
+setup-work/
+learner-run-*/

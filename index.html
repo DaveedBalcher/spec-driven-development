@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3 Days of Spec-Driven Development</title>
+<meta name="description" content="Three self-paced days that take an iOS or Android engineer from AI chat to a spec-driven agent loop in Claude Code.">
+<meta name="course:day" content="0">
+<meta name="course:kind" content="index">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="0">
+<meta name="course:slot" content="index">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="./assets/style.css">
+<script src="./assets/env-profile.js"></script>
+<script src="./assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <span class="site-title">3 Days of Spec-Driven Development</span>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <h1>3 Days of Spec-Driven Development</h1>
+
+  <p class="lede">You already use AI every day, as chat: you ask, you read, you paste. This course is
+  the step after that. In three self-paced days of about three hours each you point an agent at a
+  real repository with a spec it can execute, look at its plan before it writes anything, let a
+  runner loop until a test goes green or a gate stops it, have a second agent audit the result
+  against the spec, and finish holding a spec framework you can defend to your team. The tool is
+  Claude Code in the terminal. The sandbox is a small transactions module with the same spec in
+  Swift and Kotlin, and you pick a lane.</p>
+
+  <h2 id="start">Start here</h2>
+
+  <p>Twenty minutes, once, before Day 1: confirm Claude Code runs, pick your lane, copy the sandbox to a
+  working folder of your own, and get one green test run. Do it at your desk with the terminal you
+  actually work in.</p>
+
+  <p><a href="./setup.html">Setup: twenty minutes before Day 1</a> <span class="timing">20 min</span></p>
+
+  <h2 id="lane">Pick your lane</h2>
+
+  <p>Every exercise ships in two lanes with one shared spec: a Swift package and a Kotlin JVM
+  project on Gradle. They produce the same strings, so a lesson never belongs to one platform. Pick
+  the toolchain already installed on your machine and stay in it for all three days.</p>
+
+  <p>The lane buttons at the top of every page remember your choice in this browser. Until you
+  press one &mdash; and with JavaScript off &mdash; pages show both lanes side by side, each under
+  its own name, and nothing is lost.</p>
+
+  <h2 id="days">The three days</h2>
+
+  <div class="daycard">
+    <h3><a href="./day-1-from-chat-to-spec/index.html">Day 1: From chat to spec</a></h3>
+    <p>What an agent has that chat does not, prompting in four named parts, and plan mode. Then the
+    prompt becomes a spec: acceptance criteria a command can fail, and context as a budget you can
+    measure and cut.</p>
+    <p class="daycard-meta">Six lessons on four pages, four exercises, a wrap-up. <span class="timing">153 min with the opener</span></p>
+  </div>
+
+  <div class="daycard">
+    <h3><a href="./day-2-loops-and-your-environment/index.html">Day 2: Loops and your environment</a></h3>
+    <p>The four places drift gets in, a runner that implements and repairs until a stop condition,
+    a fresh-context subagent that audits its own output, and your locked-down environment written
+    down as part of the spec: permissions, read paths, one write path.</p>
+    <p class="daycard-meta">Four lessons, four exercises, a wrap-up. <span class="timing">159 min with the opener</span></p>
+  </div>
+
+  <div class="daycard">
+    <h3><a href="./day-3-choose-your-adventure/index.html">Day 3: Choose your adventure</a></h3>
+    <p>Why a framework at all, what OpenSpec, LID and BMAD share and where they part. You run one
+    track against a feature brief with two deliberate ambiguities, graded by the same acceptance
+    suite whichever track you pick, and leave with a comparison card for your team.</p>
+    <p class="daycard-meta">Five lessons on four pages, three exercises, a wrap-up. <span class="timing">180 min with the opener</span></p>
+  </div>
+
+  <p>Each day stands alone and ships the artifacts the day before produced, so a gap of a week
+  between days costs you nothing.</p>
+
+  <h2 id="viewing">Three ways to read this site</h2>
+
+  <p>Same files, no build step, no account:</p>
+
+  <ul>
+    <li>The hosted pages, wherever your team published this folder.</li>
+    <li>Locally with a server: run <code>python3 -m http.server 8000</code> from the repository
+    root and open <code>http://localhost:8000/spec-driven-development/</code>.</li>
+    <li>Straight from disk: open <code>spec-driven-development/index.html</code> in a browser.
+    Safari blocks browser storage over <code>file://</code>, so progress ticks last only until you
+    close the tab; every page still reads and works.</li>
+  </ul>
+
+  <p>The syllabus, the prerequisites and the folder layout are in
+  <a href="./README.md">README.md</a>, which is the Markdown version of this page.</p>
+
+  <h2 id="progress">Your progress</h2>
+
+  <p>Every lesson and exercise carries a checkbox. Ticks live in this browser under keys
+  beginning <code>sdd.progress.</code>, one per day, never on a server. Your theme, lane and
+  Day 3 track sit beside them under <code>sdd.theme</code>, <code>sdd.lane</code> and
+  <code>sdd.track</code>, so clearing those four names is a clean slate.</p>
+
+  <ul class="progress-summary">
+    <li data-progress-day="0" data-progress-total="4"><strong>Setup</strong> &middot; <span data-progress-value="">&mdash;</span></li>
+    <li data-progress-day="1" data-progress-total="9"><strong>Day 1: From chat to spec</strong> &middot; <span data-progress-value="">&mdash;</span></li>
+    <li data-progress-day="2" data-progress-total="9"><strong>Day 2: Loops and your environment</strong> &middot; <span data-progress-value="">&mdash;</span></li>
+    <li data-progress-day="3" data-progress-total="8"><strong>Day 3: Choose your adventure</strong> &middot; <span data-progress-value="">&mdash;</span></li>
+  </ul>
+
+  <p class="progress-note" data-progress-note="">Counts need JavaScript. With it off, the pages
+  work and the checkboxes stay unticked.</p>
+
+  <div class="progress-tools">
+    <button type="button" data-progress-action="copy" hidden>Copy progress</button>
+    <button type="button" data-progress-action="paste" hidden>Load progress</button>
+  </div>
+
+  <label class="progress-note" for="progress-transfer" hidden>Progress JSON, for moving between
+  browsers</label>
+  <textarea class="progress-transfer" id="progress-transfer" data-progress-transfer="" rows="5"
+    spellcheck="false" hidden></textarea>
+  <p class="progress-note" data-progress-status="" hidden></p>
+</main>
+
+<nav class="pager wrap" aria-label="Course navigation">
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="./setup.html">Setup: twenty minutes before Day 1</a></span>
+</nav>
+
+</body>
+</html>

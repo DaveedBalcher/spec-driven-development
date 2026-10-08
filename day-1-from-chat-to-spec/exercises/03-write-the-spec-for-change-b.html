@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Write the spec for Change B</title>
+<meta name="description" content="Day 1, Exercise 3: turning a feature brief into four numbered criteria a command can fail, then having the agent tell you which one it cannot.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="3">
+<meta name="course:minutes" content="15">
+<meta name="course:slot" content="d1-e3">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-19 cc-core-32">
+  <h1>Write the spec for Change B</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Exercise 3 of 4
+  &middot; <span class="timing">15 min</span></p>
+
+  <p class="lede">Turn a plain-English feature brief into a spec file with four numbered acceptance
+  criteria that a command can fail, and get the agent to tell you which of them it cannot.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>You continue in <code>day1-work</code>, the copy of your lane that Exercise 1 made at the
+  course root; the shipped <code>sandbox/</code> is never edited. Paste this block from the course
+  root &mdash; run <code>cd ..</code> first if your shell is still in the copy &mdash; and it leaves
+  you back there. Every later command and path on this page is written from inside
+  <code>day1-work</code>. Both lanes paste the same block:</p>
+
+  <pre data-lang="bash"><code>cp day-1-from-chat-to-spec/starter/specs/TEMPLATE.md day1-work/specs/daily-summary.md &amp;&amp; cd day1-work &amp;&amp; ls specs</code></pre>
+
+  <p>It prints <code>TEMPLATE.md</code> and <code>daily-summary.md</code>. Open the copy in your
+  editor, and start Claude Code inside <code>day1-work</code> if no session is running there. The
+  skeleton is the starter&rsquo;s, not the lane&rsquo;s own <code>specs/TEMPLATE.md</code>, so both
+  lanes get the same sections; its grid rows carry both lanes&rsquo; commands, and you delete the
+  one that is not yours. You are writing a file today, not code: Day 2 hands it to a runner.</p>
+
+  <details class="reveal">
+    <summary>Starting here, or starting fresh</summary>
+    <p>If you have no <code>day1-work</code> yet, or want a clean one, make it from the course root,
+    then paste the setup block above.</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work</code></pre>
+    </div>
+  </details>
+
+  <p><strong>Fifteen minutes is the budget.</strong> If you reach it before step 5, skip to step
+  6 and expect check one to list what you skipped: bounds and verification come back tonight in the
+  wrap-up&rsquo;s first challenge.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li><strong>Read the brief</strong> in place at
+    <code>../day-1-from-chat-to-spec/starter/change-b-brief.md</code>; nothing copies it. It is in a
+    product manager&rsquo;s words: no file names, no commands, no criteria, and two open questions
+    nobody has answered. Three minutes, once through.</li>
+
+    <li><strong>Fill the goal</strong> in one or two sentences, in behaviour terms &mdash; what is
+    true after the change that is not true now &mdash; and write at least two non-goals, one about
+    the thing sitting next to the change.</li>
+
+    <li><strong>Write four numbered acceptance criteria</strong>, one each for: declined
+    transactions listed but not totalled; a pending total per day beside the posted total; days
+    newest first with no empty day in between; and per-currency totals on a day holding more than one
+    currency. The brief asks for the no-empty-day half to stay true, not to become true: today&rsquo;s
+    summary never returns an empty day, so that half is a regression guard, and its assertion needs
+    an input that could produce one.</li>
+
+    <li><strong>Fill the criterion-to-command grid</strong> underneath: for each number, the command
+    you would run and the test name that would go red without it. A row you cannot fill is a
+    criterion to rewrite.</li>
+
+    <li><strong>Fill bounds, verification and done from the template.</strong> Bounds are paths, in
+    and out; verification is the exact command and what counts as success. Add the one line to the
+    template&rsquo;s definition of done that is specific to Change B. Then give each of the
+    brief&rsquo;s two open questions its destination, as Lessons 4 and 5 list them: a numbered criterion
+    when you can decide it, folded into an existing criterion&rsquo;s assertion or input so the
+    count stays at four, a non-goal when the answer is no, and a stop condition when deciding it
+    changes what a test asserts and nobody has decided it; when nobody can, it goes back to whoever
+    can. You can decide it when the answer follows from a convention already in the module.</li>
+
+    <li><strong>Clear the conversation, then audit.</strong> In Claude Code, run <code>/clear</code>,
+    then paste the prompt below exactly as written.</li>
+
+    <li><strong>Rewrite and re-run.</strong> For every criterion the agent says it cannot make fail,
+    rewrite it and paste the same prompt again; two criteria proven by one assertion get the same
+    treatment. One answer is not a rewrite: if a criterion cannot fail because no input in the
+    fixture triggers it, the fix is an input, not a sentence. Note in its grid row the input the
+    assertion has to build, and move on.</li>
+
+    <li><strong>Confirm you changed nothing but the spec</strong> with checks three and four under
+    <a href="#self-check">Self-check</a>.</li>
+
+    <li><strong>Compare</strong> against the reveals at the bottom.</li>
+  </ol>
+
+  <h2 id="prompt">The audit prompt</h2>
+
+  <p>Paste this in full. The paragraph that forbids edits is the one people trim, and step 8 is how
+  you find out whether it reached the agent.</p>
+
+  <pre data-lang="text"><code>Read the spec at specs/daily-summary.md and the existing LedgerSummary source and tests.
+
+For each numbered acceptance criterion, name the single command and the single test assertion that would fail if that criterion were not met. If a criterion cannot be made to fail by any command, say which one and explain in one sentence why not. If two criteria would be proven by the same assertion, say which two.
+
+Do not change any file. Do not write the implementation. Do not propose new criteria unless I ask.</code></pre>
+
+  <p>The same prompt ships at
+  <code>../day-1-from-chat-to-spec/starter/prompts/e3-audit-criteria.txt</code> if you would rather
+  paste from a file. <code>/clear</code> empties the conversation, so the audit cannot score your
+  spec against a transcript it can still see; Lesson 6 explains it as a budget decision.</p>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Four commands decide it</p>
+
+    <p>Run all four from inside <code>day1-work</code>. One: no placeholder survives.</p>
+
+    <pre data-lang="bash"><code>grep -n '&lt;' specs/daily-summary.md</code></pre>
+
+    <p>It prints nothing. Any line it prints is template guidance, in angle brackets, that you left
+    in place.</p>
+
+    <p>Two: four criteria, four grid rows.</p>
+
+    <pre data-lang="bash"><code>grep -c '^| [0-9] |' specs/daily-summary.md</code></pre>
+
+    <p>It prints <code>4</code>, as it does on an untouched template: it catches a row you deleted,
+    not one you left empty.</p>
+
+    <p>Three: the spec is the only thing the agent left behind. This is Exercise 1&rsquo;s comparison
+    against the shipped lane, in the brief form that names files instead of printing them:</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>diff -rq -x .build ../sandbox/swift .</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>diff -rq -x build -x .gradle -x .kotlin ../sandbox/kotlin .</code></pre>
+    </div>
+
+    <p>One line comes back, and it is your spec:</p>
+
+    <pre data-lang="text"><code>Only in ./specs: daily-summary.md</code></pre>
+
+    <p>A <code>Files &hellip; differ</code> line naming a source file is the finding. An
+    <code>Only in .: LEDGER-7.md</code> line is Exercise 2's ticket still in the copy, not a
+    finding.</p>
+
+    <p>Four: the suite is still green, because nothing implemented anything:</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash" data-run="swift"
+           data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+      <p>The verdict and count lines of a green run, recorded from this course's sandbox on
+      2026-09-22:</p>
+      <pre data-lang="text"><code>Test Suite 'All tests' passed at 2026-09-22 17:15:20.343.
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.019 (0.024) seconds</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+      <p>Gradle's verdict on a green run, recorded the same day:</p>
+      <pre data-lang="text"><code>BUILD SUCCESSFUL in 530ms</code></pre>
+    </div>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> every row of your grid names a command and
+  a test name, the audit reports no criterion it could not make fail with an input you named and no
+  two criteria proven by one assertion, the diff against the shipped lane names only your spec, and
+  your lane&rsquo;s test command is still green.</p>
+
+  <h2 id="wrong">If you see this instead</h2>
+
+  <p><strong>If the diff reports a source file as differing</strong> &mdash; your lane&rsquo;s
+  <code>LedgerSummary</code> source, say &mdash; the agent implemented instead of auditing. Save
+  your spec, take the reset at the bottom of this page, put the spec back, then paste all three
+  paragraphs and audit again.</p>
+
+  <p><strong>If it names a second file of its own</strong> &mdash; an
+  <code>Only in ./specs: change-b.md</code> line, say &mdash; the agent wrote its own spec rather
+  than reading yours. Delete it: the audit is only worth something against the file you wrote.</p>
+
+  <p><strong>If the audit objects to nothing</strong>, read its rows, not its verdict. Two rows
+  naming one assertion is a finding. So is a row naming a test that already exists and already
+  passes: that criterion describes today&rsquo;s behaviour, not the change.</p>
+
+  <p><strong>If the test command goes red</strong>, something edited code: a red suite today is a
+  fact about the run and not about your spec.</p>
+
+  <h2 id="compare">Compare</h2>
+
+  <p>Open these after your own four are written, not before. The answer key at
+  <a href="../starter/answers/e3-spec-daily-summary.md"><code>day-1-from-chat-to-spec/starter/answers/e3-spec-daily-summary.md</code></a>
+  points at the full reference spec, <code>change-b-reference-spec.md</code>, beside it.</p>
+
+  <details class="reveal">
+    <summary>The reference four criteria, with their grid rows</summary>
+    <ol>
+      <li>A declined transaction appears in its day's <code>transactions</code> list and contributes
+      to no total on that day.</li>
+      <li>Each day reports a pending total separately from its posted total, and a transaction
+      contributes to exactly one of the two.</li>
+      <li>Day sections are returned newest day first, and a day with no transactions is not returned
+      at all.</li>
+      <li>A day holding more than one currency reports a posted total and a pending total per
+      currency, and never sums two currencies into one figure.</li>
+    </ol>
+
+    <p>The test names are written the Swift lane&rsquo;s way. In the Kotlin lane each is a
+    backticked sentence in <code>LedgerSummaryTest</code>, like the existing
+    <code>`days come out oldest first with no gaps invented`</code>.</p>
+
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Reference criterion-to-command grid">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Command that fails if this is broken</th><th>Test or assertion</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><code>swift test</code> / <code>./gradlew test</code></td>
+          <td><code>testDeclinedIsListedButNotTotalled</code> &mdash; 2026-03-03 lists
+          <code>LK-006</code> among its transactions, and no total on that day includes
+          <code>-13999</code>.</td></tr>
+          <tr><td>2</td><td><code>swift test</code> / <code>./gradlew test</code></td>
+          <td><code>testPendingHasItsOwnTotal</code> &mdash; 2026-03-03's USD pending total is
+          <code>-1725</code> and its USD posted total is <code>0</code>.</td></tr>
+          <tr><td>3</td><td><code>swift test</code> / <code>./gradlew test</code></td>
+          <td><code>testDaysAreNewestFirstWithNoGaps</code> &mdash; the fixture returns
+          2026-03-06, 03-05, 03-04, 03-03, 03-02 in that order; with 2026-03-04's rows removed the
+          result has four sections and no 2026-03-04.</td></tr>
+          <tr><td>4</td><td><code>swift test</code> / <code>./gradlew test</code></td>
+          <td><code>testPerCurrencyTotalsOnAMixedDay</code> &mdash; 2026-03-03 reports EUR, GBP and
+          USD separately, and its EUR posted total is <code>-4890</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Every row names a different assertion and a different fixture fact, which is the check on the
+    four. Criteria 1 and 2 keep their &ldquo;and&rdquo; despite the split rule in Lessons 4 and 5 because
+    one assertion proves both halves; split, they would be two rows naming the same assertion. Row 3
+    needed an input: the fixture's five days are consecutive, so nothing in it can make the
+    no-empty-days clause fail, and the assertion removes a day's rows itself. Today&rsquo;s
+    <code>byDay</code> already never returns an empty day, so that clause is a regression guard; only
+    the newest-first order is new. The input is step
+    7&rsquo;s exception: settle it in the spec now, rather than find out on Day 2 that a runner went
+    green without ever testing it.</p>
+
+    <p>Bounds name paths: the summary source and its test file may change; the fixture,
+    <code>CLAUDE.md</code> and the formatter that Exercise 2 touched may not. The reference adds one
+    line to the template&rsquo;s five in the definition of done: no transaction was dropped from a
+    day section, only excluded from a total. Its notes also say where the two open questions went:
+    the declined-only day became a stop condition, and the pending refund was answered, because a
+    signed pending total follows the module&rsquo;s existing arithmetic, and it folds into criterion
+    2&rsquo;s assertion rather than becoming a fifth criterion.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The two unfalsifiable criteria almost everyone writes</summary>
+    <p><strong>"The summary is accurate."</strong> Accurate against what? With no oracle, neither you
+    nor the agent can tell whether it holds, so whoever is holding the diff marks it done. Rewritten:
+    <em>for every day in the fixture, the posted total for a currency equals the sum of the
+    <code>amountMinor</code> values of that day's posted transactions in that currency, and equals
+    nothing else.</em> Now both sides are numbers from a file in the repository, and a test can
+    compute both.</p>
+
+    <p><strong>"Performance is acceptable for large ledgers."</strong> Acceptable to whom, at what
+    size, measured with what? Making it checkable means inventing a row count, a pass count and a
+    time budget, and that invention is the tell. For a module this size, delete the criterion and
+    write a non-goal instead.</p>
+
+    <p>Two more the audit will not flag, because a command can fail for both. "Add a
+    <code>pendingTotalMinor</code> field to <code>DaySection</code>" is a plan step wearing a
+    criterion's number: criteria say what is true afterwards, plans say how. "Refactor
+    <code>byDay</code> for readability" is checkable only by opinion, and a second change riding
+    along with the first.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>The reset throws the copy away and makes a new one from the shipped lane, your spec included.
+  Save the spec first if you want to compare it on Day 2, which runs a sharpened reference spec either way:</p>
+
+  <pre data-lang="bash"><code>mkdir -p ../work &amp;&amp; cp specs/daily-summary.md ../work/</code></pre>
+
+  <p>Then, from inside <code>day1-work</code>:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <p>Put your spec back with <code>cp ../work/daily-summary.md specs/</code>, and start Claude Code
+  again inside the new copy.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-e3-done" data-progress="d1-e3-done">
+      <label for="d1-e3-done">Exercise 3 done: four criteria, four grid rows, and an audit that
+      found no criterion it could not make fail with an input you named.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Terminal output here was recorded from this course's sandbox in both lanes on 2026-09-22, the
+  day the cited documentation was accessed.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code> resets the session to an empty context,
+    from the <a href="https://code.claude.com/docs/en/commands" target="_blank"
+    rel="noopener noreferrer">Claude Code slash commands reference</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the Claude Code version this course was checked against,
+    from the <a href="https://code.claude.com/docs/en/changelog" target="_blank"
+    rel="noopener noreferrer">Claude Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/04-spec-as-input.html">Lessons 4 and 5: The spec and its criteria</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/06-context-is-a-budget.html">Lesson 6: Context is a budget</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

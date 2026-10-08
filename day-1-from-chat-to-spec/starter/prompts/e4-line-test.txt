@@ -1,0 +1,1 @@
+Read CLAUDE.md in this project. For each line or section, tell me the specific mistake you would make if it were not there. Where you cannot name a specific mistake, say "no mistake". Do not edit the file and do not rewrite it for me - I am doing the cutting.

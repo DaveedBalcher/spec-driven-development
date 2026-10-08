@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup: twenty minutes before Day 1</title>
+<meta name="description" content="Confirm Claude Code runs, pick a lane, copy the sandbox to a working folder, and get one green test run before Day 1.">
+<meta name="course:day" content="0">
+<meta name="course:kind" content="setup">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="20">
+<meta name="course:slot" content="setup">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="./assets/style.css">
+<script src="./assets/env-profile.js"></script>
+<script src="./assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="./index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-31 cc-core-32">
+  <h1>Setup: twenty minutes before Day 1</h1>
+
+  <p class="meta-line">Day 0 &middot; <span class="timing">20 min</span> &middot; Do this once, at the
+  desk where you will do the course.</p>
+
+  <p class="lede">Four things, in order: confirm Claude Code runs and is signed in, pick the lane you
+  will use for three days, copy the sandbox somewhere you can break it, and watch one test run go
+  green. Nothing here teaches an idea. It is the twenty minutes that keep Day 1 from turning into a
+  toolchain afternoon.</p>
+
+  <h2 id="install">Confirm Claude Code runs</h2>
+
+  <p>This course assumes Claude Code is already installed in your terminal and signed in with
+  <span data-env="signIn">the sign-in your team uses for Claude Code</span>. One command confirms
+  it:</p>
+
+  <pre data-lang="bash"><code>claude --version</code></pre>
+
+  <p>It prints the installed version. Every mechanical claim in this course &mdash; keystrokes, mode
+  names, settings keys, the strings on the approval prompt &mdash; was checked against Claude Code
+  2.1.280 on 2026-09-22. A newer version is expected and fine; if a keystroke on a lesson page does
+  not match what your terminal does, trust your terminal and check the linked documentation at the
+  bottom of that page.</p>
+
+  <div class="callout note">
+    <span class="callout-title">Connectors can wait</span>
+    <p>If your team runs read-only connectors, such as
+    <span data-env="sourceConnector">your read-only source-control connector</span>, none of them are
+    needed today. Day 2 is where the environment gets written down and turned on. Today the only
+    thing that has to work is the terminal.</p>
+  </div>
+
+  <h2 id="lane">Pick a lane</h2>
+
+  <p>The sandbox ships twice from one spec: a Swift package and a Kotlin JVM project on Gradle. The
+  two lanes produce the same output strings, so every lesson and every exercise works in either.
+  Pick the toolchain already on your machine and stay in it for three days. Switching mid-course
+  costs you the state you built up, not the ideas.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p>You need Swift 6.2 or later, from Xcode 26 or a standalone toolchain. Check it with
+    <code>swift --version</code>.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p>You need a JDK 17 or later; the Gradle wrapper is committed, so you do not install Gradle
+    yourself. Check the JDK with <code>java -version</code>.</p>
+  </div>
+
+  <p>The lane buttons at the top of this page remember your choice in this browser. Until you press
+  one &mdash; and with JavaScript off &mdash; both lanes stay visible under their own names and
+  nothing is hidden from you.</p>
+
+  <h2 id="copy">Copy the sandbox to a working folder</h2>
+
+  <p>You never edit <code>sandbox/</code> itself. Every day starts from a fresh copy, which is
+  what makes an exercise repeatable and a mistake cheap. For this check, make a scratch copy at
+  the course root called <code>setup-work/</code>, the same place Day 1's first exercise will make
+  its own <code>day1-work/</code>.</p>
+
+  <p>Run this from the course folder, the one holding this page, in your clone or download of the
+  course repository; the hosted pages alone have no <code>sandbox/</code> to copy.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cp -R sandbox/swift setup-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cp -R sandbox/kotlin setup-work</code></pre>
+  </div>
+
+  <h2 id="green">Run the tests once</h2>
+
+  <p>This is the whole point of setup: a green run before Day 1, so that when Day 1 turns a test red
+  on purpose you know the red came from the lesson and not from your machine. The test command runs
+  from the course folder and never asks you to change directory.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>swift test --package-path setup-work</code></pre>
+    <p>A fresh copy on this machine, on 2026-09-23, printed this verdict for the whole suite and its
+    count line:</p>
+    <pre data-lang="text"><code>Test Suite 'All tests' passed at 2026-09-23 16:04:08.343.
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.013 (0.016) seconds</code></pre>
+    <p>Your timestamp and durations will differ; the counts will not. The skipped test is
+    deliberate, and Day 1 turns it on. The run also prints <code>Test run with 0 tests in 0 suites
+    passed</code>: the suite is XCTest, so swift-testing has nothing of its own to run.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>setup-work/gradlew -p setup-work test</code></pre>
+    <p>A fresh copy on this machine, on 2026-09-23, printed Gradle's verdict, with the duration and
+    the link shortened to &hellip; here:</p>
+    <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+5 actionable tasks: 5 executed
+Consider enabling configuration cache to speed up this build: …</code></pre>
+    <p><code>BUILD SUCCESSFUL</code> is the line that decides; the configuration-cache line is a
+    hint, and a re-run reports the tasks as up to date. This lane's summary carries no test
+    counts.</p>
+  </div>
+
+  <p>What matters in both lanes is zero failures: the Swift count line says so, and in the Kotlin
+  lane <code>BUILD SUCCESSFUL</code> does. That is all <code>setup-work/</code> was for: nothing
+  later in the course uses it, so delete it with <code>rm -rf setup-work</code> once you have seen
+  the green run. Day 1 makes its own copy.</p>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <div class="callout note">
+      <span class="callout-title">Swift, first run</span>
+      <p>The first <code>swift test</code> run builds the package before any test runs, so it is
+      slower than later runs. It downloads nothing, so it needs no network access.</p>
+    </div>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <div class="callout warning">
+      <span class="callout-title">Kotlin, first run</span>
+      <p>The first <code>gradlew</code> run downloads the Gradle distribution and the test libraries,
+      so it needs network access and takes a few minutes; later runs are seconds. If it stops at
+      something like <code>Could not resolve all files</code> or a timeout against a distribution URL,
+      that is the network, not your code. On a restricted machine, run it once where downloads are
+      allowed, or ask your platform team which internal mirror to point it at.</p>
+    </div>
+  </div>
+
+  <ul>
+    <li><code>claude: command not found</code> means the install put the binary somewhere your shell
+    does not look. Open a new terminal window first; that fixes most of them.</li>
+    <li>Any failure that names a test, rather than the build, means the copy is not clean. Delete
+    <code>setup-work</code> and copy it again.</li>
+  </ul>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <ul>
+      <li><code>swift: command not found</code>, or a Swift version below 6.2, means the toolchain is
+      not the one on your <code>PATH</code>. Xcode users: check with <code>xcode-select -p</code>.</li>
+      <li><code>PCH was compiled with module cache path</code> followed by <code>missing required module
+      'SwiftShims'</code> means the copy brought a <code>.build</code> folder with it, left by a build
+      run inside <code>sandbox/swift</code>. Delete <code>setup-work/.build</code> and run the tests
+      again. Delete <code>sandbox/swift/.build</code> too so the next copy starts clean; removing a
+      build product is not editing the sandbox.</li>
+    </ul>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <ul>
+      <li><code>java: command not found</code>, or a run that fails with an unsupported class file
+      version, means the JDK on <code>PATH</code> is missing or older than 17. Point
+      <code>JAVA_HOME</code> at a JDK 17 or later.</li>
+    </ul>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <p>Four lines. Tick each one when it is true on your machine, not when it sounds true.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="setup-1" data-progress="setup-version">
+      <label for="setup-1"><code>claude --version</code> prints a version, and the tool is signed
+      in: starting <code>claude</code> opens a session instead of asking you to log in.</label>
+    </li>
+    <li>
+      <input type="checkbox" id="setup-2" data-progress="setup-lane">
+      <label for="setup-2">I know which lane I am in, and its toolchain check printed a version.</label>
+    </li>
+    <li>
+      <input type="checkbox" id="setup-3" data-progress="setup-copy">
+      <label for="setup-3">I copied my lane to <code>setup-work/</code> at the course root and left
+      <code>sandbox/</code> itself untouched.</label>
+    </li>
+    <li>
+      <input type="checkbox" id="setup-4" data-progress="setup-green">
+      <label for="setup-4">The test run finished with zero failures, and I saw the count line or
+      <code>BUILD SUCCESSFUL</code> myself.</label>
+    </li>
+  </ul>
+
+  <p class="progress-note" data-progress-note="">Ticks need JavaScript and stay in this browser.</p>
+
+  <h2 id="next">What Day 1 expects</h2>
+
+  <p>Day 1 assumes exactly the four lines above and nothing else: no editor plugin, no connectors, no
+  account beyond the sign-in. It opens with a ten-minute video, then six short lessons and four
+  exercises, and it makes its own copy of the sandbox in the first exercise.</p>
+
+  <div class="callout done-when">
+    <span class="callout-title">Done when</span>
+    <p>All four self-check lines are true and you have seen a green test run in your own terminal
+    with your own eyes.</p>
+  </div>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-31</code> &mdash; <code>claude --version</code> reports the installed version.
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>, accessed 2026-09-22.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, 2.1.280, dated
+    2026-09-22.
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>, accessed 2026-09-22.</li>
+  </ul>
+
+  <p>No ledger entry covers the install command itself, so this page links the official
+  documentation instead of restating it.</p>
+</main>
+
+<nav class="pager wrap" aria-label="Course navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="./index.html">Course home</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="./day-1-from-chat-to-spec/index.html">Day 1: From chat to spec</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. The tool ships fast: where this page names
+    a command, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

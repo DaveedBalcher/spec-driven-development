@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The runner: non-stop until a stop condition, with limited gates</title>
+<meta name="description" content="Day 2, Lesson 2: a skill that implements, tests and repairs without stopping to chat, and the three exits that make that acceptable.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="2">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d2-l2">
+<meta name="course:video" content="Ib5GBkD555M">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-automation-01 cc-automation-03 cc-automation-18 cc-automation-19 cc-automation-20 cc-automation-21 cc-automation-23 cc-automation-24 cc-automation-27 cc-core-19 cc-core-25 cc-core-26 cc-core-27 cc-core-30 cc-core-32 cc-core-35">
+  <h1>The runner: non-stop until a stop condition, with limited gates</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot; Lesson
+  2 of 4 &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">A runner is a procedure the agent follows on its own: implement the spec, run
+  the tests, repair what is red, and keep going without stopping to chat. One iteration cap and a
+  small, named set of gates make that acceptable, because you know before it starts what will stop
+  it.</p>
+
+  <div class="video" data-video-id="Ib5GBkD555M" data-start="352" data-end="536"
+       data-video-title="Why Software Factories Fail (AI Engineer, 2026-07-23), 5:52 to 8:56">
+    <span class="video-kicker">Watch first &middot; 3 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=Ib5GBkD555M&amp;t=352s"
+      target="_blank" rel="noopener noreferrer">Why Software Factories Fail</a></p>
+    <p class="video-meta">AI Engineer, 2026-07-23. Segment 5:52 to 8:56, two chapters: the
+    lights-off factory, where the agents build and nobody reads the code, then the speaker's own
+    July 2025 experiment with one, which fell apart on an issue no amount of prompting could fix,
+    in code nobody had read for three months. Watch for the absences rather than the failures:
+    what nobody was looking at, and the point at which someone would have had to be asked a
+    question. Hold that point in mind, because it is what the rest of this lesson calls a gate. His
+    fix, plan up front and turn review back on, is the closing chapters from 14:58, which you watched
+    in Day 1's Lesson 4.</p>
+  </div>
+
+  <h2 id="what">What a runner is</h2>
+
+  <p>A runner is a skill: a Markdown file at
+  <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> that you invoke by name with an
+  argument.</p>
+
+  <pre data-lang="text"><code>/run-spec specs/daily-summary.md</code></pre>
+
+  <p>The argument is the spec's path. The body is the procedure: read the spec and its in-bounds
+  files, make the smallest change that meets an unmet criterion, run the spec's verification
+  command, log the result, and decide whether to go again. Nothing on this page needs running:
+  Exercise 1 makes <code>day2-work</code>, the copy of your lane at the course root, installs the
+  runner and the Change B spec into it, and runs what you see here. The shipped
+  <code>sandbox/</code> is never edited.</p>
+
+  <h2 id="exits">Three ways a run ends, and only three</h2>
+
+  <p>Green, the iteration cap, or a gate. Named before the first iteration, each exit hands you a
+  different next action: ship and review, find out why five passes were not enough, or answer one
+  question.</p>
+
+  <p>Green means the spec's verification command, your lane's test command, exited zero:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+  </div>
+
+  <p>The cap is <code>MAX_ITERATIONS = 5</code> in the skill Exercise 1 runs: if iteration
+  five ends red, the runner stops, prints the failure, and says the cap fired. Without a cap, a
+  runner can spend an afternoon repairing the same assertion.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 368 236" role="img" aria-labelledby="run-title run-desc">
+      <title id="run-title">The runner loop and its three exits</title>
+      <desc id="run-desc">Time runs left to right. The spec feeds implement, implement feeds test,
+      and a dashed return arrow labelled repair runs below those two boxes from test back into
+      implement; that return is the only loop in the drawing. A run leaves the loop by exactly one
+      of three exits drawn to the right of test: green, meaning the tests exited zero; cap, meaning
+      iteration 5 ended red; and gate, meaning one question that stops the run. The gate is drawn in
+      the accent colour because it is the exit that comes back to you. One row per pass is appended
+      to run-log.md when the test command returns.</desc>
+
+      <defs>
+        <marker id="run-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="run-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+        <marker id="run-arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"></path>
+        </marker>
+      </defs>
+
+      <rect x="2" y="83" width="44" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="24" y="108" text-anchor="middle" font-size="15" fill="var(--fg)">spec</text>
+
+      <line x1="46" y1="103" x2="58" y2="103" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#run-arrow-fg)"></line>
+
+      <rect x="60" y="83" width="80" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="100" y="108" text-anchor="middle" font-size="15" fill="var(--fg)">implement</text>
+
+      <line x1="140" y1="103" x2="152" y2="103" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#run-arrow-fg)"></line>
+
+      <rect x="154" y="83" width="36" height="40" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="172" y="108" text-anchor="middle" font-size="15" fill="var(--fg)">test</text>
+
+      <path d="M165,123 V154 H100 V125" fill="none" stroke="var(--fg)" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#run-arrow-fg)"></path>
+      <text x="132" y="172" text-anchor="middle" font-size="15" fill="var(--fg)">repair</text>
+
+      <path d="M190,95 H198 V37 H206" fill="none" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#run-arrow-fg)"></path>
+      <rect x="208" y="10" width="158" height="54" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="216" y="34" font-size="15" font-weight="650" fill="var(--fg)">green</text>
+      <text x="216" y="56" font-size="15" fill="var(--fg)">tests exited zero</text>
+
+      <line x1="190" y1="103" x2="206" y2="103" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#run-arrow-fg)"></line>
+      <rect x="208" y="76" width="158" height="54" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="216" y="100" font-size="15" font-weight="650" fill="var(--fg)">cap</text>
+      <text x="216" y="122" font-size="15" fill="var(--fg)">iteration 5 ended red</text>
+
+      <path d="M190,111 H198 V169 H206" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#run-arrow-accent)"></path>
+      <rect x="208" y="142" width="158" height="54" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <text x="216" y="166" font-size="15" font-weight="650" fill="var(--fg)">gate</text>
+      <text x="216" y="188" font-size="15" fill="var(--fg)">one question, stop</text>
+
+      <line x1="182" y1="199" x2="182" y2="125" stroke="var(--muted)" stroke-width="1" marker-end="url(#run-arrow-muted)"></line>
+      <text x="4" y="205" font-size="15" fill="var(--muted)">one row per pass</text>
+      <text x="4" y="223" font-size="15" fill="var(--muted)">appended to run-log.md</text>
+    </svg>
+    <figcaption>One loop, three ways out: the exit that fires decides what you do next.</figcaption>
+  </figure>
+
+  <h2 id="gate">What a gate is</h2>
+
+  <p>A gate is three things: a question answerable in one sentence, the evidence to answer it in
+  under a minute, and two or three answers to choose from. &ldquo;Is this okay?&rdquo; is none of
+  them. It sends you into the code to invent the options, the work the runner was meant to
+  spare you.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="text"><code>GATE: criterion 4 asks for the totals in currency-code order, and the tidiest
+home for that comparator is Sources/LedgerKit/Transaction.swift, which the spec
+lists as out of bounds.
+
+Evidence:
+  the failure that sent me there, quoted whole: the totals order is not
+  stable across runs, from this iteration's test output
+
+Answers:
+  A. Widen the bounds to include Transaction.swift.
+  B. Keep the sort private inside LedgerSummary.swift.
+  C. Stop here; I will re-scope the spec.</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="text"><code>GATE: criterion 4 asks for the totals in currency-code order, and the tidiest
+home for that comparator is src/main/kotlin/ledgerkit/Transaction.kt, which the
+spec lists as out of bounds.
+
+Evidence:
+  the failure that sent me there, quoted whole: the totals order is not
+  stable across runs, from this iteration's test output
+
+Answers:
+  A. Widen the bounds to include Transaction.kt.
+  B. Keep the sort private inside LedgerSummary.kt.
+  C. Stop here; I will re-scope the spec.</code></pre>
+  </div>
+
+  <p>That is the shipped runner's example in your lane's paths, and the gate Exercise 1's
+  reference log records; illustrative, not captured from a run. A real gate quotes that failure
+  whole, never describes it: an error you must go and find costs the minute the gate existed to
+  save.</p>
+
+  <h2 id="three-gates">The three gates that ship with the starter runner</h2>
+
+  <ul>
+    <li><strong>Bounds gate:</strong> a file outside the spec's bounds must change, or is the better
+    home for the change, including a test file the spec does not list. The runner neither widens the
+    bounds nor quietly takes the in-bounds route; it offers that route as an answer.</li>
+    <li><strong>Repeat-failure gate:</strong> the same failure occurs twice, byte for byte.</li>
+    <li><strong>Line-budget gate:</strong> the diff exceeds the spec's line budget: 250 changed lines
+    in the Change B spec, 200 when a spec names none.</li>
+  </ul>
+
+  <p>The repeat-failure gate is the one people leave out, and it saves the most time: a repair loop
+  that cannot change the failure text is repeating, not converging. The bounds gate stops the runner
+  reaching green by editing files you never approved: widening the bounds is your decision.</p>
+
+  <h2 id="memory">The loop's memory is the filesystem</h2>
+
+  <p>The runner appends one row to <code>run-log.md</code> when the test command returns: the pass
+  number, the change, the test result, the next decision. A gate adds a row, and your answer
+  another.</p>
+
+  <p>That file is the run's memory; the conversation is not. A compaction replaces the conversation
+  with a structured summary, <code>/clear</code> empties it, and tomorrow's session never had it.
+  All three keep the file, so a <code>/clear</code> between attempts costs nothing you needed.
+  Attach the run log to the pull request beside the diff.</p>
+
+  <h2 id="interval">Re-running it on an interval</h2>
+
+  <p><em>Preview, not needed for Exercise 1.</em></p>
+
+  <p><code>/loop</code> re-runs a prompt in the session you are in &mdash;
+  <code>/loop 5m check if the deployment finished and tell me what happened</code> &mdash; or a
+  skill, so <code>/loop 20m /review-pr 1234</code> puts one on a timer. A recurring loop expires
+  seven days after creation, firing once more before deleting itself. <kbd>Esc</kbd> stops a
+  self-paced loop (one started with no interval) while it waits for the
+  next iteration.</p>
+
+  <p>Three surfaces repeat work, and the floor is where they differ. <code>/loop</code> and Desktop scheduled tasks go down to one
+  minute; cloud Routines, managed with <code>/schedule</code> or its alias <code>/routines</code>,
+  have a one-hour minimum.</p>
+
+  <h2 id="orchestration">Orchestration is the same loop one level up</h2>
+
+  <p><em>Preview, not needed for Exercise 1.</em></p>
+
+  <p>A main session can dispatch a
+  <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">subagent</a>
+  per acceptance criterion and a separate reviewer, then gates once. A
+  subagent is a Markdown file with YAML frontmatter under <code>.claude/agents/</code>.
+  <code>tools:</code> narrows what the role may touch (<code>tools: Read, Glob, Grep</code> for an
+  auditor that must not write); leaving it out inherits everything. <code>model:</code> picks the
+  role's model. Write it explicitly: Lesson 3 covers its values and why omitting it undoes the
+  arrangement.</p>
+
+  <p>That is loop economics: a cheap worker and an expensive reviewer often beat one expensive
+  everything. Claude Code ships built-in subagents, <code>Explore</code> and
+  <code>Plan</code> among them, so check whether the role already exists.</p>
+
+  <h2 id="when-not">When not to loop</h2>
+
+  <p>Loop only where a command can tell you that you are done. If a criterion is a judgement call
+  (the API reads naturally, performance is acceptable), the runner converges on something green
+  and wrong, because green is its only signal. Send those criteria back to the spec first.</p>
+
+  <p>A loop also needs an undo, and <code>day2-work</code> has one without a repository. The clean
+  tree is the shipped lane, so a recursive diff against it lists every file the runner touched. It
+  skips the runner's own files (<code>.claude/</code>, <code>specs/</code> and
+  <code>run-log.md</code>) and your lane's build output:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p><code>.build/</code>, the only folder <code>swift test</code> adds.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p><code>build/</code>, <code>.gradle/</code> and <code>.kotlin/</code>, the folders
+    Gradle and the Kotlin compiler write.</p>
+  </div>
+
+  <p>Diff the spec and the runner against their starters too, because a runner stuck on red is
+  most tempted to loosen its own spec. From inside <code>day2-work</code>, in either lane, these
+  print nothing while both are untouched:</p>
+
+  <pre data-lang="bash"><code>diff ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/daily-summary.md
+diff ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/SKILL.md</code></pre>
+
+  <p>If either diff names a change you did not approve, the rollback is a fresh copy of the
+  shipped lane. Exercise 1 gives the lane diff in its self-check and the reset at its end.</p>
+
+  <p>Claude Code also keeps checkpoints, reachable with <code>/rewind</code> or <kbd>Esc</kbd>
+  twice on an empty prompt. Treat them as a convenience on top of the reset, not the undo.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your runner is on iteration four of the same failing assertion. Which stop condition
+    should have fired earlier, and what would it have put in front of you?</summary>
+    <p>The repeat-failure gate, which trips when a failure recurs byte for byte. It would have shown
+    you the identical failing output twice alongside the diff that failed to change it, which is the
+    evidence that repair is not converging. The cap would have caught it too, but
+    only when iteration five ended red.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Why does the runner write each iteration to a file instead of relying on the
+    conversation it is already having?</summary>
+    <p>Because the run may outlive the context it started in. A file survives compaction, a
+    <code>/clear</code>, and tomorrow's session; the transcript does not, and a loop whose memory can
+    evaporate cannot tell you what it already tried.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-l2-done" data-progress="d2-l2-read">
+      <label for="d2-l2-done">Lesson 2 read, and I can name the three exits and the three gates
+      without looking.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation, all accessed 2026-09-22 against version 2.1.280.</p>
+
+  <ul class="sources">
+    <li><code>cc-automation-01</code>, <code>cc-automation-03</code> &mdash; the project skill path
+    <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> and invoking a skill by name with an
+    argument, from
+    <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener noreferrer">Agent
+    Skills</a>.</li>
+    <li><code>cc-automation-18</code>, <code>cc-automation-19</code>, <code>cc-automation-20</code>,
+    <code>cc-automation-21</code>, <code>cc-automation-23</code>
+    &mdash; <code>/loop</code> on a prompt and on a skill, the seven-day expiry, <kbd>Esc</kbd> to
+    stop a self-paced loop (no interval given) while it waits, and the one-minute floor for <code>/loop</code> and Desktop tasks against the one-hour floor for
+    cloud Routines, from
+    <a href="https://code.claude.com/docs/en/scheduled-tasks" target="_blank" rel="noopener noreferrer">Scheduled
+    tasks</a>.</li>
+    <li><code>cc-automation-24</code> &mdash; <code>/schedule</code> and its <code>/routines</code>
+    alias for creating and managing a cloud Routine, from
+    <a href="https://code.claude.com/docs/en/routines" target="_blank" rel="noopener noreferrer">Routines</a>.</li>
+    <li><code>cc-automation-27</code> &mdash; <code>/rewind</code> and
+    <kbd>Esc</kbd> <kbd>Esc</kbd> on an empty prompt, from
+    <a href="https://code.claude.com/docs/en/checkpointing" target="_blank" rel="noopener noreferrer">Checkpointing</a>.</li>
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code> and its aliases, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-35</code> &mdash; compaction replaces the conversation with a structured
+    summary, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">The
+    context window</a>.</li>
+    <li><code>cc-core-25</code>, <code>cc-core-26</code>, <code>cc-core-27</code>,
+    <code>cc-core-30</code> &mdash; subagents as frontmatter plus Markdown under
+    <code>.claude/agents/</code>, the <code>model:</code> and <code>tools:</code> fields, and the
+    built-in subagent types including <code>Explore</code> and <code>Plan</code>, from
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="01-four-places-drift-gets-in.html">Lesson 1: Spec, plan, execute, verify, and the four
+    places drift gets in</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/01-run-change-b-with-a-runner.html">Exercise 1: Run Change B with a runner
+    and gates</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a command or a
+    settings path, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

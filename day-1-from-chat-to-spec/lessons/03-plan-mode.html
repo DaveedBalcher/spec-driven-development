@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seeing the diff before the diff with plan mode</title>
+<meta name="description" content="Day 1, Lesson 3: holding an agent at the point where changing your mind is still cheap.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="3">
+<meta name="course:minutes" content="11">
+<meta name="course:slot" content="d1-l3">
+<meta name="course:video" content="xJQuF02NAK8">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-01 cc-core-02 cc-core-03 cc-core-04 cc-core-05 cc-core-06 cc-core-07 cc-core-32 cc-core-33 cc-core-34 cc-core-37 enterprise-11">
+  <h1>Seeing the diff before the diff with plan mode</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Lesson 3 of 6
+  &middot; <span class="timing">11 min</span></p>
+
+  <p class="lede">Changing your mind in an agent run is cheap in exactly one place: before the first
+  edit lands. In plan mode that place stays open &mdash; the agent reads your code, works out what
+  it would do, and writes a proposal instead of a diff. Nothing in your working tree moves until you
+  answer the prompt it puts on screen &mdash; with one exception, below.</p>
+
+  <div class="video" data-video-id="xJQuF02NAK8" data-start="0" data-end="191"
+       data-video-title="The Explore, Plan, Code, Commit workflow in Claude Code (Claude, 2026-05-17)">
+    <span class="video-kicker">Watch first &middot; 3 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=xJQuF02NAK8"
+      target="_blank" rel="noopener noreferrer">The Explore &rarr; Plan &rarr; Code &rarr; Commit
+      workflow in Claude Code</a></p>
+    <p class="video-meta">Claude, 2026-05-17, 3 min 11 s. Watch the seam between the second step and
+    the third: that seam is what this lesson is about. The plan is expected to carry success
+    criteria before any code is written, so ask what you would have checked before letting it
+    run.</p>
+  </div>
+
+  <h2 id="what">What it is, and how you get in</h2>
+
+  <p>Claude Code runs every turn under a permission mode, and the mode decides what the agent may
+  do without asking you first. Three modes are always in the <kbd>Shift</kbd>+<kbd>Tab</kbd> cycle: <code>default</code> reads
+  and asks first, <code>acceptEdits</code> also applies file edits and common filesystem commands,
+  and <code>plan</code> reads and proposes. The other three &mdash; <code>auto</code>,
+  <code>dontAsk</code> and <code>bypassPermissions</code> &mdash; are set deliberately, and this
+  lesson does not use them. The terminal shows you the label, not the config value:
+  <code>default</code> reads Manual, and <code>plan</code> reads plan mode on.</p>
+
+  <p>In plan mode the agent is told to research and propose changes without making them: it reads
+  files, runs shell commands to explore, and writes a plan, but does not edit your source. Edits
+  stay blocked until you approve the plan, with the one exception in the note below.</p>
+
+  <div class="callout note">
+    <p class="callout-title">The bypass-permissions exception</p>
+    <p>In an interactive terminal session with bypass permissions available, an edit the agent
+    attempts while planning runs unprompted. Bypass permissions are meant for isolated containers
+    and virtual machines only; if a file changes while a proposal is on screen, check for this
+    first.</p>
+  </div>
+
+  <p>Three ways in. <kbd>Shift</kbd>+<kbd>Tab</kbd> cycles the modes. <code>/plan</code> in front
+  of a prompt enters plan mode for that prompt alone. A whole session starts there with a flag:</p>
+
+  <pre data-lang="bash"><code>claude --permission-mode plan</code></pre>
+
+  <p>For a repository where you always want to look first, set the default in the file your team
+  commits, <code>.claude/settings.json</code>, not the personal
+  <code>.claude/settings.local.json</code> beside it:</p>
+
+  <pre data-lang="json"><code>{ "permissions": { "defaultMode": "plan" } }</code></pre>
+
+  <p>Leaving is the keystroke you came in with: <kbd>Shift</kbd>+<kbd>Tab</kbd> exits without
+  approving anything, and approving a plan exits into whichever mode your answer names.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 310" role="img" aria-labelledby="gate-title gate-desc">
+      <title id="gate-title">The approval gate in plan mode</title>
+      <desc id="gate-desc">Time runs left to right. On the left, before the gate, the agent reads
+      files, asks questions and edits nothing, except in a session with bypass permissions
+      available. A plan travels to a vertical barrier labelled the approval gate, where one plan
+      waits. Three exits lead out of the gate: approve, in which edits apply; manual, in which each
+      edit asks; and keep planning, which returns to the left side along a path below the gate,
+      with no file changed yet.</desc>
+
+      <defs>
+        <marker id="gate-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="gate-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <text x="180" y="17" text-anchor="middle" font-size="15" fill="var(--accent)">approval gate: one plan waits here</text>
+
+      <rect x="4" y="30" width="140" height="104" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="16" y="54" font-size="15" font-weight="650" fill="var(--fg)">before the gate</text>
+      <text x="16" y="80" font-size="15" fill="var(--fg)">reads files</text>
+      <text x="16" y="102" font-size="15" fill="var(--fg)">asks questions</text>
+      <text x="16" y="124" font-size="15" fill="var(--fg)">edits nothing</text>
+
+      <line x1="192" y1="22" x2="192" y2="252" stroke="var(--accent)" stroke-width="3"></line>
+      <line x1="198" y1="22" x2="198" y2="252" stroke="var(--accent)" stroke-width="3"></line>
+
+      <text x="168" y="72" text-anchor="middle" font-size="15" fill="var(--fg)">plan</text>
+      <line x1="146" y1="82" x2="186" y2="82" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#gate-arrow-fg)"></line>
+
+      <line x1="202" y1="52" x2="214" y2="52" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#gate-arrow-fg)"></line>
+      <rect x="218" y="24" width="138" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="230" y="48" font-size="15" font-weight="650" fill="var(--fg)">approve</text>
+      <text x="230" y="70" font-size="15" fill="var(--fg)">edits apply</text>
+
+      <line x1="202" y1="126" x2="214" y2="126" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#gate-arrow-fg)"></line>
+      <rect x="218" y="98" width="138" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="230" y="122" font-size="15" font-weight="650" fill="var(--fg)">manual</text>
+      <text x="230" y="144" font-size="15" fill="var(--fg)">each edit asks</text>
+
+      <line x1="202" y1="200" x2="214" y2="200" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#gate-arrow-accent)"></line>
+      <rect x="218" y="172" width="138" height="56" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <text x="230" y="196" font-size="15" font-weight="650" fill="var(--fg)">keep planning</text>
+      <text x="230" y="218" font-size="15" fill="var(--fg)">no edit yet</text>
+
+      <path d="M287,228 V262 H74 V140" fill="none" stroke="var(--accent)" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#gate-arrow-accent)"></path>
+      <text x="180" y="282" text-anchor="middle" font-size="15" fill="var(--muted)">no file has changed yet,</text>
+      <text x="180" y="300" text-anchor="middle" font-size="15" fill="var(--muted)">unless bypass permissions are on</text>
+    </svg>
+    <figcaption>Reads and questions cross freely; a change to a file waits for your
+    answer.</figcaption>
+  </figure>
+
+  <h2 id="edit">Editing the plan before you approve it</h2>
+
+  <p>A proposal that is ninety percent right does not have to be thrown away.
+  <kbd>Ctrl</kbd>+<kbd>G</kbd> opens the proposed plan in your default text editor: strike the step
+  that is wrong, add the verification command it left out, save and close, and approve the version
+  you edited.</p>
+
+  <h2 id="answers">The three answers</h2>
+
+  <p>When the proposal is ready, the approval prompt offers three answers. The first approves and
+  lets edits apply: <strong>Yes, and use auto mode</strong>, or <strong>Yes, auto-accept
+  edits</strong> when auto mode is not available, or a bypass-permissions variant in a session that
+  started with those enabled. The other two are <strong>Yes, manually approve edits</strong> and
+  <strong>No, keep planning</strong>. The wording varies; what the answers mean does not.</p>
+
+  <p>Manual approval is the right default while you are learning what this agent reaches for in this
+  repository. The third answer is
+  an ordinary outcome, not a failure: one turn, no diff, the cheapest correction in the loop. Nobody
+  rejects enough plans in their first week.</p>
+
+  <h2 id="read">What to look for in a plan</h2>
+
+  <p>Read a proposal for four things. The <strong>files</strong> it names: one you did not expect
+  means it is solving a bigger problem than the ticket asked for. The <strong>verification
+  command</strong>, and what it expects that command to print. The <strong>order</strong> of
+  operations, because a plan that edits before it reads is guessing. And the
+  <strong>omission</strong>: what you expected and did not see, usually the test.</p>
+
+  <p>A proposal with no command that could fail is an intention, not a plan. When you run these
+  commands in Exercise 2, run them from inside <code>day1-work</code>, the copy of your lane that
+  Exercise 1 makes at the course root; the shipped <code>sandbox/</code> is never edited. The plan's verification command is
+  the one you check hardest; your lane's plain test command guards the rest of the module:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+  </div>
+
+  <p>It is not always the command that can fail. LEDGER-7's test is held back behind a gate, so the
+  plain command stays green with the bug in place; a plan that offers it as proof has named a
+  command that cannot fail. The gated form sets one variable in front of your lane's command, and
+  it is the one a LEDGER-7 plan must name:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test</code></pre>
+  </div>
+
+  <p>Exercise 2 applies these four things to a real proposal on LEDGER-7.</p>
+
+  <h2 id="reject">Rejecting on evidence</h2>
+
+  <p>A rejection is worth one sentence, and the sentence names the defect. Vague dissatisfaction
+  produces a second plan with the same problem. Say what is wrong and what would make it right:</p>
+
+  <pre data-lang="text"><code>No. The ticket is about how amounts are rendered, and your plan edits
+LedgerSummary and the fixtures file. Keep the change in the money
+formatting path, and name the test command you will run to prove the
+JPY case is fixed.</code></pre>
+
+  <p>That answer restates the bounds and asks for the falsifiable part back. A useful team norm: paste the approved plan into the pull request description,
+  so your reviewer reads the diff against the intent you approved.</p>
+
+  <h2 id="skip">When to skip it</h2>
+
+  <p>For a two-line change in a file you know well, the round trip costs more than reading the diff
+  would. Renaming a property, bumping a Gradle dependency, fixing an assertion you wrote yesterday:
+  make the edit, read the diff, run the tests. Planning that work is ceremony, and ceremony is how a
+  good practice gets abandoned in week three.</p>
+
+  <p>Skip it too when you want a conversation: while you are still deciding whether the change
+  belongs in the model or the view, a proposal pushes you to commit early. The mode earns its turn
+  when the change spans files, when the code is unfamiliar, or when a wrong edit costs more than a
+  reset.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>The plan reads well but names no command that could fail. What is the right answer at
+    the approval prompt?</summary>
+    <p><strong>No, keep planning</strong>, with one sentence asking for the verification command
+    (for LEDGER-7, the gated form) and the output that would count as success. A plan with nothing
+    falsifiable in it hands the finish line back to the agent.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>One sentence of an otherwise good plan is wrong. What is faster than rejecting
+    it?</summary>
+    <p><kbd>Ctrl</kbd>+<kbd>G</kbd>. Edit the plan yourself, then approve the version you edited.
+    Rejection restarts the proposal; editing keeps the ninety percent that was already right.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-l3-done" data-progress="d1-l3-read">
+      <label for="d1-l3-done">Lesson 3 read, and I can name the three approval answers
+      without looking.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation, all accessed 2026-09-22 against version 2.1.280.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-01</code>, <code>cc-core-02</code>, <code>cc-core-03</code> &mdash; the
+    keystroke, the prefix, the flag, the cycle order, and leaving.</li>
+    <li><code>cc-core-04</code> &mdash; <kbd>Ctrl</kbd>+<kbd>G</kbd> opens the plan in your
+    editor.</li>
+    <li><code>cc-core-05</code> &mdash; the three approval options and their variants.</li>
+    <li><code>cc-core-06</code> &mdash; <code>defaultMode</code> in
+    <code>.claude/settings.json</code>.</li>
+    <li><code>cc-core-07</code> &mdash; the six values and what each allows without asking;
+    <code>cc-core-37</code> &mdash; the label each one shows in the terminal.</li>
+    <li><code>cc-core-33</code>, <code>cc-core-34</code> &mdash; what plan mode blocks, and the
+    bypass-permissions exception.</li>
+    <li>All ten from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>enterprise-11</code> &mdash; the committed and personal settings files, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/01-same-task-two-prompts.html">Exercise 1: Same task, two prompts</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/02-plan-mode-on-ledger-7.html">Exercise 2: LEDGER-7 in plan mode</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

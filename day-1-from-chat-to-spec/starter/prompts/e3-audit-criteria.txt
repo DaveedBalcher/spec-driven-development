@@ -1,0 +1,5 @@
+Read the spec at specs/daily-summary.md and the existing LedgerSummary source and tests.
+
+For each numbered acceptance criterion, name the single command and the single test assertion that would fail if that criterion were not met. If a criterion cannot be made to fail by any command, say which one and explain in one sentence why not. If two criteria would be proven by the same assertion, say which two.
+
+Do not change any file. Do not write the implementation. Do not propose new criteria unless I ask.

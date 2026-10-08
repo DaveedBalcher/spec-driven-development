@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context is a budget</title>
+<meta name="description" content="Day 1, Lesson 6: what a standing instruction file costs you on every turn, and how to cut it without losing anything.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="6">
+<meta name="course:minutes" content="14">
+<meta name="course:slot" content="d1-l6">
+<meta name="course:video" content="qyPCVqFUyDo">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-18 cc-core-19 cc-core-20 cc-core-08 cc-core-09 cc-core-10 cc-core-11 cc-core-12 cc-core-13 cc-core-15 cc-core-16 cc-core-17 cc-core-32 cc-core-35 cc-core-36 cc-core-40 cc-core-41 cc-core-42 cc-core-43 cc-core-44 practitioners-01 context-eng-12">
+  <h1>Context is a budget</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Lesson 6 of 6
+  &middot; <span class="timing">14 min</span></p>
+
+  <p class="lede">Everything the agent knows arrived from somewhere and cost tokens, and
+  <code>CLAUDE.md</code> is the part of that bill you pay on every turn. Read the window as a budget
+  and the question about a line changes: not is it true, but is it worth its cost.</p>
+
+  <div class="video" data-video-id="qyPCVqFUyDo" data-start="201" data-end="630"
+       data-video-title="Boris Cherny: We Cut 80% of Claude Code's Prompt (Y Combinator, 2026-07-27), 3:21 to 10:30">
+    <span class="video-kicker">Watch first &middot; 7 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=qyPCVqFUyDo&amp;t=201s"
+      target="_blank" rel="noopener noreferrer">Boris Cherny: We Cut 80% of Claude Code&rsquo;s
+      Prompt</a></p>
+    <p class="video-meta">Y Combinator, 2026-07-27. Segment 3:21 to 10:30. Watch for the method
+    rather than the number: how he decides whether a line is earning its place.</p>
+  </div>
+
+  <h2 id="paid-for">Everything in the window was paid for</h2>
+
+  <p>Open a session and the window already holds what loaded before you typed: the system prompt,
+  the <code>CLAUDE.md</code> files that apply where you started, the auto memory Claude keeps for
+  this project where it is on, the attached tools' names, and a description of each available
+  skill. The run fills the rest &mdash; the ticket, the files read, every command's output &mdash; until something
+  compacts or clears it. Compaction, automatic near the limit or by <code>/compact</code>, replaces
+  the conversation with a summary, then reloads the system prompt, memory, tools, recently modified
+  files and your <code>CLAUDE.md</code>: your instruction file is back on the bill immediately.</p>
+
+  <p>Nothing there is free: a file read in the first minute is still there in the fortieth, taking
+  room from the failing test output.</p>
+
+  <p>Every command below runs from <code>day1-work</code>. Look at what you are paying:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="180 CLAUDE.md"><code>wc -l CLAUDE.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="177 CLAUDE.md"><code>wc -l CLAUDE.md</code></pre>
+  </div>
+
+  <p>Around 180 lines for a module of five source files with no dependencies, paid on every turn of
+  every session your team runs.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 368" role="img" aria-labelledby="ctx-title ctx-desc">
+      <title id="ctx-title">A context window before and after trimming CLAUDE.md</title>
+      <desc id="ctx-desc">The same fixed context window drawn twice, each split into system
+      prompt plus tool names, CLAUDE.md, files read plus conversation, and a hatched remainder left
+      as room for the task. After the trim, the CLAUDE.md segment, paid on every turn, is a quarter
+      of its former width, and the room for the task grows by exactly that amount.</desc>
+
+      <defs>
+        <pattern id="ctx-hatch" patternUnits="userSpaceOnUse" width="9" height="9">
+          <path d="M0,9 L9,0" fill="none" stroke="var(--accent)" stroke-width="1"></path>
+        </pattern>
+      </defs>
+
+      <text x="5" y="16" font-size="15" font-weight="650" fill="var(--fg)">before the trim</text>
+
+      <text x="152" y="40" text-anchor="middle" font-size="15" fill="var(--accent)">CLAUDE.md</text>
+      <text x="355" y="40" text-anchor="end" font-size="15" fill="var(--accent)">room for the task</text>
+      <line x1="152" y1="46" x2="152" y2="56" stroke="var(--border)" stroke-width="1"></line>
+      <line x1="334" y1="46" x2="334" y2="56" stroke="var(--border)" stroke-width="1"></line>
+
+      <rect x="5" y="56" width="350" height="38" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <rect x="110" y="56" width="84" height="38" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <rect x="313" y="56" width="42" height="38" fill="url(#ctx-hatch)" stroke="var(--accent)" stroke-width="1.5"></rect>
+
+      <line x1="57" y1="94" x2="57" y2="102" stroke="var(--border)" stroke-width="1"></line>
+      <line x1="253" y1="94" x2="253" y2="102" stroke="var(--border)" stroke-width="1"></line>
+      <text x="57" y="118" text-anchor="middle" font-size="15" fill="var(--fg)">system prompt</text>
+      <text x="57" y="138" text-anchor="middle" font-size="15" fill="var(--fg)">+ tool names</text>
+      <text x="253" y="118" text-anchor="middle" font-size="15" fill="var(--fg)">files read</text>
+      <text x="253" y="138" text-anchor="middle" font-size="15" fill="var(--fg)">+ conversation</text>
+
+      <line x1="152" y1="94" x2="152" y2="144" stroke="var(--muted)" stroke-width="1"></line>
+      <text x="152" y="158" text-anchor="middle" font-size="15" fill="var(--muted)">paid on every turn</text>
+
+      <text x="5" y="194" font-size="15" font-weight="650" fill="var(--fg)">after the trim</text>
+
+      <text x="120" y="218" text-anchor="middle" font-size="15" fill="var(--accent)">CLAUDE.md</text>
+      <text x="355" y="218" text-anchor="end" font-size="15" fill="var(--accent)">room for the task</text>
+      <line x1="120" y1="224" x2="120" y2="234" stroke="var(--border)" stroke-width="1"></line>
+      <line x1="302" y1="224" x2="302" y2="234" stroke="var(--border)" stroke-width="1"></line>
+
+      <rect x="5" y="234" width="350" height="38" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <rect x="110" y="234" width="21" height="38" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <rect x="250" y="234" width="105" height="38" fill="url(#ctx-hatch)" stroke="var(--accent)" stroke-width="1.5"></rect>
+
+      <line x1="57" y1="272" x2="57" y2="280" stroke="var(--border)" stroke-width="1"></line>
+      <line x1="190" y1="272" x2="190" y2="280" stroke="var(--border)" stroke-width="1"></line>
+      <text x="57" y="296" text-anchor="middle" font-size="15" fill="var(--fg)">system prompt</text>
+      <text x="57" y="316" text-anchor="middle" font-size="15" fill="var(--fg)">+ tool names</text>
+      <text x="190" y="296" text-anchor="middle" font-size="15" fill="var(--fg)">files read</text>
+      <text x="190" y="316" text-anchor="middle" font-size="15" fill="var(--fg)">+ conversation</text>
+
+      <line x1="302" y1="272" x2="302" y2="322" stroke="var(--muted)" stroke-width="1"></line>
+      <text x="355" y="336" text-anchor="end" font-size="15" fill="var(--muted)">what the cut gives back</text>
+      <line x1="120" y1="272" x2="120" y2="342" stroke="var(--muted)" stroke-width="1"></line>
+      <text x="120" y="356" text-anchor="middle" font-size="15" fill="var(--muted)">paid on every turn</text>
+    </svg>
+    <figcaption>What the standing file gives back goes straight to the task.</figcaption>
+  </figure>
+
+  <h2 id="loaded">Look at what actually loaded</h2>
+
+  <p><code>/context</code> shows what is in the window right now, broken down by where it came
+  from. Run it before you theorize about an ignored
+  instruction file: often it never loaded, because the session started outside its directory.</p>
+
+  <p>You read the numbers off your own screen in Exercise 4's first step, in a session started
+  inside <code>day1-work</code>: the tokens shown for your <code>CLAUDE.md</code> (under Memory
+  files) and the total. The exercise compares both before and after a cut.</p>
+
+  <h2 id="standing-spec">CLAUDE.md is the standing spec</h2>
+
+  <p>Project instructions live at <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>,
+  loaded from the directory you started in and every directory above it; your personal ones live at
+  <code>~/.claude/CLAUDE.md</code>. Today's project file is <code>day1-work</code>'s, which is why
+  every session today starts inside that folder. The lane also ships a
+  <code>.claude/settings.json</code> whose <code>claudeMdExcludes</code> skips any instruction file
+  above <code>day1-work</code> and whose <code>"autoMemoryEnabled": false</code> turns auto memory
+  off. If a block in the breakdown still surprises you, it is usually your personal file, a managed
+  policy file your organisation ships, a <code>CLAUDE.local.md</code> of your own, or a rules file
+  with no <code>paths:</code> list (<a href="#where">below</a>).</p>
+
+  <p>In a repository with none, <code>/init</code> generates one from the build commands, tests and
+  conventions it finds: a good first draft and a poor final one, since it records what is true
+  about the codebase, not what an agent gets wrong.</p>
+
+  <h2 id="line-test">The line test</h2>
+
+  <p>For each line, ask: if I removed this, would the agent make a specific mistake I can name? If
+  you can, keep it; if not, cut it: every session is paying for it.</p>
+
+  <p>Your lane's file holds both kinds: a line that names its mistake, and a block that names
+  none.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p>Without the line forbidding <code>NumberFormatter</code> and <code>Locale</code>, an agent
+    formatting an amount reaches for the platform formatter and the golden fixture stops matching.
+    None of the <q>Engineering principles</q> lines would have changed a diff.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p>Without the line forbidding <code>java.text.NumberFormat</code> and
+    <code>DateTimeFormatter</code>, an agent formatting an amount reaches for the platform formatter
+    and the golden fixture stops matching. None of the <q>Coding standards</q> lines would have
+    changed a diff.</p>
+  </div>
+
+  <p>Boris Cherny described Anthropic doing the large version of this to Claude Code's own system
+  prompt: <q>You delete the entire system prompt, and then you bring it back line by line</q>,
+  keeping what measurably earns its place.</p>
+
+  <h2 id="where">Where the cut lines go</h2>
+
+  <p>Cutting is not deleting knowledge: a cut line has two places to go, and only one changes
+  its cost.</p>
+
+  <p>An <code>@path/to/file</code> reference inside <code>CLAUDE.md</code> imports that file, and an
+  imported file may import others up to four hops deep. That buys you one topic per file, not a
+  smaller bill: count the imported lines as paid on every turn, like the rest of the file.</p>
+
+  <p>The sharper tool is a path-scoped rule: a file at <code>.claude/rules/&lt;name&gt;.md</code>
+  whose YAML frontmatter lists <code>paths:</code> globs enters the window when the agent reads a
+  matching file, and stays out otherwise. Exercise 4 moves part of your lane's file into one.</p>
+
+  <h2 id="reset">Resetting between tasks</h2>
+
+  <p><code>/clear</code> starts a new conversation with an empty window and is the correct move
+  between unrelated tasks, as in Exercise 1. <code>/compact</code> keeps a summary of the thread
+  instead of its transcript, with focus instructions on the same line.</p>
+
+  <h2 id="long-file">When a long file is the right answer</h2>
+
+  <p>Short is not the goal; earned is. An unusual build step, a constraint with legal weight, a
+  footgun that has bitten two people: each prevents a mistake you can name, so each stays.</p>
+
+  <p>Under about fifty lines, a cut buys back little; and a smaller <code>wc -l</code> alone
+  proves nothing: what counts is whether the agent still avoids the mistakes the file names.</p>
+
+  <p>Exercise 4 runs all of this on your lane's file.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your lane's <code>CLAUDE.md</code> carries <q>Don't repeat yourself</q> in its block
+    of general coding advice. Keep it or cut it?</summary>
+    <p>Cut it. You cannot name the mistake its removal would cause, and it is paid for on every
+    turn. A specific convention with a file path, or a lint rule the agent can run, would earn the
+    same space.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>You have just finished a merchant-filter task and are starting an unrelated formatter
+    task in the same session. What do you run first, and why?</summary>
+    <p><code>/clear</code>. The filter transcript is now cost with no benefit, and leftover detail
+    about the wrong file is exactly where the next wrong edit comes from.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-l6-done" data-progress="d1-l6-read">
+      <label for="d1-l6-done">Lesson 6 read.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation; <code>cc-core-40</code> to <code>cc-core-44</code> accessed
+  2026-09-23.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-08</code>, <code>cc-core-09</code>, <code>cc-core-10</code>,
+    <code>cc-core-11</code>, <code>cc-core-12</code>, <code>cc-core-13</code>,
+    <code>cc-core-15</code>, <code>cc-core-16</code>, <code>cc-core-17</code>,
+    <code>cc-core-40</code>, <code>cc-core-42</code>, <code>cc-core-43</code>,
+    <code>cc-core-44</code> &mdash; instruction-file locations and loading, imports, <code>/init</code>,
+    path-scoped rules, <code>claudeMdExcludes</code> and auto memory:
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage Claude's memory</a>.</li>
+    <li><code>cc-core-41</code> &mdash; the launch directory is the primary working directory:
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-18</code>, <code>cc-core-19</code>, <code>cc-core-20</code> &mdash;
+    <code>/context</code>, <code>/clear</code> and <code>/compact</code>:
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-35</code>, <code>cc-core-36</code> &mdash; what loads at startup and after
+    compaction:
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Explore
+    the context window</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version checked:
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>practitioners-01</code> &mdash; the talk in the video, 2026-08-02:
+    <a href="https://www.barath.ai/learnings/boris-cherny-yc-startup-school-2026" target="_blank" rel="noopener noreferrer">notes
+    on Boris Cherny at YC Startup School 2026</a>.</li>
+    <li><code>context-eng-12</code> &mdash; the ablation method quoted above, 2026-08-05:
+    <a href="https://www.ai.joaoqueiros.com/blog/claude-code-cut-system-prompt-boris-cherny-ablation-playbook" target="_blank" rel="noopener noreferrer">the
+    ablation playbook write-up</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/03-write-the-spec-for-change-b.html">Exercise 3: Write the spec for Change B</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/04-trim-the-context.html">Exercise 4: Trim the context</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Make it critique itself</title>
+<meta name="description" content="Day 2, Exercise 2: run a read-only auditor against the spec, route every finding without growing CLAUDE.md, and re-run to see whether the change paid for itself.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="2">
+<meta name="course:minutes" content="25">
+<meta name="course:slot" content="d2-e2">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-25 cc-core-26 cc-core-27 cc-core-28 cc-core-38 cc-core-19 cc-core-18 context-eng-03 cc-core-15 cc-core-40 cc-core-35 cc-core-36 cc-core-32">
+  <h1>Make it critique itself</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot;
+  Exercise 2 of 4 &middot; <span class="timing">25 min</span></p>
+
+  <p class="lede">Put a fresh-context auditor on the green result your runner produced, route every
+  finding it returns into the spec or your standing instructions without growing either, then re-run
+  from a fresh copy and see whether the change paid for itself.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>This exercise continues in <code>day2-work</code>, the copy Exercise 1 made at the course
+  root, against the implementation and <code>run-log.md</code> that run left, so do not reset
+  in between; the shipped <code>sandbox/</code> is never edited. Quit Claude Code and paste one
+  block from the course root (<code>cd ..</code> first if you are in the copy). It installs the
+  auditor, the runner (keeping the one you edited in Exercise 1 if it is already there) and the
+  spec, saves your starting <code>CLAUDE.md</code> line count to
+  <code>../work/</code>, and ends inside <code>day2-work</code>, where every later command runs.
+  Your notes go in <code>../work/e2.md</code>.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect=".claude/agents/spec-auditor.md"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/swift day2-work; } &amp;&amp; cd day2-work &amp;&amp; mkdir -p .claude/agents .claude/skills/run-spec &amp;&amp; cp ../day-2-loops-and-your-environment/starter/agents/spec-auditor.md .claude/agents/ &amp;&amp; { [ -f .claude/skills/run-spec/SKILL.md ] || cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/; } &amp;&amp; cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/ &amp;&amp; wc -l CLAUDE.md &gt; ../work/e2-swift.txt &amp;&amp; ls .claude/agents/spec-auditor.md specs/daily-summary.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect=".claude/agents/spec-auditor.md"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/kotlin day2-work; } &amp;&amp; cd day2-work &amp;&amp; mkdir -p .claude/agents .claude/skills/run-spec &amp;&amp; cp ../day-2-loops-and-your-environment/starter/agents/spec-auditor.md .claude/agents/ &amp;&amp; { [ -f .claude/skills/run-spec/SKILL.md ] || cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/; } &amp;&amp; cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/ &amp;&amp; wc -l CLAUDE.md &gt; ../work/e2-kotlin.txt &amp;&amp; ls .claude/agents/spec-auditor.md specs/daily-summary.md</code></pre>
+  </div>
+
+  <p>The saved count is what the net-zero rule holds you to: your instructions may get better, not
+  longer.</p>
+
+  <p>If your Exercise 1 run did not finish, also paste this catch-up block from inside
+  <code>day2-work</code>. It copies in a finished run whose own tests pass and which is wrong in
+  six places, with its log.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="Sources/LedgerKit/LedgerSummary.swift"><code>cp -R ../day-2-loops-and-your-environment/starter/reference/after-e1/swift/. . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/reference/after-e1/run-log.md . &amp;&amp; ls Sources/LedgerKit/LedgerSummary.swift</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="day2-work" data-expect="src/main/kotlin/ledgerkit/LedgerSummary.kt"><code>cp -R ../day-2-loops-and-your-environment/starter/reference/after-e1/kotlin/. . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/reference/after-e1/run-log.md . &amp;&amp; ls src/main/kotlin/ledgerkit/LedgerSummary.kt</code></pre>
+  </div>
+
+  <p>Start Claude Code inside <code>day2-work</code> with <code>claude</code>, and keep a second
+  terminal tab there for the shell commands.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Read the auditor's frontmatter before you run it. The path is the same in both lanes.</p>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="tools: Read, Glob, Grep"><code>sed -n '1,6p' .claude/agents/spec-auditor.md</code></pre>
+      <p><code>name</code> is what you type to call it, <code>description</code> says when it
+      applies, and <code>tools: Read, Glob, Grep</code> holds no edit tool, which makes it an
+      auditor rather than a second implementer. <code>model: opus</code> names its model instead of
+      inheriting the session's.</p>
+    </li>
+
+    <li>
+      <p>Run <code>/clear</code>. It is not what isolates the auditor: a subagent starts with a
+      fresh, isolated context window and does not see your conversation, the skills you invoked, or
+      the files Claude already read. What reaches it is a delegation message composed by your
+      session; <code>/clear</code> empties that session, so the message comes from your prompt.</p>
+      <pre data-lang="text"><code>/clear</code></pre>
+    </li>
+
+    <li>
+      <p>Invoke the auditor by name and paste this prompt in full. Let it finish without steering
+      it; a critic you argue with mid-run reports your opinion back to you.</p>
+      <pre data-lang="text"><code>@"spec-auditor (agent)" Audit the working tree against specs/daily-summary.md. For every finding give four things: the criterion number it violates or the token NO-CRITERION, the file and line, the evidence you read, and a one-line fix. Do not edit any file and do not run the tests.</code></pre>
+    </li>
+
+    <li><p>Write your own list into <code>../work/e2.md</code> before you open anything else: one
+    line per finding, each starting with <code>CRITERION n</code> or
+    <code>NO-CRITERION</code>.</p></li>
+
+    <li><p>Open the first reveal and score against the six reference findings: how many you hold,
+    and how many you hold that are not on the list. A finding with no file and line is invented,
+    and costs as much as a missed one: ten minutes of routing. Auditing your own Exercise 1 run?
+    The six are the reference tree's defects, so count one as missed only if step 7 turns its test
+    red in your tree.</p></li>
+
+    <li><p>Route every real finding and write its destination beside it in
+    <code>../work/e2.md</code>. Fixing code is ring one, which step 8 hands back to the runner;
+    routing is ring two, with Lesson 3's three destinations: a new or sharpened criterion in
+    <code>specs/daily-summary.md</code>, where most <code>NO-CRITERION</code> findings belong; a line
+    in <code>CLAUDE.md</code> for a fact that outlives this change, paid for by removing one of equal
+    weight, or a <code>.claude/rules/&lt;name&gt;.md</code> with <code>paths:</code> globs; or the
+    bin, with a sentence saying why.</p>
+    <p>A line routed to <code>CLAUDE.md</code> needs one more edit before the re-run, or the second
+    audit reports your own line: the spec lists <code>CLAUDE.md</code> out of bounds, and its
+    Definition of done names every file the diff may touch. In <code>specs/daily-summary.md</code>,
+    add this line at the end of the out-of-bounds list, and add <code>CLAUDE.md</code> beside
+    <code>run-log.template.md</code> in the Definition of done:</p>
+    <pre data-lang="text"><code>- Except one line in `CLAUDE.md`, routed there by hand before this run. It is not the runner's change and not a stop.</code></pre></li>
+
+    <li>
+      <p>Copy in the hidden acceptance suite and run it. It was written against the spec and the two
+      criteria the second reveal sharpens, never against an implementation, so it goes red on every
+      reference defect your tree carries.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="Executed 38 tests, with 1 test skipped and 6 failures (0 unexpected)"><code>cp -R ../day-2-loops-and-your-environment/starter/acceptance/change-b/swift/. Tests/LedgerKitTests/ &amp;&amp; swift test</code></pre>
+        <p>With the reference result in place (the catch-up block), the summary line carries the
+        count:</p>
+        <pre data-lang="text"><code>	 Executed 38 tests, with 1 test skipped and 6 failures (0 unexpected) in … seconds</code></pre>
+        <p>Each failure line names its test, gives the value the run produced and the value
+        expected, and carries the criterion it belongs to, such as <code>criterion 1: LK-006
+        (-13999, declined) must not be counted</code>.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-cwd="day2-work" data-expect="91 tests completed, 6 failed, 1 skipped"><code>cp -R ../day-2-loops-and-your-environment/starter/acceptance/change-b/kotlin/. src/test/kotlin/ &amp;&amp; ./gradlew test</code></pre>
+        <p>With the reference result in place (the catch-up block), Gradle prints the count, then
+        the verdict:</p>
+        <pre data-lang="text"><code>91 tests completed, 6 failed, 1 skipped
+…
+BUILD FAILED in …</code></pre>
+        <p>Each failure message opens with the criterion it belongs to and closes with the expected
+        and actual values: <code>criterion 1: LK-006 (-13999, declined) must not be counted ==&gt;
+        expected: &lt;0&gt; but was: &lt;-13999&gt;</code>.</p>
+      </div>
+
+      <p>Your own run's tree fails once per reference defect it shares, so its counts differ. Match
+      each message to a row in <code>../work/e2.md</code>; one you cannot match is the interesting
+      one.</p>
+    </li>
+
+    <li>
+      <p>Record the first run's iteration count and save your two revised files and the runner
+      skill where the reset cannot reach them. The <code>e2-</code> names leave Day 1's <code>CLAUDE.md</code> and
+      <code>daily-summary.md</code> in <code>../work/</code> untouched:</p>
+      <pre data-lang="bash"><code>grep -c '^| iteration ' run-log.md &gt;&gt; ../work/e2.md &amp;&amp; cp CLAUDE.md ../work/e2-CLAUDE.md &amp;&amp; cp specs/daily-summary.md ../work/e2-daily-summary.md &amp;&amp; cp .claude/skills/run-spec/SKILL.md ../work/e2-SKILL.md</code></pre>
+      <p>Quit Claude Code, run the reset at the bottom of this page, <code>cd ..</code>, and paste
+      the setup block again (it re-records the same count). The reset replaced the folder your
+      second tab is in; run <code>cd ../day2-work</code> there before you use it. The fresh copy has
+      no implementation and no <code>run-log.md</code>, so the second run counts from zero. Put your
+      files back, with the log format the runner uses:</p>
+      <pre data-lang="bash"><code>cp ../work/e2-CLAUDE.md CLAUDE.md &amp;&amp; cp ../work/e2-daily-summary.md specs/daily-summary.md &amp;&amp; cp ../work/e2-SKILL.md .claude/skills/run-spec/SKILL.md &amp;&amp; cp ../day-2-loops-and-your-environment/starter/run-log.template.md . &amp;&amp; ls run-log.template.md</code></pre>
+      <p>Your routed line now makes <code>CLAUDE.md</code> differ from the shipped lane, so from
+      here on it shows in both the runner's budget diff and the spec's Definition-of-done diff, and
+      its changed lines count toward the budget. That one is expected, and step 6 wrote it into the
+      spec; any other unlisted file is not.</p>
+      <p>Start Claude Code with <code>claude</code>, then:</p>
+      <pre data-lang="text"><code>/context</code></pre>
+      <p>Confirm the revised <code>CLAUDE.md</code> loaded; a run against instructions that never
+      entered the window measures nothing. Then:</p>
+      <pre data-lang="text"><code>/run-spec specs/daily-summary.md</code></pre>
+      <p>When it exits, count the second run's passes and run the acceptance suite against the tree
+      the sharpened spec produced:</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>grep -c '^| iteration ' run-log.md &gt;&gt; ../work/e2.md &amp;&amp; cp -R ../day-2-loops-and-your-environment/starter/acceptance/change-b/swift/. Tests/LedgerKitTests/ &amp;&amp; swift test</code></pre>
+        <p>Green is the <code>Executed … tests</code> summary line carrying <code>0 failures</code>;
+        the count depends on how many tests your run wrote.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>grep -c '^| iteration ' run-log.md &gt;&gt; ../work/e2.md &amp;&amp; cp -R ../day-2-loops-and-your-environment/starter/acceptance/change-b/kotlin/. src/test/kotlin/ &amp;&amp; ./gradlew test</code></pre>
+        <p>Green is the verdict line <code>BUILD SUCCESSFUL in …</code>.</p>
+      </div>
+
+      <p>A failure here names an acceptance test, and the acceptance test names the finding you
+      binned. Two counts are now in <code>../work/e2.md</code>, both against the same cap.</p>
+    </li>
+
+    <li><p>Run <code>/clear</code> and paste the step 3 prompt again against the tree the second
+    run left. Treat the answer as a reading, not a verdict: <code>0 findings.</code> is what the
+    auditor prints when it has nothing, and anything else must name a file and a line.</p></li>
+
+    <li><p>Write one sentence in <code>../work/e2.md</code> saying what you measured, with the
+    words <strong>n equals one</strong> in it: two counts from one spec in one lane is an anecdote,
+    not a trend.</p></li>
+  </ol>
+
+  <h2 id="wrong">If you see this instead</h2>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p><strong>The acceptance suite does not compile:</strong>
+    <code>error: cannot find type 'CurrencyTotal' in scope</code>. The copy holds no Change B
+    implementation. Paste the catch-up block and run step 7 again.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p><strong>The acceptance suite does not compile:</strong> unresolved references, among them
+    <code>ChangeBAcceptanceTest.kt:29:55 Unresolved reference 'CurrencyTotal'.</code>, then
+    <code>BUILD FAILED</code>. The copy holds no Change B implementation. Paste the catch-up block
+    and run step 7 again.</p>
+  </div>
+
+  <p><strong><code>grep: run-log.md: No such file or directory</code> after the second
+  run.</strong> The second tab is still in the copy the reset deleted, so the rest of the command
+  never ran. Run <code>cd ../day2-work</code> there and paste it again.</p>
+
+  <p><strong>The auditor edits a file, or runs the tests.</strong> Then it is not the auditor:
+  check that <code>.claude/agents/spec-auditor.md</code> is where setup put it, that its
+  <code>tools:</code> line survived, and that you invoked it by name. For a clean tree, run the
+  reset, then the setup and catch-up blocks; the reset spares <code>../work/</code>, not your own
+  Exercise 1 implementation.</p>
+
+  <p><strong>Nine findings, seven of them <code>NO-CRITERION</code>.</strong> The spec is too
+  quiet to audit against. Route the two or three that name a real
+  decision.</p>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Run this, from inside day2-work</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="NET-ZERO OK"><code>before=$(awk '{print $1}' ../work/e2-swift.txt) &amp;&amp; now=$(wc -l &lt; CLAUDE.md) &amp;&amp; if [ "$now" -le "$before" ]; then echo "NET-ZERO OK: $now of $before"; else echo "NET-ZERO FAILED: $now of $before"; fi</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash" data-run="kotlin" data-cwd="day2-work" data-expect="NET-ZERO OK"><code>before=$(awk '{print $1}' ../work/e2-kotlin.txt) &amp;&amp; now=$(wc -l &lt; CLAUDE.md) &amp;&amp; if [ "$now" -le "$before" ]; then echo "NET-ZERO OK: $now of $before"; else echo "NET-ZERO FAILED: $now of $before"; fi</code></pre>
+    </div>
+    <p>It prints <code>NET-ZERO OK</code> or <code>NET-ZERO FAILED</code>. A
+    <code>CLAUDE.md</code> that grew fails even when every test is green: the added line is charged
+    to every turn.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> the check prints
+  <code>NET-ZERO OK</code>, the acceptance suite is green against the tree the second run left, and
+  <code>../work/e2.md</code> holds your findings with a destination beside each, both iteration
+  counts, and one sentence containing <strong>n equals one</strong>.</p>
+
+  <h2 id="reference">Reference answers</h2>
+
+  <p>Open these after your own list exists. The scoring table is also in the repository at
+  <a href="../starter/answers/reference-findings.md"><code>starter/answers/reference-findings.md</code></a>.</p>
+
+  <details class="reveal">
+    <summary>The six reference findings</summary>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Critique tags">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Tag</th><th>What it is</th><th>Where it shows</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><code>CRITERION 1</code></td><td>A declined amount is counted: every row
+          that is not pending is added into <code>postedMinor</code></td><td>2026-03-03, USD
+          <code>postedMinor</code> is &minus;13999 (LK-006, declined)</td></tr>
+          <tr><td>2</td><td><code>CRITERION 2</code></td><td>The pending figure is the day's, copied
+          into every currency</td><td>2026-03-05, BHD <code>pendingMinor</code> is &minus;9630
+          (LK-016, a GBP row)</td></tr>
+          <tr><td>3</td><td><code>CRITERION 3</code></td><td>Days come back oldest
+          first</td><td><code>byDay</code> returns 2026-03-02 first</td></tr>
+          <tr><td>4</td><td><code>NO-CRITERION</code></td><td>The order of rows inside a day: the
+          spec never said, the lane's own test did, and the run deleted that test and reversed the
+          rows</td><td>2026-03-04 comes back LK-013 first</td></tr>
+          <tr><td>5</td><td><code>NO-CRITERION</code></td><td>Which currencies earn a totals entry
+          was never specified, so declined-only currencies get one</td><td>2026-03-05 has an EUR
+          entry from LK-017, declined</td></tr>
+          <tr><td>6</td><td><code>CRITERION 4</code></td><td>Totals come back in arrival order, not
+          currency-code order</td><td>2026-03-06 totals read USD, GBP, EUR</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Four tagged, two <code>NO-CRITERION</code>. Catching the four and neither of the two is the
+    usual result, and it means the auditor is comparing code to criteria and stopping there; the
+    question it is missing is what the spec did not say that the code had to decide anyway. Fewer
+    than four means it probably could not read what it needed: check that you gave it the spec path
+    and that its <code>tools:</code> line lets it reach the files. More than six, and each extra one
+    needs a file and a line before you route it.</p>
+    <p>A lost-coverage finding is real, not invented: the deleted test that kept rows inside a day
+    oldest first, the grid's four test names missing from the rewritten summary tests, or checks
+    that compare sets where a criterion asks for an order. That is how findings 3, 4 and 6 stayed
+    green, so count it with those rows.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Where each one goes</summary>
+    <p><strong>Findings 1, 2, 3 and 6 are ring one: fix the code.</strong> Each violates a criterion
+    that is already numbered, already binary and already has a test name beside it in the spec's
+    criterion-to-command grid. Nothing about the spec is wrong; the run was. Writing a new rule for
+    a criterion that already exists is how instruction files get long without getting better.</p>
+    <p><strong>Finding 4 routes to the spec, sharpening criterion 3.</strong> The wording the
+    hidden suite was written against: <em>the day order flips, the rows inside a day do not &mdash;
+    transactions within a section stay oldest first</em>. Against the spec it is
+    <code>NO-CRITERION</code>: nothing there said which way rows inside a day run. Against the lane
+    it is lost coverage: the shipped summary tests asserted oldest first, and the run deleted that
+    test when it rewrote the file, which is why the reversal stayed green. The sharpened criterion
+    is what stops the next run deleting it for free.</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <p>The deleted test is <code>testTransactionsInsideASectionAreOrderedOldestFirst</code> in
+      <code>Tests/LedgerKitTests/LedgerSummaryTests.swift</code>.</p>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p>The deleted test is <code>a section is ordered by postedAt within the day</code> in
+      <code>src/test/kotlin/ledgerkit/LedgerSummaryTest.kt</code>.</p>
+    </div>
+    <p><strong>Finding 5 routes to the spec, sharpening criterion 4.</strong> Add the clause the
+    criterion was missing: <em>no entry for a currency with no posted and no pending row that
+    day</em>. This is the one most people bin as a detail, and it is the one that puts an empty EUR
+    line on a customer's statement. If you put the clause under criterion 1 instead, because the
+    stray entry came from declined rows, that routing is just as right: what matters is that the
+    clause lands in the spec.</p>
+    <p><strong>Finding 1 also earns the day's one line in <code>CLAUDE.md</code>.</strong> The
+    criterion covers this change; the domain rule underneath it &mdash; a declined transaction
+    counts toward no total and still appears in the list &mdash; is what the next money change will
+    meet again, on a spec nobody has written yet. That is the test for a standing line: not whether
+    it is true, but whether it outlives the spec that produced it.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The reference <code>CLAUDE.md</code> revision, paid for</summary>
+    <p>One line in, two lines out, in both lanes. The sentence that goes in is the same one; what
+    pays for it is whatever that lane's file was already spending those two lines on. The same
+    revision is in the repository at
+    <a href="../starter/reveal/claude-md-diff.md"><code>starter/reveal/claude-md-diff.md</code></a>.</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <p>In, under <code>## Money</code>, where the other domain rules already are:</p>
+      <pre data-lang="text"><code>A declined transaction is still listed and counted in no total; pending money is reported separately from settled money.</code></pre>
+      <p>Out, from <code>## Engineering principles</code>, items 9 and 11:</p>
+      <pre data-lang="text"><code>9. Leave the campsite cleaner than you found it.
+11. Premature optimization is the root of all evil.</code></pre>
+      <p>This file carries no statuses line to sharpen, so the new rule is paid for by two
+      principles that name no specific mistake.</p>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p>Out, from <code>## Domain rules</code>, the two-line statuses bullet:</p>
+      <pre data-lang="text"><code>- Statuses are `pending`, `posted` and `declined`. A declined transaction is
+  still a transaction and is still shown to the customer.</code></pre>
+      <p>In, one line in its place:</p>
+      <pre data-lang="text"><code>- Statuses are `pending`, `posted` and `declined`. A declined transaction is still listed and counted in no total; pending money is reported separately from settled money.</code></pre>
+      <p>The bullet that comes out is true, and it is the half of the fact the code does not get
+      wrong. The half it gets wrong is the money.</p>
+    </div>
+    <p>Two lines out and one in, so <code>wc -l CLAUDE.md</code> goes down by one, which is why
+    net-zero is written as same or lower rather than as exactly equal. The arithmetic is not the
+    test, though: ask of each line what specific mistake its removal would cause. The added line
+    names one you watched happen this morning, in a run that was green when it happened.</p>
+    <p>The alternative the reference run considered and rejected: put the same rule in
+    <code>.claude/rules/money.md</code> with <code>paths: ["**/Money*", "**/LedgerSummary*"]</code>
+    in its frontmatter, so it loads when Claude reads a matching file, not on every tool use.
+    Rejected because the rule
+    is one sentence long and the files it would be scoped to are the ones this module mostly edits,
+    which buys a file and saves nothing.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-e2-done" data-progress="d2-e2-done">
+      <label for="d2-e2-done">Exercise 2 done: your findings scored, every one routed, and
+      <code>CLAUDE.md</code> no longer than it started.</label>
+    </li>
+  </ul>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Quit Claude Code, then run this from inside <code>day2-work</code>. It deletes the copy, makes
+  it again from the shipped lane, and leaves you inside it. It uses no git and leaves
+  <code>sandbox/</code> and <code>../work/</code> alone.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/swift day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <p>A fresh copy is the shipped lane and nothing else, so re-run this page's setup block (from the
+  course root) before you continue.</p>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-25</code>, <code>cc-core-26</code>, <code>cc-core-27</code>,
+    <code>cc-core-28</code> &mdash; the subagent file, its <code>model:</code> and
+    <code>tools:</code> fields, and explicit invocation. From
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>,
+    accessed 2026-09-22.</li>
+    <li><code>cc-core-38</code> &mdash; a subagent's fresh, isolated context and the delegation
+    message. From
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>,
+    accessed 2026-09-23.</li>
+    <li><code>cc-core-19</code>, <code>cc-core-18</code> &mdash; <code>/clear</code> and
+    <code>/context</code>. From
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>, accessed 2026-09-22.</li>
+    <li><code>context-eng-03</code> &mdash; <code>/context</code> confirms <code>CLAUDE.md</code>
+    loaded. From
+    <a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener noreferrer">Best
+    practices</a>, accessed 2026-09-22.</li>
+    <li><code>cc-core-15</code>, <code>cc-core-40</code> &mdash; path-scoped rule files, and that
+    they load when Claude reads a matching file, not on every tool use. From
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Memory</a>,
+    accessed 2026-09-22 and 2026-09-23.</li>
+    <li><code>cc-core-35</code>, <code>cc-core-36</code> &mdash; <code>CLAUDE.md</code> loads at
+    startup, before your first message, and reloads after compaction. From
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Explore
+    the context window</a>, accessed 2026-09-22.</li>
+    <li><code>cc-core-32</code> &mdash; the version checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>, 2026-09-22.</li>
+    <li>Terminal output recorded on 2026-09-23 in fresh copies made by this page's setup and
+    catch-up blocks.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/03-recursive-self-improvement.html">Lesson 3: Recursive self-improvement: the output, the instructions, the workflow</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/04-your-environment-is-part-of-the-spec.html">Lesson 4: Your environment: profile, permissions, write path</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

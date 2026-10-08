@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEDGER-7 in plan mode</title>
+<meta name="description" content="Day 1, Exercise 2: take a seeded bug through plan mode, reject one plan on a stated defect, and prove the fix with a test that failed before it.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="2">
+<meta name="course:minutes" content="25">
+<meta name="course:slot" content="d1-e2">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-01 cc-core-03 cc-core-04 cc-core-05 cc-core-32 cc-core-33 cc-core-34 cc-core-37 cc-core-41">
+  <h1>LEDGER-7 in plan mode</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Exercise 2 of 4
+  &middot; <span class="timing">25 min</span></p>
+
+  <p class="lede">Take a seeded bug through plan mode, reject one plan on a defect you can name,
+  run the approved plan to green, and finish holding a test that failed before the change and passes
+  after it.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>You continue in <code>day1-work</code>, the copy Exercise 1 made. Paste this block from the
+  course root (<code>cd ..</code> first if you are in the copy): it puts the ticket beside the code
+  and the blank checklist at <code>../work/plan.md</code>, which no reset touches, and leaves you
+  inside <code>day1-work</code>, where every later command on this page runs. The shipped
+  <code>sandbox/</code> is never edited.</p>
+
+  <pre data-lang="bash"><code>mkdir -p work &amp;&amp; cp day-1-from-chat-to-spec/starter/tickets/LEDGER-7.md day1-work/ &amp;&amp; cp day-1-from-chat-to-spec/starter/plan-checklist.md work/plan.md &amp;&amp; cd day1-work &amp;&amp; ls LEDGER-7.md ../work/plan.md</code></pre>
+
+  <p>It prints the two paths it made; <code>../work/plan.md</code> is your deliverable. Start
+  Claude Code from inside <code>day1-work</code>, since a session starts in the directory you
+  launch it from.</p>
+
+  <p>Budget five minutes for each agent run; the 25 minutes above assume three of them back to
+  back.</p>
+
+  <details class="reveal">
+    <summary>Starting from a clean copy</summary>
+    <p>If Exercise 1 left the copy in a state you would rather not plan against, make it again from
+    the course root, then paste the setup block above. A copy made this way is identical to the
+    shipped lane, which is what step 10 measures against.</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work</code></pre>
+    </div>
+  </details>
+
+  <h2 id="checklist">The six items</h2>
+
+  <p>Step 5 runs these against the proposal; <code>../work/plan.md</code> holds them as a table.
+  Each answer is yes or no; if you have to infer it, it is no.</p>
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Plan checklist questions">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Question</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Does it name the file it will change?</td></tr>
+        <tr><td>2</td><td>Does it name each currency and its minor-unit count?</td></tr>
+        <tr><td>3</td><td>Does it name the exact verification command?</td></tr>
+        <tr><td>4</td><td>Does it say how the gated test gets run?</td></tr>
+        <tr><td>5</td><td>Does it stay out of <code>LedgerSummary</code> and the fixture?</td></tr>
+        <tr><td>6</td><td>Does it say what it will <strong>not</strong> change?</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Run your lane's gated command and confirm exactly one test fails, on the JPY case. That run
+      is half your evidence and is gone once the bug is fixed, so copy its summary line into
+      <code>../work/plan.md</code> under <strong>Before</strong> now.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="expected: -¥128,000"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></pre>
+        <p>From a run of this lane on 2026-09-22, path and timings shortened, error line
+        wrapped:</p>
+        <pre data-lang="text"><code>…/Tests/LedgerKitTests/KnownIssueTests.swift:35: error:
+-[LedgerKitTests.KnownIssueTests testLEDGER7_JPYRendersWithTwoDecimalPlaces] :
+XCTAssertEqual failed: ("-¥1,280.00") is not equal to ("-¥128,000")
+ - LEDGER-7: LK-014 (JPY) rendered the wrong amount.
+  expected: -¥128,000
+  actual:   -¥1,280.00
+…
+	 Executed 34 tests, with 1 failure (0 unexpected) in … seconds
+…</code></pre>
+        <p>Copy the line beginning <code>Executed 34 tests</code>.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="expected: &lt;-¥128,000&gt; but was: &lt;-¥1,280.00&gt;"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test</code></pre>
+        <p>From a run of this lane on 2026-09-22, stack frames and timing shortened, assertion
+        wrapped:</p>
+        <pre data-lang="text"><code>&gt; Task :test FAILED
+
+KnownIssueTest &gt; LEDGER-7 the JPY row renders with decimal places it should not have() FAILED
+    org.opentest4j.AssertionFailedError: LEDGER-7: LK-014 is -128000 minor units
+    of JPY. The fixture expects "-¥128,000" and TransactionFormatter.amountText
+    produced "-¥1,280.00". Money.decimalPlaces returns 2 for JPY; JPY has no
+    minor unit. ==&gt; expected: &lt;-¥128,000&gt; but was: &lt;-¥1,280.00&gt;
+…
+85 tests completed, 1 failed
+
+BUILD FAILED in …
+…</code></pre>
+        <p>Copy the <code>85 tests completed, 1 failed</code> line and the <code>BUILD FAILED</code>
+        verdict line. The lane's <code>build.gradle.kts</code> declares
+        <code>LEDGER_RUN_KNOWN_ISSUES</code> as a test-task input, so the tests re-run when only the
+        gate changes.</p>
+      </div>
+
+      <p>Then run the plain command, the same one without the variable. It should be green now, and
+      step 9 checks it is still green after the fix, so copy its result into the
+      <code>Plain test command, before:</code> slot under <strong>Before</strong>.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>Copy the line beginning <code>Executed 34 tests, with 1 test skipped</code>.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p>Copy the <code>BUILD SUCCESSFUL</code> verdict line.</p>
+      </div>
+    </li>
+
+    <li><p>Read <code>LEDGER-7.md</code> in the copy: a normal bug report describing a customer's
+    screenshot, with no acceptance criteria. The two complaints at the bottom are not part of this
+    fix.</p></li>
+
+    <li>
+      <p>Start Claude Code in plan mode from inside <code>day1-work</code>, or press
+      <kbd>Shift</kbd>+<kbd>Tab</kbd> in a running session until the mode line reads
+      <code>plan mode on</code> &mdash; the keystroke cycles <code>default</code>,
+      <code>acceptEdits</code>, <code>plan</code>.</p>
+      <pre data-lang="bash"><code>claude --permission-mode plan</code></pre>
+    </li>
+
+    <li>
+      <p>Paste this prompt as written and let the agent read the code and propose a plan.
+      Nothing in the copy changes while the proposal is on screen.</p>
+      <pre data-lang="text"><code>Read LEDGER-7.md and the LedgerKit source, then propose a plan to fix it.
+
+Bounds: the fix belongs in the money formatting path - Money and TransactionFormatter and their tests. Do not change LedgerSummary, LedgerFilter, or the fixtures file. Do not change the assertions in the known-issue test - it is already correct, it is only gated off. The "When it is fixed" cleanup in KNOWN-ISSUES.md is not part of this fix: leave the golden fixture test's skip of the JPY row in place.
+
+Verification: the plan must name the exact command I will run to prove the fix, including how the gated test gets executed.
+
+Stop: if you believe the fix requires touching a file outside the money formatting path, say so in the plan instead of planning around it.</code></pre>
+    </li>
+
+    <li><p>Run the six items against the proposal in order, filling the table in
+    <code>../work/plan.md</code> with the line that answers each one.</p></li>
+
+    <li><p>Reject once: answer <strong>No, keep planning</strong> and send one sentence naming the
+    item number and what is missing. Record it in <code>../work/plan.md</code> under
+    <strong>Rejection 1</strong>. If it fails several, name the lowest-numbered one that fails.
+    If the first proposal passes all six, reject it on the weakest;
+    most first plans name a test command but not the output that counts as success. Then answer
+    only the item you rejected on, against the second proposal.</p></li>
+
+    <li><p>When the second proposal passes that item, press <kbd>Ctrl</kbd>+<kbd>G</kbd> and edit
+    the plan yourself: add the verification command if it is missing, delete any step touching a
+    file outside the bounds, including one that removes the golden fixture test's JPY skip.
+    Approve with <strong>Yes, manually approve edits</strong>; the other answer applies edits
+    without asking.</p></li>
+
+    <li><p>Approve each edit as it is proposed and let the run finish.</p></li>
+
+    <li>
+      <p>Verify twice. The plain command, green at step 1, must stay green: it guards
+      against fixing one currency by breaking the other four. Only the gated command proves the bug
+      is gone; your lane's After evidence goes into <code>../work/plan.md</code> under
+      <strong>After</strong>.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>Green, before and after. Its summary line:</p>
+        <pre data-lang="text"><code>	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … seconds
+…</code></pre>
+        <p>After the fix it reads 34 tests, or 35 if the plan added one. Then the gated run again.
+        After the fix, step 1's failure block is gone and the summary line reports 0 failures,
+        nothing skipped: that line is your After evidence.</p>
+        <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p>Green before and after, with the verdict <code>BUILD SUCCESSFUL</code>. Then the gated
+        run again, and its test report:</p>
+        <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test
+grep -o 'skipped="[0-9]*"' build/test-results/test/TEST-ledgerkit.KnownIssueTest.xml</code></pre>
+        <p>After the fix, step 1's <code>KnownIssueTest</code> failure is gone and the verdict reads
+        <code>BUILD SUCCESSFUL</code>. The grep prints <code>skipped="0"</code> when the gate reached
+        the test and <code>skipped="1"</code> when it did not; <code>BUILD SUCCESSFUL</code> alone
+        cannot tell you which happened. The verdict line and <code>skipped="0"</code> together are
+        your After evidence.</p>
+      </div>
+    </li>
+
+    <li><p>Check that the fix was not a loosened test. The shipped lane one level up is the before
+    picture and <code>day1-work</code> the after, so one recursive diff is the record of the run:
+    <code>-N</code> counts a file the agent created as well as one it edited, and each file it
+    touched opens a section with a line starting <code>diff</code>.</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>diff -ruN -x .build ../sandbox/swift . | grep '^diff '</code></pre>
+      <p>Whatever your run did, one line is the ticket the setup copied in:</p>
+      <pre data-lang="text"><code>diff -ruN -x .build ../sandbox/swift/LEDGER-7.md ./LEDGER-7.md</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin ../sandbox/kotlin . | grep '^diff '</code></pre>
+      <p>Whatever your run did, one line is the ticket the setup copied in:</p>
+      <pre data-lang="text"><code>diff -ruN -x build -x .gradle -x .kotlin ../sandbox/kotlin/LEDGER-7.md ./LEDGER-7.md</code></pre>
+    </div>
+    <p>Every other line names a file your run touched, the lane's copy and yours. The money
+    formatting path and its tests are what the prompt allowed. A line naming
+    <code>LedgerSummary</code>, <code>LedgerFilter</code>, the fixture or the known-issue test is the
+    finding.</p></li>
+
+    <li><p>Once <code>../work/plan.md</code> holds your After evidence and the self-check below
+    passes, run the one-line <a href="#reset">Reset</a> command for your lane and leave the copy
+    reset for Exercise 3.</p></li>
+  </ol>
+
+  <h2 id="wrong">If you see this instead</h2>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p><strong>The gated run reports <code>1 test skipped</code> and 0 failures.</strong> The
+    variable did not reach the test; it has to sit on the same command line, in front of
+    <code>swift test</code>.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p><strong>The gated run reports <code>BUILD SUCCESSFUL</code> before the fix.</strong> Same
+    cause: the variable has to be set on the command line that starts Gradle.</p>
+  </div>
+
+  <p><strong>A file changes while the proposal is still on screen.</strong> The session was not in
+  plan mode when you pasted the prompt, or started with bypass permissions available, the exception
+  Lesson 3 named. Reset (foot of this page), check the mode line, paste the prompt again.</p>
+
+  <p><strong>The plain command goes red after your run.</strong> The plan was wrong and the diff is
+  the evidence. Take the same reset, then reject the next plan on item 2.</p>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">One command decides it, run twice</p>
+    <p>Same pair in both lanes: the gated command failed on the JPY case at step 1 and passes now,
+    while the plain command is green at both ends.</p>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p>Here, passing means <code>BUILD SUCCESSFUL</code> and step 9's grep printing
+      <code>skipped="0"</code>; a run the gate never reached is <code>BUILD SUCCESSFUL</code> too.</p>
+    </div>
+    <p>Then check that the known-issue test did not move:</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>diff -u ../sandbox/swift/Tests/LedgerKitTests/KnownIssueTests.swift Tests/LedgerKitTests/KnownIssueTests.swift</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>diff -u ../sandbox/kotlin/src/test/kotlin/ledgerkit/KnownIssueTest.kt src/test/kotlin/ledgerkit/KnownIssueTest.kt</code></pre>
+    </div>
+    <p>It prints nothing while the test is as the lane shipped it. A hunk means the assertion was
+    edited: the bug argued away, not fixed.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> the self-check passes and
+  <code>../work/plan.md</code> holds both Before lines from step 1, a rejection sentence naming an item
+  number, the plan you approved, and step 9's After evidence.</p>
+
+  <h2 id="reference">Reference answers</h2>
+
+  <p>Open these after your run; the fix is not in them. The same three sections are
+  in the repository, reached from
+  <a href="../starter/answers/e2-plan-checklist.md"><code>starter/answers/e2-plan-checklist.md</code></a>,
+  which points at <code>plan-checklist.md</code> beside it.</p>
+
+  <details class="reveal">
+    <summary>What a passing answer looks like for each of the six items</summary>
+    <p><strong>1. The file it will change.</strong> Yes looks like
+    <code>Sources/LedgerKit/Money.swift</code>, or
+    <code>src/main/kotlin/ledgerkit/Money.kt</code>, written out once as a path. No looks like
+    &ldquo;update the money formatting logic&rdquo;: true, and it does not tell you whether one file
+    or three is about to move. A plan naming two files fails this item only if it does not say what
+    each one gets.</p>
+    <p><strong>2. Each currency and its minor-unit count.</strong> Yes looks like the five codes
+    with their counts in the plan text, before any code is written. No looks like &ldquo;give JPY
+    zero decimal places&rdquo;, which fixes the ticket and leaves you no way to tell whether the
+    other four are about to change by accident. This is the item most first plans fail, because the
+    ticket mentions one currency and the plan mirrors the ticket.</p>
+    <p><strong>3. The exact verification command.</strong> Yes looks like <code>swift test</code> or
+    <code>./gradlew test</code> spelled out, plus what counts as success. No looks like &ldquo;run
+    the tests to confirm&rdquo;, which a sentence in the final message can satisfy.</p>
+    <p><strong>4. How the gated test gets run.</strong> Yes looks like the gated command named as a
+    step of its own. No looks like silence, and silence is the expensive answer here: the suite is
+    green before the fix and green after it, so a plan that only runs the plain command has verified
+    nothing about the bug.</p>
+    <p><strong>5. Staying out of <code>LedgerSummary</code> and the fixture.</strong> Yes looks like
+    no step touching either, and ideally a line saying so. No looks like a step that edits the
+    fixture or &ldquo;updates the expected value&rdquo;: the fixture already holds the right answer,
+    so a plan proposing to change it has decided the bug is in the test.</p>
+    <p><strong>6. What it will not change.</strong> Yes looks like one line naming the neighbours it
+    is leaving alone. Most plans have no such line unless the prompt asks for one, which is why the
+    prompt asks for one. It is the cheapest signal you get about whether the boundary was understood
+    or is going to be discovered halfway through.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The two rejection sentences the reference run sent</summary>
+    <p>Rejection 1, against a plan that failed item 4:</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="text"><code>Item 4: the plan verifies with swift test only, which is green before and
+after the fix. Name the gated command as a separate step and say what its
+output is before the change and after it.</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="text"><code>Item 4: the plan verifies with ./gradlew test only, which is green before
+and after the fix. Name the gated command as a separate step and say what
+its output is before the change and after it.</code></pre>
+    </div>
+    <p>Rejection 2, against a plan that passed all six, so it was rejected on the weakest item:</p>
+    <pre data-lang="text"><code>Item 2: you list JPY at zero but not the other four. Put USD, EUR, GBP and
+BHD in the plan with their counts so I can see at review time that the
+table is complete rather than patched.</code></pre>
+    <p>The second one is the skill this exercise is teaching. That plan was not wrong; it was
+    reviewable in principle rather than reviewable in ten seconds, and saying so cost one sentence.
+    A rejection that names no item number and no missing thing is not a rejection, it is a mood, and
+    &ldquo;this needs more detail&rdquo; sends the agent to guess which detail.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The minor-unit table the fix needs</summary>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Currency minor units and rendering">
+      <table>
+        <thead>
+          <tr><th>Currency</th><th>Minor units</th><th>Renders as</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>USD</td><td>2</td><td><code>-$84.99</code></td></tr>
+          <tr><td>EUR</td><td>2</td><td><code>-&euro;23.50</code></td></tr>
+          <tr><td>GBP</td><td>2</td><td><code>-&pound;12.99</code></td></tr>
+          <tr><td>JPY</td><td>0</td><td><code>-&yen;128,000</code></td></tr>
+          <tr><td>BHD</td><td>3</td><td><code>-BD12.500</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>These are the five currencies the fixture uses, and its <code>expectedAmountText</code>
+    column already holds every string in the right-hand column. BHD surprises people twice: three
+    decimal places is correct, and the ticket's second complaint is about how it reads, not about
+    whether it is right.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-e2-done" data-progress="d1-e2-done">
+      <label for="d1-e2-done">Exercise 2 done: one rejection written down, the gated test red before
+      and green after.</label>
+    </li>
+  </ul>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>One command, the sandbox reset every Day 1 exercise means: delete the copy, remake it from
+  the shipped lane, step back in.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <p>It never reaches <code>../work</code> or writes to <code>sandbox/</code>, so your checklist
+  outlives it. It does remove the <code>LEDGER-7.md</code> the setup copied in; this brings it
+  back:</p>
+
+  <pre data-lang="bash"><code>cp ../day-1-from-chat-to-spec/starter/tickets/LEDGER-7.md .</code></pre>
+
+  <p>Not the setup block: it would overwrite <code>../work/plan.md</code>, now holding your
+  evidence, with the blank checklist. Run the reset once more when you finish, and leave the copy
+  reset for Exercise 3.</p>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-01</code>, <code>cc-core-03</code>, <code>cc-core-37</code> &mdash;
+    <kbd>Shift</kbd>+<kbd>Tab</kbd> cycles <code>default</code>, <code>acceptEdits</code> and
+    <code>plan</code>; the mode line reads <code>plan mode on</code>;
+    <code>claude --permission-mode plan</code> starts in plan mode.</li>
+    <li><code>cc-core-04</code> &mdash; <kbd>Ctrl</kbd>+<kbd>G</kbd> edits the proposed plan.</li>
+    <li><code>cc-core-05</code> &mdash; the approval answers, including
+    <strong>Yes, manually approve edits</strong> and <strong>No, keep planning</strong>.</li>
+    <li><code>cc-core-33</code>, <code>cc-core-34</code> &mdash; plan mode researches and proposes
+    without editing your source, except in an interactive terminal session with bypass permissions
+    available.</li>
+    <li>All seven from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>, accessed 2026-09-22.</li>
+    <li><code>cc-core-41</code> &mdash; the directory you launch Claude Code in is the session's
+    primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>,
+    accessed 2026-09-23.</li>
+    <li><code>cc-core-32</code> &mdash; the version checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>, 2026-09-22.</li>
+    <li>Terminal output recorded from both lanes of this repository on 2026-09-22; the Kotlin
+    test-report grep on 2026-09-23.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/03-plan-mode.html">Lesson 3: Seeing the diff before the diff with plan mode</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/04-spec-as-input.html">Lessons 4 and 5: The spec and its criteria</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

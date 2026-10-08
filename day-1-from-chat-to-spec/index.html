@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 1: From chat to spec</title>
+<meta name="description" content="Day 1 index: the opening video, six lessons on four pages and four exercises that take a task from a question you ask to an assignment with a spec, bounds and a command that decides.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="index">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="0">
+<meta name="course:slot" content="d1-index">
+<meta name="course:video" content="96jN2OCOfLs">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-31 cc-core-32 context-eng-12">
+  <h1>Day 1: From chat to spec</h1>
+
+  <p class="meta-line"><a href="../index.html">3 Days of Spec-Driven Development</a> &middot; Day 1
+  of 3 &middot; six lessons on four pages, four exercises, a wrap-up &middot;
+  <span class="timing">about three hours: 153 minutes including the opener</span></p>
+
+  <blockquote class="quote">
+    <p>You delete the entire system prompt, and then you bring it back line by line.</p>
+    <cite>Boris Cherny, on how Claude Code's own instructions were cut, reported 2026-08-05. Today
+    you do the small version of that to a <code>CLAUDE.md</code>.</cite>
+  </blockquote>
+
+  <p class="lede">Today you stop asking and start assigning. The first half is the mechanical
+  shift: what an agent has that a chat session does not, a prompt that is an assignment rather than
+  a question, and plan mode, which lets you reject a change before it exists &mdash; ending on a
+  seeded bug taken from red to green. The second half turns that prompt into a file: a spec with
+  numbered criteria a command can fail, then a cut of the lane's roughly 180-line
+  <code>CLAUDE.md</code> to under 40 lines.</p>
+
+  <h2 id="opener">Watch this first</h2>
+
+  <div class="video" data-video-id="96jN2OCOfLs" data-start="946" data-end="1517"
+       data-video-title="Andrej Karpathy: From Vibe Coding to Agentic Engineering w/ Stephanie Zhan (Sequoia Capital, 2026-04-29)">
+    <span class="video-kicker">Opener &middot; 10 min</span>
+    <p class="video-title"><a
+      href="https://www.youtube.com/watch?v=96jN2OCOfLs&amp;t=946s"
+      target="_blank" rel="noopener noreferrer">Andrej Karpathy: From Vibe Coding to Agentic
+      Engineering w/ Stephanie Zhan</a></p>
+    <p class="video-meta">Sequoia Capital, 2026-04-29. Watch the chapter
+    <q>From Vibe Coding to Agent Engineering</q>, 15:46 to 25:17.</p>
+    <p class="video-meta"><strong>What to listen for.</strong> The moment the speaker stops
+    describing a model that answers and starts describing one that acts: tools, a working directory,
+    and a loop that runs until something says it is done, and what the human's job becomes once the
+    machine can run commands &mdash; reviewing a diff, owning the finish line. Lesson 3 has the
+    keystrokes.</p>
+  </div>
+
+  <h2 id="before">Before you start</h2>
+
+  <p>You never edit <code>sandbox/</code> itself. Day 1 works in <code>day1-work</code>, a copy of
+  your lane that Exercise 1 makes at the course root; start Claude Code inside it, because every
+  command and every path on every Day 1 page is written from inside it. Lessons 1 and 2 need no
+  folder; Exercise 1 creates <code>day1-work</code>. Two kinds of block run from
+  the course root instead: the setup blocks of Exercises 1 to 3, which leave you in
+  <code>day1-work</code>, and the end-of-day cleanup at the foot of Exercises 1 and 4,
+  <code>rm -rf day1-work</code>. Starter files sit one level up, at
+  <code>../day-1-from-chat-to-spec/starter/&hellip;</code>, and your answers one level up too, in
+  <code>../work/</code>, which nothing on a Day 1 page deletes. Day 2 and Day 3 write there too, so
+  it stays until the Day 3 wrap-up removes it when you are done for good.</p>
+
+  <p>Below is the command that decides in your lane. Exercise 1 runs it inside
+  <code>day1-work</code> before anything changes, so that when Day 1 turns a test red on purpose you
+  know where the red came from.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift"
+         data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+    <p>A green run from this machine on 2026-09-22 carries this verdict for the whole suite and its
+    count line:</p>
+    <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … seconds</code></pre>
+    <p>The skipped test is the seeded bug; Exercise 2 turns it on.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+    <p>A green run from this machine on 2026-09-22 carries Gradle's verdict:</p>
+    <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+5 actionable tasks: 5 executed
+Consider enabling configuration cache to speed up this build: …</code></pre>
+    <p>This lane gates the seeded bug's test on an environment variable, so it does not run and
+    the summary carries no test counts; Exercise 2 turns it on.</p>
+  </div>
+
+  <p>The reset is the same everywhere: delete <code>day1-work</code>, copy the lane again, step back
+  in. It uses no git, so a download works as well as a clone, and it reaches nothing outside the
+  copy: the shipped <code>sandbox/</code> and your <code>../work/</code> answers survive. Quit
+  Claude Code first, run it from inside <code>day1-work</code>, then start Claude Code there
+  again.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-title">What today needs</span>
+    <ul>
+      <li>Claude Code, signed in; <code>claude --version</code> prints your version.</li>
+      <li class="lane-swift">Your lane's toolchain from Setup: Swift 6.2 or later.</li>
+      <li class="lane-kotlin">Your lane's toolchain from Setup: a JDK 17 or later with the
+      committed Gradle wrapper.</li>
+    </ul>
+  </div>
+
+  <h2 id="order">The day in order</h2>
+
+  <p>Nine pages after the video, in this order. Lessons 1 and 2 share a page, as do Lessons 4
+  and 5, so the six lessons take four pages. Exercise 3 follows Lessons 4 and 5 and uses
+  both halves. The day's first change is LEDGER-7, the seeded bug;
+  Exercise 3's Change B, the pending-aware daily summary, is the second, and Day 3 has a
+  Change C.</p>
+
+  <ol class="progress">
+    <li>
+      <input type="checkbox" id="seq-d1-l1" data-progress="d1-l1-read">
+      <label for="seq-d1-l1"><a href="lessons/01-chat-vs-agent.html">Lessons 1 and 2: Chat vs
+      agent, and the four-part prompt</a> <span class="timing">14 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-e1" data-progress="d1-e1-done">
+      <label for="seq-d1-e1"><a href="exercises/01-same-task-two-prompts.html">Exercise 1: Same
+      task, two prompts</a> <span class="timing">20 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-l3" data-progress="d1-l3-read">
+      <label for="seq-d1-l3"><a href="lessons/03-plan-mode.html">Lesson 3: Seeing the diff before the diff with plan mode</a> <span class="timing">11 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-e2" data-progress="d1-e2-done">
+      <label for="seq-d1-e2"><a href="exercises/02-plan-mode-on-ledger-7.html">Exercise 2: LEDGER-7 in plan mode</a> <span class="timing">25 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-l4" data-progress="d1-l4-read">
+      <label for="seq-d1-l4"><a href="lessons/04-spec-as-input.html">Lessons 4 and 5: The spec and
+      its criteria</a> <span class="timing">16 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-e3" data-progress="d1-e3-done">
+      <label for="seq-d1-e3"><a href="exercises/03-write-the-spec-for-change-b.html">Exercise 3:
+      Write the spec for Change B</a> <span class="timing">15 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-l6" data-progress="d1-l6-read">
+      <label for="seq-d1-l6"><a href="lessons/06-context-is-a-budget.html">Lesson 6: Context is a
+      budget</a> <span class="timing">14 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-e4" data-progress="d1-e4-done">
+      <label for="seq-d1-e4"><a href="exercises/04-trim-the-context.html">Exercise 4: Trim the
+      context</a> <span class="timing">18 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d1-wrap" data-progress="d1-wrap-up-done">
+      <label for="seq-d1-wrap"><a href="wrap-up.html">Wrap-up: recap, ten review questions, three
+      challenges</a> <span class="timing">10 min</span></label>
+    </li>
+  </ol>
+
+  <p class="progress-note" data-progress-note="">Ticks need JavaScript and stay in this browser.</p>
+
+  <h2 id="starter">Starter files</h2>
+
+  <p>Today's starter folder is <code>day-1-from-chat-to-spec/starter/</code> at the course root, one
+  level up from <code>day1-work</code>. Exercise 1 makes that copy; each exercise then copies the
+  starter file it needs when it needs it, so there is nothing to install now.</p>
+
+  <ul>
+    <li><code>README.md</code> &mdash; what each file below is for, and where it is copied.</li>
+    <li><code>tickets/LEDGER-7.md</code> &mdash; Exercise 2's bug ticket, with no acceptance
+    criteria in it.</li>
+    <li><code>plan-checklist.md</code> &mdash; the six-item checklist Exercise 2 fills in at
+    <code>../work/plan.md</code>.</li>
+    <li><code>change-b-brief.md</code> &mdash; Exercise 3's pending-aware daily summary brief, in a
+    product manager's words.</li>
+    <li><code>specs/TEMPLATE.md</code> &mdash; the spec skeleton: goal, non-goals, numbered criteria,
+    the criterion-to-command grid, bounds, verification, stop conditions, definition of done.</li>
+    <li><code>spec-template.md</code> &mdash; the template again, annotated section by section: what
+    each one is for, what a filled version looks like, and the specific way each one gets filled
+    badly. Read it before Exercise 3.</li>
+    <li><code>prompts/</code> &mdash; every prompt on these pages as a file, to paste from disk
+    instead.</li>
+    <li><code>rules/EXAMPLE-formatting.md</code> &mdash; the path-scoped rules file Exercise 4
+    copies into <code>day1-work</code>.</li>
+    <li><code>answers/</code> &mdash; <code>e1-comparison.md</code>,
+    <code>e2-plan-checklist.md</code>, <code>e3-spec-daily-summary.md</code> and
+    <code>e4-claude-md-keepers.md</code>, the comparisons the exercises reveal, each worth less the
+    earlier you open it.</li>
+  </ul>
+
+  <h2 id="alongside">Videos and reading</h2>
+
+  <p>Every video sits on the page that uses it; none is required to finish an exercise:</p>
+
+  <ul>
+    <li><a href="../resources/videos.md">Recommended videos</a> &mdash; the opener and one clip per
+    lesson, with the segment and why each was picked.</li>
+    <li><a href="../resources/reading.md">Reading</a> &mdash; the articles, docs and repositories
+    behind the lessons, grouped by day.</li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>context-eng-12</code> &mdash; the quotation above, 2026-08-05:
+    <a href="https://www.ai.joaoqueiros.com/blog/claude-code-cut-system-prompt-boris-cherny-ablation-playbook"
+    target="_blank" rel="noopener noreferrer">the ablation playbook</a>. Lesson 6 uses the
+    method.</li>
+    <li><code>cc-core-31</code>, <code>cc-core-32</code> &mdash; <code>claude --version</code>, and
+    the version checked against here, Claude Code 2.1.280 on 2026-09-22, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../setup.html">Setup: twenty minutes before Day 1</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="lessons/01-chat-vs-agent.html">Lessons 1 and 2: Chat vs agent, and the four-part prompt</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where a page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

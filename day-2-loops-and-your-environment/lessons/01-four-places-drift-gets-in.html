@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec, plan, execute, verify, and the four places drift gets in</title>
+<meta name="description" content="Day 2, Lesson 1: the four moments where the spec and the code come apart, and the detector that catches each one in under a minute.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d2-l1">
+<meta name="course:video" content="8TXAlOFkmk0">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="practitioners-04 practitioners-05 cc-core-08 cc-core-15 cc-core-32 cc-core-36 cc-core-44">
+  <h1>Spec, plan, execute, verify, and the four places drift gets in</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot; Lesson 1 of 4
+  &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">Drift is the gap between what the spec says and what the code does. It enters at
+  four identifiable moments in the loop, each with a detector that costs under a minute.</p>
+
+  <div class="video" data-video-id="8TXAlOFkmk0" data-start="1055" data-end="1354"
+       data-video-title="Learnings from a No-Code Library: Keeping the Spec Driven Development Triangle in Sync (Drew Breunig, 2026-03-04)">
+    <span class="video-kicker">Watch first &middot; 5 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=8TXAlOFkmk0&amp;t=1055s"
+      target="_blank" rel="noopener noreferrer">Learnings from a No-Code Library: Keeping the Spec
+      Driven Development Triangle in Sync</a></p>
+    <p class="video-meta">Drew Breunig, 2026-03-04. Watch for spec, tests and code as three corners
+    that agree only because something holds them there. The chapter from 17:35 to 22:34 carries this
+    lesson's argument; the rest is optional, outside today's schedule.</p>
+  </div>
+
+  <h2 id="ring">The loop you ran yesterday, drawn as a loop</h2>
+
+  <p>Yesterday's plan, execute, verify ran as a line, and you stood at its end. Draw it as a ring,
+  with the verified result feeding back into the spec, and the question changes from "did it
+  work", which the test command answers, to "where can spec and code come apart unnoticed".</p>
+
+  <p>Böckeler's levels place today. Days 1 and 2 run <strong>spec-first</strong>, where the
+  spec drives the work and may then go stale, not <strong>spec-anchored</strong>, where it is kept
+  as the feature evolves. At spec-first nothing after the run compares the spec with the code, so
+  the comparison has to happen inside the run, and that is where today works.</p>
+
+  <h2 id="what">What drift actually is</h2>
+
+  <p>Drift is not sabotage or a weak model. It is bookkeeping: the spec says four things, the code
+  does three and a half, and no step in the run had to compare them. It shows
+  up as a merged pull request that passes every test it ships with and still misses the
+  ticket.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 442" role="img" aria-labelledby="drift-title drift-desc">
+      <title id="drift-title">Where drift enters the spec, plan, execute, verify loop</title>
+      <desc id="drift-desc">Four stages sit on a ring and the arrows run clockwise: spec at the
+      top, plan at the right, execute at the bottom, verify at the left, and back to spec. A
+      numbered marker sits on each arrow. Marker 1, spec to plan, sits on the arrow from spec to
+      plan. Marker 2, plan to diff, sits on the arrow from plan to execute. Marker 3, diff to
+      tests, sits on the arrow from execute to verify. Marker 4, run to run, sits on the return
+      arrow from verify back up to spec, which is drawn dashed because it is the only arrow that
+      crosses from one session to the next rather than joining two steps inside one. The legend
+      below gives the detector for each marker in the same order: one, the criterion-to-command
+      grid read against the plan; two, the diff's file list against the spec's bounds; three,
+      delete the line and watch a named test go red; four, the decision lives in a file, not a
+      transcript.</desc>
+
+      <defs>
+        <marker id="drift-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="drift-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <rect x="145" y="40" width="70" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="180" y="64" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">spec</text>
+
+      <rect x="251" y="116" width="70" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="286" y="140" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">plan</text>
+
+      <rect x="145" y="192" width="70" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="180" y="216" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">execute</text>
+
+      <rect x="39" y="116" width="70" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="74" y="140" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">verify</text>
+
+      <line x1="217" y1="72" x2="272" y2="112" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#drift-arrow-fg)"></line>
+      <line x1="272" y1="156" x2="217" y2="196" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#drift-arrow-fg)"></line>
+      <line x1="143" y1="196" x2="88" y2="156" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#drift-arrow-fg)"></line>
+      <line x1="88" y1="112" x2="143" y2="72" stroke="var(--accent)" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#drift-arrow-accent)"></line>
+
+      <rect x="236" y="83" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="245" y="97" text-anchor="middle" font-size="15" fill="var(--bg)">1</text>
+      <text x="260" y="97" font-size="15" fill="var(--muted)">spec to plan</text>
+
+      <rect x="236" y="167" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="245" y="181" text-anchor="middle" font-size="15" fill="var(--bg)">2</text>
+      <text x="260" y="181" font-size="15" fill="var(--muted)">plan to diff</text>
+
+      <rect x="107" y="167" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="116" y="181" text-anchor="middle" font-size="15" fill="var(--bg)">3</text>
+      <text x="101" y="181" text-anchor="end" font-size="15" fill="var(--muted)">diff to tests</text>
+
+      <rect x="107" y="83" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="116" y="97" text-anchor="middle" font-size="15" fill="var(--bg)">4</text>
+      <text x="101" y="97" text-anchor="end" font-size="15" fill="var(--muted)">run to run</text>
+
+      <text x="4" y="254" font-size="15" fill="var(--muted)">detector</text>
+      <line x1="4" y1="262" x2="356" y2="262" stroke="var(--border)" stroke-width="1"></line>
+
+      <rect x="4" y="272" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="13" y="286" text-anchor="middle" font-size="15" fill="var(--bg)">1</text>
+      <text x="32" y="286" font-size="15" fill="var(--fg)">criterion-to-command grid,</text>
+      <text x="32" y="304" font-size="15" fill="var(--fg)">read against the plan</text>
+
+      <rect x="4" y="316" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="13" y="330" text-anchor="middle" font-size="15" fill="var(--bg)">2</text>
+      <text x="32" y="330" font-size="15" fill="var(--fg)">the diff's file list against</text>
+      <text x="32" y="348" font-size="15" fill="var(--fg)">the spec's bounds</text>
+
+      <rect x="4" y="360" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="13" y="374" text-anchor="middle" font-size="15" fill="var(--bg)">3</text>
+      <text x="32" y="374" font-size="15" fill="var(--fg)">delete the line, watch a</text>
+      <text x="32" y="392" font-size="15" fill="var(--fg)">named test go red</text>
+
+      <rect x="4" y="404" width="18" height="18" fill="var(--accent)"></rect>
+      <text x="13" y="418" text-anchor="middle" font-size="15" fill="var(--bg)">4</text>
+      <text x="32" y="418" font-size="15" fill="var(--fg)">the decision lives in a file,</text>
+      <text x="32" y="436" font-size="15" fill="var(--fg)">not a transcript</text>
+    </svg>
+    <figcaption>The four drift points sit on the arrows between stages; each detector runs from
+    outside the loop.</figcaption>
+  </figure>
+
+  <h2 id="one">Drift point one: spec to plan</h2>
+
+  <p>The plan quietly reinterprets a criterion, or covers three of four. The detector is Day 1's
+  criterion-to-command grid, read against the plan before you approve it: every numbered criterion
+  needs a row, and a row whose command would pass with the criterion unmet is a criterion the plan
+  is not promising.</p>
+
+  <p>In Change B, the spec you run in Exercise 1, criterion 4 wants totals per currency, ordered by
+  currency code ascending. A plan that tests keeping currencies apart and ignores the ordering has
+  dropped half a criterion; the grid shows it in twenty seconds.</p>
+
+  <h2 id="two">Drift point two: plan to diff</h2>
+
+  <p>The agent changes a file the plan never named, for a reason that reads well in the transcript.
+  The detector is a file list: what differs from the shipped <code>sandbox/</code>, held against the
+  spec's bounds. A file outside them may be needed, but then the plan or the bounds were incomplete,
+  and you say which before merging. Exercise 1 gives you the command and has you run it.</p>
+
+  <h2 id="three">Drift point three: diff to tests</h2>
+
+  <p>Green means less when the tests moved in the same diff as the code. Two questions settle it:
+  did any existing assertion change, and does each criterion have a test that fails without its
+  implementation?</p>
+
+  <p>The second has a cheap physical version: remove the line that implements a behavior, run the
+  suite, and watch a named test go red. If nothing goes red, that behavior has no sensor. This probe
+  is the one thing in this lesson to run now. Try it in a throwaway copy, never in
+  <code>sandbox/</code>, which Exercise 1 copies. From the course root:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-cwd="."><code>cp -R sandbox/swift day2-probe-work &amp;&amp; cd day2-probe-work</code></pre>
+    <p>Expect several tests to go red, not one; the one to find is
+    <code>testThousandsAreGroupedWithCommas</code>. On line 24 of
+    <code>Sources/LedgerKit/TransactionFormatter.swift</code>, change <code>grouped(wholeUnits)</code>,
+    at the end of the <code>var text = …</code> line, to <code>String(wholeUnits)</code>, then run
+    <code>swift test</code>. Unchanged, green is the line
+    <code>Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … seconds</code>.
+    It is not the last line: the Swift Testing summary prints after it and reads
+    <code>Test run with 0 tests in 0 suites passed</code> either way, so look a few lines up for the
+    line starting <code>Executed</code>.</p>
+    <pre data-lang="bash" data-run="swift" data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-cwd="."><code>cp -R sandbox/kotlin day2-probe-work &amp;&amp; cd day2-probe-work</code></pre>
+    <p>Expect several tests to go red, not one; the one to find is <code>thousands are grouped with
+    commas in the integer part only</code>. On line 33 of
+    <code>src/main/kotlin/ledgerkit/TransactionFormatter.kt</code>, change
+    <code>val grouped = group(whole)</code> to <code>val grouped = whole</code>, then run
+    <code>./gradlew test</code>. Unchanged, green is the last line, <code>BUILD SUCCESSFUL in …</code>.</p>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+  </div>
+
+  <p>Then remove the copy, edit and all:</p>
+
+  <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-probe-work</code></pre>
+
+  <p>Of the red tests, read the one whose name says what broke, since a green line never names the
+  criterion it checked. Exercise 2 runs a suite written against the spec over the tree
+  Exercise 1 leaves; each red test names its criterion.</p>
+
+  <h2 id="four">Drift point four: run to run</h2>
+
+  <p>Tomorrow's session starts with none of today's conversation. Before your first message it
+  loads only the startup set, your <code>CLAUDE.md</code> files among them, and auto memory where
+  it is on (the course lanes turn it off, so each day starts from its own files alone), so a
+  decision that lives only in the transcript gets re-derived, differently. The detector is
+  structural: the decision lives in a file. A spec. A line in
+  <code>CLAUDE.md</code>, which Claude Code reads from <code>./CLAUDE.md</code> or
+  <code>./.claude/CLAUDE.md</code>. A rule file at <code>.claude/rules/&lt;name&gt;.md</code>, whose
+  frontmatter <code>paths:</code> glob list scopes it to the files it concerns.</p>
+
+  <h2 id="sensors">Guides and sensors</h2>
+
+  <p>Böckeler's other split is the frame worth keeping. <strong>Guides</strong> feed instructions
+  forward: <code>CLAUDE.md</code>, rule files, the spec itself. <strong>Sensors</strong> report
+  back: tests, linters, the diff, a review pass. The first three detectors are sensors: each one
+  reports back on a run. The fourth is a guide, so it only works if the next session reads the file
+  and follows it, which is why the cheaper fix, when one exists, is a sensor.</p>
+
+  <p>Most drift complaints arrive as requests for more guidance when what is missing is a sensor:
+  a <code>CLAUDE.md</code> line spends context every session and depends on being
+  followed, while an assertion fails loudly. A useful team norm: when someone asks for a new rule,
+  ask first what would have gone red.</p>
+
+  <h2 id="skip">When drift does not matter</h2>
+
+  <p>For a one-file spike you will read end to end and probably delete, the detectors cost more than
+  the mistake they prevent: drift needs someone downstream to be surprised. Skip them on purpose
+  and say so. A spike
+  stops being one the moment a second person will read it, so start the detectors there.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>The tests are green, the diff is small, and criterion 3 was never implemented. Which
+    detector should have caught it, and at which step?</summary>
+    <p>The criterion-to-command grid, read against the plan before any code was written: criterion 3
+    had no row naming a command that would fail without it, so nothing in the run was ever obliged
+    to deliver it. Point three's detector also fits, later: no test fails for want of criterion 3,
+    which is why the suite is green. Either answer is right; the grid is the cheaper catch because it comes before any code.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Your agent changed a file the plan never mentioned. Why is that a signal rather than a
+    tidy-up you can wave through?</summary>
+    <p>Because the bounds are part of the contract you are holding the result against. A file
+    outside them means the plan was incomplete or the bounds were wrong, and until you decide which,
+    you cannot tell whether the extra change was necessary or invented.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-l1-done" data-progress="d2-l1-read">
+      <label for="d2-l1-done">Lesson 1 read, and I can name all four drift points and their
+      detectors.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation accessed 2026-09-22 against version 2.1.280, and 2026-09-23 for
+  <code>cc-core-44</code>.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-08</code>, <code>cc-core-15</code> &mdash; the project instruction-file paths,
+    and <code>.claude/rules/&lt;name&gt;.md</code> with a <code>paths:</code> frontmatter list, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>cc-core-36</code> &mdash; what loads into the context window at session start, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Explore
+    the context window</a>.</li>
+    <li><code>cc-core-44</code> &mdash; auto memory is one folder per git repository, and
+    <code>autoMemoryEnabled</code> turns it off for one project, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>practitioners-04</code> &mdash; the split between guides, which feed instructions
+    forward, and sensors, which feed results back, from Birgitta Böckeler on harness engineering,
+    <a href="https://se-radio.net/2026/07/se-radio-730-birgitta-boeckeler-on-harness-engineering-for-ai-agents/"
+    target="_blank" rel="noopener noreferrer">SE Radio 730</a> (2026-07-22, accessed
+    2026-09-22).</li>
+    <li><code>practitioners-05</code> &mdash; the three maturity levels named spec-first,
+    spec-anchored and spec-as-source, from Birgitta Böckeler,
+    <a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html"
+    target="_blank" rel="noopener noreferrer">Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl</a>, in her Exploring generative AI series
+    (2025-10-15, accessed 2026-09-22).</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li>The Swift and Kotlin lines quoted above were recorded on this machine on 2026-09-23, in a
+    fresh <code>day2-probe-work</code> made by the setup block above, and the thousands-grouping pair
+    was run red in a scratch copy of each lane the same day.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../index.html">Day 2: Loops and your environment, and the opening video</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="02-the-runner.html">Lesson 2: The runner: non-stop until a stop condition, with limited gates</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Terminal output on this page was recorded
+    on this machine on 2026-09-23.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your environment profile and permissions</title>
+<meta name="description" content="Day 2, Exercise 3: fill the six-row environment profile, write a permissions file deny list first, predict six commands before you run them, and mark every mismatch.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="3">
+<meta name="course:minutes" content="15">
+<meta name="course:slot" content="d2-e3">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-18 cc-core-21 cc-core-22 cc-core-23 cc-core-24 cc-core-36 cc-core-39 cc-core-41 cc-automation-11 enterprise-07 enterprise-10 enterprise-11 cc-core-32">
+  <h1>Your environment profile and permissions</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot;
+  Exercise 3 of 4 &middot; <span class="timing">15 min</span></p>
+
+  <p class="lede">Finish with two files: a filled environment profile, and a permissions file whose
+  behaviour on six commands you wrote down before you observed it.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Every command after the setup block runs from inside <code>day2-work</code>, the copy of your
+  lane at the course root; the shipped <code>sandbox/</code> is never edited. Paste the block from
+  the course root (if your shell is inside <code>day2-work</code>, <code>cd ..</code> first). It
+  makes the copy if it is missing, installs the blank profile, the prediction grid and the example
+  permissions file, and leaves you inside the copy. Nothing here needs Exercises 1 or 2.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="settings.json"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/swift day2-work; } &amp;&amp; cd day2-work &amp;&amp; mkdir -p .claude &amp;&amp; cp ../day-2-loops-and-your-environment/starter/env-profile.md . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/prediction-grid.md . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/settings.example.json .claude/settings.json &amp;&amp; ls env-profile.md prediction-grid.md .claude</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="settings.json"><code>mkdir -p work &amp;&amp; { [ -d day2-work ] || cp -R sandbox/kotlin day2-work; } &amp;&amp; cd day2-work &amp;&amp; mkdir -p .claude &amp;&amp; cp ../day-2-loops-and-your-environment/starter/env-profile.md . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/prediction-grid.md . &amp;&amp; cp ../day-2-loops-and-your-environment/starter/settings.example.json .claude/settings.json &amp;&amp; ls env-profile.md prediction-grid.md .claude</code></pre>
+  </div>
+
+  <p>The block lists <code>env-profile.md</code>, <code>prediction-grid.md</code>, and
+  <code>settings.json</code> under <code>.claude</code>. JSON carries no comments, so the
+  rule-by-rule reading of the example lives in
+  <code>../day-2-loops-and-your-environment/starter/settings.example.md</code>; step 4 says when to
+  open it. The example replaces the <code>settings.json</code> your lane shipped, and its first
+  two keys, <code>claudeMdExcludes</code> and <code>autoMemoryEnabled</code>, are that file's,
+  carried over. They are not permission rules; leave them as they are.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Fill the six rows of <code>env-profile.md</code>, one short true sentence each. Start from
+      the Default wording column of its table and change what is false for you. Name the kind of
+      connector, not the vendor: no employer, internal system, hostname or repository name. A connector that later needs a rule of its own is scoped as
+      <code>mcp__&lt;server&gt;</code>, <code>mcp__&lt;server&gt;__*</code>, or
+      <code>mcp__&lt;server&gt;__&lt;tool&gt;</code>.</p>
+    </li>
+
+    <li>
+      <p>Edit <code>.claude/settings.json</code>: the deny list first, then ask, then allow, which
+      is the order the engine evaluates rules in. Each rule is shaped <code>Tool(pattern)</code>. Keep
+      every shipped rule, including any allow rule you cannot yet justify; step 4 and the reference
+      answers come back to those. You may add rules, but write no allow rule of your own you cannot
+      justify in one sentence. The only rules you remove are the other lane's two allow rules
+      (<code>Bash(swift test:*)</code> and <code>Edit(./Sources/**)</code> for
+      Kotlin, <code>Bash(./gradlew test)</code> and <code>Edit(./src/**)</code> for Swift), since
+      the example carries both lanes' and those match nothing in your copy. Leave <code>settings.example.md</code> closed until your
+      predictions exist.</p>
+    </li>
+
+    <li>
+      <p>Fill all six rows of <code>prediction-grid.md</code> before you run anything. For each
+      command write <code>allow</code>, <code>ask</code> or <code>deny</code>, and name the rule you
+      think decides it. Predictions written afterwards teach nothing.</p>
+    </li>
+
+    <li>
+      <p>With the predictions written, open <code>settings.example.md</code> for the shipped reason
+      behind any rule. Then check that the file parses and that three deny rules survived your edit:
+      probes 4, 5 and 6 run into them.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="Bash(rm:*)"><code>python3 -m json.tool .claude/settings.json
+grep -nE 'Bash\((rm|gh pr merge|curl):\*\)' .claude/settings.json</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-cwd="day2-work" data-expect="Bash(rm:*)"><code>python3 -m json.tool .claude/settings.json
+grep -nE 'Bash\((rm|gh pr merge|curl):\*\)' .claude/settings.json</code></pre>
+      </div>
+
+      <p>The first command prints your settings back, reformatted. The second prints the lines
+      carrying the three rules, which in the unedited example are:</p>
+
+      <pre data-lang="text"><code>7:      "Bash(rm:*)",
+8:      "Bash(gh pr merge:*)",
+12:      "Bash(curl:*)",</code></pre>
+
+      <p>Then take a baseline in your own shell, which passes through no permission rules: a green
+      suite now means a red one during the probe is the settings file, not the code.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift"
+             data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>The XCTest count line, the one starting <code>Executed</code>, decides it. It is not the
+        last line: Swift Testing prints its own summary after it, <code>Test run with 0 tests</code>,
+        which counts none of these tests, so ignore that one and look a few lines up. A fresh copy
+        ended with these lines on 2026-10-06:</p>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds
+…  Test run started.
+…  Testing Library Version: …
+…  Target Platform: …
+…  Test run with 0 tests in 0 suites passed after … seconds.</code></pre>
+        <p>If your copy carries Exercise 1's change, the count is higher than 34; any count with
+        0 failures is the green baseline.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p><code>BUILD SUCCESSFUL</code> is the line that decides it. A first run in a fresh copy
+        printed the lines below on 2026-09-23; a repeat run prints different task counts.</p>
+        <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+… actionable tasks: …
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/…/userguide/configuration_cache_enabling.html</code></pre>
+      </div>
+
+      <p>A suite an earlier exercise left red is fine; note it. Now start Claude
+      Code inside <code>day2-work</code> with <code>claude</code> and look at the rules the session
+      loaded.</p>
+
+      <pre data-lang="text"><code>/permissions</code></pre>
+
+      <p>That view is the rules in effect for this session, which is not always the file you just
+      edited. If one of the three deny rules is not in it, put it back before you send the
+      probe.</p>
+    </li>
+
+    <li>
+      <p>Send the probe, in full, and record what happened for each of the six commands.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="text"><code>Attempt each of these six commands in order, one at a time, in this working copy. Do not work around a refusal, and do not edit any settings file. After each one, tell me whether it was allowed, asked, or denied, and quote the rule that decided it. If one is refused, record the refusal and go on to the next. 1: git status. 2: swift test. 3: gh pr view 1. 4: gh pr merge 1. 5: rm -rf build. 6: curl https://example.com</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="text"><code>Attempt each of these six commands in order, one at a time, in this working copy. Do not work around a refusal, and do not edit any settings file. After each one, tell me whether it was allowed, asked, or denied, and quote the rule that decided it. If one is refused, record the refusal and go on to the next. 1: git status. 2: ./gradlew test. 3: gh pr view 1. 4: gh pr merge 1. 5: rm -rf build. 6: curl https://example.com</code></pre>
+      </div>
+
+      <p>Rows 1 and 3 test rules, not repositories, so ignore whatever <code>git status</code> and
+      <code>gh</code> print. Row 3 asks for approval: choose Yes, not &ldquo;Yes, and don't ask
+      again&rdquo;. <code>gh pr view</code> only reads, and the row is <code>ask</code> whatever it
+      prints. The Observed column takes what happened, not what the agent said should happen.</p>
+    </li>
+
+    <li>
+      <p>Compare the two halves of the grid row by row and mark every mismatch with one sentence:
+      what you believed about the rules, and what turned out to be true. Then put both deliverables
+      where the reset cannot reach them.</p>
+
+      <pre data-lang="bash" data-run="swift" data-cwd="day2-work"
+           data-expect="prediction-grid.md"><code>cp env-profile.md prediction-grid.md ../work/ &amp;&amp; ls ../work</code></pre>
+    </li>
+
+    <li>
+      <p>Only now, open the reveal below.</p>
+    </li>
+
+    <li>
+      <p>Part B, observation only; skip it if you have no connectors attached. Run these in order,
+      disabling one connector in the <code>/mcp</code> view, and write down the two
+      <code>/context</code> figures and their difference.</p>
+
+      <pre data-lang="text"><code>/context
+/mcp
+/context</code></pre>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="callout warning">
+    <p class="callout-title">Likely wrong turns</p>
+    <ul>
+      <li>A line naming a line and a column where the reformatted file should be. A comma left after
+      the last deny rule printed <code>Illegal trailing comma before end of array: line 14 column 25
+      (char 309)</code> under Python 3.14 on 2026-09-23; the wording varies by version. The file is
+      malformed: fix it and check again before you start a session.</li>
+      <li>The agent runs <code>rm -rf build</code> without stopping. The deny rule covering
+      <code>rm</code> is not among the rules this session loaded: it came out during your edit, or
+      the session started outside <code>day2-work</code> and read a different
+      <code>.claude/settings.json</code>. Quit, run step 4's checks, start again.</li>
+      <li><code>/permissions</code> shows rules you never wrote. Something above your file has an
+      opinion. Settings resolve in a fixed order: a managed <code>managed-settings.json</code> from
+      MDM or the console, then <code>claude --settings</code>, then
+      <code>.claude/settings.local.json</code>, then <code>.claude/settings.json</code>, then
+      <code>~/.claude/settings.json</code>.</li>
+      <li>You chose &ldquo;Yes, and don't ask again&rdquo; on row 3. Record the row as
+      <code>ask</code> anyway. The rule went into a <code>.claude/settings.local.json</code>, not the
+      file you edited; the reveal says where that file is and what the rule changes.
+      <code>/permissions</code> shows it.</li>
+      <li>The agent stopped after row 3 and is waiting for you. Send:
+      <pre data-lang="text"><code>Go on with commands 4, 5 and 6, as before.</code></pre></li>
+      <li>All six rows match. That is a pass if you wrote every prediction in step 3; row 5 is the
+      one built to catch a first reading of the file.</li>
+      <li>To start the settings file over, copy the example in again rather than resetting: the reset
+      deletes your profile and grid with the copy.</li>
+    </ul>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Four lines decide it</p>
+    <p>Run them in your own shell, from inside <code>day2-work</code>.</p>
+    <pre data-lang="bash" data-run="swift" data-cwd="day2-work"
+         data-expect="settings parse: ok"><code>python3 -m json.tool .claude/settings.json &gt; /dev/null &amp;&amp; echo 'settings parse: ok'
+grep -c '^[0-9]\. \*\*.*&lt;' env-profile.md
+awk -F'|' '/^\| [1-6] \|/ &amp;&amp; $4 ~ /allow|ask|deny/ {n++} END {print n+0}' prediction-grid.md
+grep -c 'gh pr view' .claude/settings.json</code></pre>
+    <p>A pass is <code>settings parse: ok</code>, then <code>0</code>, then <code>6</code>, then
+    <code>0</code>. The second counts profile rows still holding their placeholder; the third counts
+    grid rows with a word in the Predicted column. The fourth prints <code>0</code> unless you
+    wrote a <code>gh pr view</code> rule yourself in step 2, because an accepted &ldquo;don't ask again&rdquo; is never saved to the
+    shared file, wherever its <code>settings.local.json</code> ended up.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> all six profile rows are filled and none
+  names an employer, a system or a repository; the settings file parses, still carries every shipped rule
+  except the other lane's two allow rules, and every allow rule you added has a sentence you would
+  defend in review; all six grid rows carry a prediction written before its
+  observation, each mismatch annotated with the rule that decided it; and copies of both files are
+  in <code>../work/</code>.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <details class="reveal">
+    <summary>Row 5, and the rule row 3 can leave behind</summary>
+    <p><strong>Row 5, <code>rm -rf build</code>.</strong> This is the row built to disagree with a
+    first reading of the file. The example allows
+    <code>Bash(rm -rf build)</code> and denies <code>Bash(rm:*)</code>. The allow rule reads as
+    housekeeping and does nothing: evaluation runs deny, then ask, then allow, and the first match
+    ends the decision regardless of how specific a later rule is. Specificity is never a tiebreak.
+    The row is <code>deny</code>, decided by <code>Bash(rm:*)</code>, and the narrow allow underneath
+    it never runs.</p>
+    <p>That is the failure mode worth carrying out of this exercise. A rule that is written, read in
+    review, and approved can still be inert, and nothing in the file says so. The only way to know is
+    to predict a command and then run it. Row 4, <code>gh pr merge 1</code>, is the same mechanism
+    pointing the way people expect: <code>Bash(gh pr merge:*)</code> in the deny list settles it
+    before the <code>Bash(gh:*)</code> ask rule is ever consulted.</p>
+    <p><strong>Row 3, <code>gh pr view 1</code>.</strong> The row is <code>ask</code>, decided by
+    <code>Bash(gh:*)</code>. The rule to watch is the one an accepted &ldquo;Yes, and don't ask
+    again&rdquo; saves. It is an allow rule, and in <code>day2-work</code> it changes nothing: the ask
+    rule <code>Bash(gh:*)</code> is evaluated first, the same mechanism as row 5. In a copy without
+    that ask rule, it takes effect. It is not saved into the <code>.claude/settings.json</code> you
+    edited: Claude Code saves it to <code>.claude/settings.local.json</code> at the root of the git repository, and it applies to
+    future sessions anywhere in that repository. Four cases keep the file beside
+    <code>day2-work/.claude/settings.json</code> instead, where the reset removes it with the copy:
+    outside a git repository, as in a zip download; on Windows; when the repository root is your
+    home directory; and when the repository root or its <code>.git</code> or <code>.claude</code>
+    entry is not owned by your user. Otherwise the file is at the repository root, which in a clone
+    of this course is the clone's root folder, not <code>day2-work</code>, so the rule outlives the
+    reset and follows you into Day 3's copy. File-edit approvals are never saved; they last until
+    the session ends.</p>
+    <p>Wherever it lands, <code>.claude/settings.local.json</code> is personal and outranks the
+    shared <code>.claude/settings.json</code>, so a rule that lives only there is one your teammates
+    do not have and will not see in your diff. A rule the team shares is written into the shared file
+    on purpose, where a reviewer gets to ask what it lets through.</p>
+    <p>One more thing before you grep your own file: <code>Bash(gh pr view *)</code> and
+    <code>Bash(gh pr view:*)</code> are the same rule in two spellings, so searching for one form
+    can miss a rule that is already there.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Part B: what to expect from the connector probes</summary>
+    <p>This course quotes no <code>/mcp</code> or <code>/context</code> output, on purpose. Your
+    connectors do not exist on the machine this course was built on, and the documentation read on
+    2026-09-22 does not state the format of the context breakdown, so any example printed here would
+    be invented. What you record is your own two figures.</p>
+    <p>Each attached server's tool names are in the window from the start of the session, with the
+    full schemas deferred by default. This course has not recorded what disabling a server partway
+    through a session does to the figures, so the pair you wrote down is the finding, whatever it
+    shows. If the two figures match, check that <code>/mcp</code> showed the server as attached
+    before you disabled it.</p>
+    <p>If <code>/mcp</code> shows nothing attached, there is nothing here to measure. Write the
+    honest answer in row 1 of your profile, which is the row that matters most, and move on to
+    Exercise 4.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Every Day 2 exercise resets the same way: quit Claude Code, then from inside
+  <code>day2-work</code> run your lane's line.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/swift day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <p>It replaces the copy with a fresh one from the shipped lane and leaves <code>../work</code>
+  alone, so step 6's copies survive. A fresh copy is the shipped lane and nothing else, so re-run
+  this page's setup block before you continue. It does not reach a
+  <code>.claude/settings.local.json</code> at a clone's root folder; in the four cases the reveal
+  lists, the file is inside <code>day2-work</code> and goes with the copy. You need not reset
+  before Exercise 4, which edits the
+  settings file you wrote here.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-e3-done" data-progress="d2-e3-done">
+      <label for="d2-e3-done">Exercise 3 finished: the profile is filled, the grid has six
+      predictions written before their observations, and every mismatch is annotated.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-21</code>, <code>cc-core-22</code>, <code>cc-core-24</code>,
+    <code>enterprise-07</code>, <code>enterprise-10</code> &mdash; the <code>Tool(pattern)</code>
+    rule format and its space-star spelling, deny then ask then allow with the first match winning,
+    <code>/permissions</code>, and
+    <code>mcp__&lt;server&gt;__&lt;tool&gt;</code> scoping. <code>cc-core-39</code> &mdash; where
+    &ldquo;Yes, and don't ask again&rdquo; saves its rule, how far it applies, and that file-edit
+    approvals are not saved. <code>cc-core-41</code> &mdash; the directory you launch Claude Code
+    in is the session's primary working directory, accessed 2026-09-23. From
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank"
+    rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-23</code>, <code>enterprise-11</code> &mdash; settings file precedence, and
+    the shared <code>.claude/settings.json</code> against the personal
+    <code>.claude/settings.local.json</code>. <code>cc-core-39</code> &mdash; the four cases in
+    which a saved approval stays beside <code>.claude/settings.json</code>. From
+    <a href="https://code.claude.com/docs/en/settings" target="_blank"
+    rel="noopener noreferrer">Settings</a>.</li>
+    <li><code>cc-automation-11</code> &mdash; <code>/mcp</code>, from
+    <a href="https://code.claude.com/docs/en/mcp" target="_blank"
+    rel="noopener noreferrer">Connect Claude Code to tools via MCP</a>. <code>cc-core-18</code>
+    &mdash; <code>/context</code>, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank"
+    rel="noopener noreferrer">Slash commands</a>. <code>cc-core-36</code> &mdash; MCP tool names
+    load at session start with schemas deferred by default, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank"
+    rel="noopener noreferrer">Context window</a>.</li>
+    <li><code>cc-core-32</code> &mdash; Claude Code 2.1.280, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank"
+    rel="noopener noreferrer">Claude Code changelog</a>.</li>
+    <li>Quoted output was recorded on 2026-09-23 in a fresh copy of each lane made by this page's
+    setup block; the Swift baseline's tail was re-recorded on 2026-10-06.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/04-your-environment-is-part-of-the-spec.html">Lesson 4: Your environment:
+    profile, permissions, write path</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="04-extend-a-vetted-write-script.html">Exercise 4: Use and extend a vetted
+    write script</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Terminal output on this page was recorded
+    on this machine on 2026-09-23, except the Swift baseline tail, recorded on 2026-10-06.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Change B with a runner and gates</title>
+<meta name="description" content="Day 2, Exercise 1: add one gate of your own to the shipped run-spec skill, invoke it against the reference Change B spec, let it run unattended, answer any gate it raises, and name the exit that ended it.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="30">
+<meta name="course:slot" content="d2-e1">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-automation-01 cc-automation-03 cc-core-07 cc-core-32 cc-core-35 cc-core-39 cc-core-41">
+  <h1>Run Change B with a runner and gates</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot;
+  Exercise 1 of 4 &middot; <span class="timing">30 min</span></p>
+
+  <p class="lede">Add one gate of your own to the shipped <code>/run-spec</code> skill, run it
+  against the reference Change B spec until it stops on its own, then say which of its three exits
+  fired, on what evidence, and, if a gate fired, what you did at it.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Paste one block from the course root. You never edit <code>sandbox/</code> itself: the block
+  copies your lane to <code>day2-work</code>, installs the runner, the spec and the run-log template
+  in the copy, and leaves your shell inside it. It also makes <code>work/</code> at the course root
+  for your answers. Every later command on this page runs from
+  inside <code>day2-work</code>, and the starter files are at
+  <code>../day-2-loops-and-your-environment/starter/</code>. If <code>day2-work</code> is already
+  there, remove it first with <code>rm -rf day2-work</code>, or run the reset at the bottom of this
+  page from inside it.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="daily-summary.md"><code>mkdir -p work
+cp -R sandbox/swift day2-work &amp;&amp; cd day2-work
+mkdir -p .claude/skills/run-spec
+cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/
+cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/
+cp ../day-2-loops-and-your-environment/starter/run-log.template.md .
+ls .claude/skills/run-spec specs</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="daily-summary.md"><code>mkdir -p work
+cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work
+mkdir -p .claude/skills/run-spec
+cp ../day-2-loops-and-your-environment/starter/skills/run-spec/SKILL.md .claude/skills/run-spec/
+cp ../day-2-loops-and-your-environment/starter/specs/daily-summary.md specs/
+cp ../day-2-loops-and-your-environment/starter/run-log.template.md .
+ls .claude/skills/run-spec specs</code></pre>
+  </div>
+
+  <p>The block prints <code>SKILL.md</code> and then <code>TEMPLATE.md</code> and
+  <code>daily-summary.md</code>. A project skill lives at
+  <code>.claude/skills/&lt;name&gt;/SKILL.md</code> inside the project it belongs to, and a session
+  works in the directory you launch it from, so start Claude Code inside
+  <code>day2-work</code>.</p>
+
+  <p>The spec covers both lanes: one file, with the Kotlin path or command in brackets after the
+  Swift one. Keep a second terminal tab open in <code>day2-work</code> for the shell commands
+  below.</p>
+
+  <p>Budget about twelve of the 30 minutes for the run itself: an agent turn up to the gate, if
+  one fires, and another after it, about five minutes each, counting the approval prompts, and the question at
+  the end. Five minutes before that go on the gate you write in step 4.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Confirm the copy is green before the runner starts, so a suite it inherited red cannot be
+      mistaken for one it broke.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift"
+             data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <p>In a fresh copy the count line reads:</p>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds</code></pre>
+        <p>The counts hold until the runner changes them. The skipped test is LEDGER-7.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <p>The line that decides it:</p>
+        <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+5 actionable tasks: …</code></pre>
+        <p>The task counts differ between a first run and a repeat; <code>BUILD SUCCESSFUL</code>
+        does not.</p>
+      </div>
+    </li>
+
+    <li>
+      <p>Read <code>specs/daily-summary.md</code>: four numbered criteria, two files in bounds, a
+      list out of bounds, and a budget of 250 changed lines.</p>
+    </li>
+
+    <li>
+      <p>In <code>.claude/skills/run-spec/SKILL.md</code>, find the section headed
+      <code>The three exits</code> and write down the three exits and the iteration cap before
+      anything starts.</p>
+    </li>
+
+    <li>
+      <p>Design one gate of your own before the run starts. In the same file, the copy in
+      <code>day2-work</code> and not the starter, add a fourth condition under <code>The three gate
+      conditions</code>, in the shape of the three above it: one bold name, then one or two
+      sentences saying what the runner compares and what counts as true. Pick a condition a run of
+      Change B could trip and a command could show. Two that work: the test count in the
+      verification command's summary line goes down between iterations, which means a test was
+      deleted rather than repaired; or one iteration edits both in-bounds files at once, so a red
+      result cannot say which edit caused it. Then, under <code>What a gate looks like</code>, add
+      the question, the evidence and the two or three answers your gate would present, in the
+      example's shape. Change &ldquo;three&rdquo; to &ldquo;four&rdquo; in two places, the
+      <code>The three gate conditions</code> heading and the line <code>One of the three conditions
+      below became true</code>, so the runner counts yours. Save the file: Claude Code reads it when you invoke the skill, so the gate is
+      live from the first pass.</p>
+
+      <p>Record which condition you chose and why, one paragraph:</p>
+
+      <pre data-lang="bash"><code>cat &gt; ../work/e1-gate.md</code></pre>
+
+      <p>Type the paragraph, then <kbd>Ctrl</kbd>+<kbd>D</kbd> on its own line. The self-check
+      reads the file.</p>
+    </li>
+
+    <li>
+      <p>Start Claude Code in <code>day2-work</code> with <code>claude</code>, then invoke the
+      runner with the spec path as its argument after the skill's name.</p>
+
+      <pre data-lang="text"><code>/run-spec specs/daily-summary.md</code></pre>
+
+      <p>Do not paste the runner's instructions into the chat by hand. The file is the procedure;
+      typing it out again is the habit today replaces.</p>
+    </li>
+
+    <li>
+      <p>Let it run. Do not send a new instruction while it is working, and do not paste a failure
+      back to it. What it does unsteered is the measurement.</p>
+
+      <p>Until Exercise 3 writes a settings file, Claude Code asks before each file edit and before
+      commands such as the test command: default mode allows only reads. Approving
+      is not steering: answer Yes, or allow edits for the session, and type nothing else. A
+      &ldquo;Yes, and don't ask again&rdquo; is saved to <code>.claude/settings.local.json</code> at
+      the root of the git repository; Exercise 3 shows you where that is.</p>
+    </li>
+
+    <li>
+      <p>If a gate fires, answer from the evidence in the gate message alone. The shape below is
+      a decision, the bound restated, and an instruction to write the reason where the run can still
+      read it after a compaction. Replace the criterion number with the one your gate names.</p>
+
+      <pre data-lang="text"><code>Continue. Criterion 4 stands as written. Do not change any file outside the bounds listed in the spec. Before you resume, append one line to run-log.md recording this decision and the reason in one sentence.</code></pre>
+    </li>
+
+    <li>
+      <p>When the run stops, make it name its own exit rather than summarise.</p>
+
+      <pre data-lang="text"><code>Print the last line of run-log.md, then tell me which stop condition ended the run: green, the iteration cap, or a gate. Quote the test output line that carries the verdict, not whatever printed last.</code></pre>
+    </li>
+
+    <li>
+      <p>Verify it yourself, in the second tab: your lane's test command, then the same with the
+      known-issues gate set. The spec puts LEDGER-7 out of scope, so the gated run must
+      still fail on the JPY case and nothing else.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="expected: -¥128,000"><code>swift test
+LEDGER_RUN_KNOWN_ISSUES=1 swift test</code></pre>
+        <p>With the reference result in place, the gated run printed this, with the path shortened
+        and the error line wrapped to fit:</p>
+        <pre data-lang="text"><code>…/Tests/LedgerKitTests/KnownIssueTests.swift:35: error:
+-[LedgerKitTests.KnownIssueTests testLEDGER7_JPYRendersWithTwoDecimalPlaces] :
+XCTAssertEqual failed: ("-¥1,280.00") is not equal to ("-¥128,000")
+ - LEDGER-7: LK-014 (JPY) rendered the wrong amount.
+  expected: -¥128,000
+  actual:   -¥1,280.00
+…
+	 Executed … tests, with 1 failure (0 unexpected) in … (…) seconds</code></pre>
+        <p>The count may no longer be 34, because the runner rewrote the summary tests; the verdict
+        is 1 failure.</p>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin"
+             data-expect="expected: &lt;-¥128,000&gt; but was: &lt;-¥1,280.00&gt;"><code>./gradlew test
+LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test</code></pre>
+        <p>The gated run ends in <code>BUILD FAILED</code> with one assertion above it. With the
+        reference result in place, it printed:</p>
+        <pre data-lang="text"><code>KnownIssueTest &gt; LEDGER-7 the JPY row renders with decimal places it should not have() FAILED
+    org.opentest4j.AssertionFailedError: … ==&gt; expected: &lt;-¥128,000&gt; but was: &lt;-¥1,280.00&gt;
+…
+85 tests completed, 1 failed
+…
+BUILD FAILED in …</code></pre>
+        <p>The completed count moves with the rewritten summary tests; the verdict is 1
+        failed.</p>
+      </div>
+    </li>
+
+    <li>
+      <p>Read <code>run-log.md</code> from the top, then copy it where the reset cannot reach it.</p>
+
+      <pre data-lang="bash"><code>cp run-log.md ../work/e1-run-log.md</code></pre>
+    </li>
+
+    <li>
+      <p>Check the bounds against the shipped lane rather than the log. The first command lists
+      every file that differs, including files the runner created; the second counts changed lines
+      exactly the way the runner measured its budget.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x .build -x .claude -x specs -x run-log.md ../sandbox/swift . | grep '^diff '
+diff -ruN -x .build -x .claude -x specs -x run-log.md ../sandbox/swift . | grep -vE '^(--- |\+\+\+ )' | grep -cE '^[+-]'</code></pre>
+        <p>With the reference result in place, the list read:</p>
+        <pre data-lang="text"><code>diff -ruN … ../sandbox/swift/Sources/LedgerKit/LedgerSummary.swift ./Sources/LedgerKit/LedgerSummary.swift
+diff -ruN … ../sandbox/swift/Tests/LedgerKitTests/LedgerSummaryTests.swift ./Tests/LedgerKitTests/LedgerSummaryTests.swift
+diff -ruN … ../sandbox/swift/run-log.template.md ./run-log.template.md</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin -x .claude -x specs -x run-log.md ../sandbox/kotlin . | grep '^diff '
+diff -ruN -x build -x .gradle -x .kotlin -x .claude -x specs -x run-log.md ../sandbox/kotlin . | grep -vE '^(--- |\+\+\+ )' | grep -cE '^[+-]'</code></pre>
+        <p>With the reference result in place, the list read:</p>
+        <pre data-lang="text"><code>diff -ruN … ../sandbox/kotlin/run-log.template.md ./run-log.template.md
+diff -ruN … ../sandbox/kotlin/src/main/kotlin/ledgerkit/LedgerSummary.kt ./src/main/kotlin/ledgerkit/LedgerSummary.kt
+diff -ruN … ../sandbox/kotlin/src/test/kotlin/ledgerkit/LedgerSummaryTest.kt ./src/test/kotlin/ledgerkit/LedgerSummaryTest.kt</code></pre>
+      </div>
+
+      <p>The list should be the spec's two in-bounds files and <code>run-log.template.md</code>,
+      which setup copied in. The count is at most 250, including the template's 34 lines, as in the
+      runner's own measure.</p>
+    </li>
+
+    <li>
+      <p>Open the reveals. If a gate fired, compare the runner's gate wording against the gate you
+      hit; if none did, compare your run's exit with the reference log's.</p>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="callout warning">
+    <p class="callout-title">Likely wrong turns</p>
+    <ul>
+      <li>Typing <code>/run-spec specs/daily-summary.md</code> does not start the runner. The skill
+      file is not where Claude Code looks for it. Quit, run <code>ls .claude/skills/run-spec</code> from
+      <code>day2-work</code> to confirm <code>SKILL.md</code> is there, and start Claude Code again
+      from inside it.</li>
+      <li>No <code>run-log.md</code> exists when the run stops. The runner skipped step 5 of its own
+      loop, so the run has no memory outside the transcript, and a compaction now costs you the
+      history. Rebuild the log before you close the session.</li>
+      <li>It asks a question that is not one of the four gate conditions in your copy. That is an
+      interruption, not a gate. Answer in one sentence and note it: a runner that asks for reassurance has a spec
+      that left something undecided.</li>
+      <li>No gate fired. That is a result, not a fault: add one sentence saying so to
+      <code>../work/e1-gate.md</code>, and name the exit as green or the cap.</li>
+      <li>It stops green on the first iteration. Read the diff before you believe it: the fastest
+      route to green is a weakened test, and the spec's grid names the assertion each criterion
+      needs. A one-pass green is real when every test name in the grid appears in the diff and the
+      diff deletes no existing test, so the test count did not fall; if it deletes one, check that a
+      grid test replaced it before you believe the green.</li>
+      <li>To start over rather than debug an edit, run the reset at the bottom of this page, after
+      copying <code>run-log.md</code> to <code>../work</code> if you want to keep it.</li>
+    </ul>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <p>A line beginning <code>error:</code> where the count line should be means the package did
+      not compile, and the runner's last edit caused it. The exception is <code>error: PCH was compiled with module cache path
+      '…/sandbox/swift/.build/…'</code> before the runner has started: someone built inside
+      <code>sandbox/swift</code>, and the copy brought that build folder along. Run
+      <code>rm -rf .build</code> in <code>day2-work</code> and test again.</p>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <p><code>BUILD FAILED</code> with a <code>FAILED</code> line naming a test class means a test
+      went red; open the HTML report path printed beside it.</p>
+    </div>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Four commands decide it</p>
+    <p>Run all four in the second tab.</p>
+    <pre data-lang="bash"><code>grep -c '^| iteration ' run-log.md
+grep -n '^| GATE \|^| ANSWER ' run-log.md
+wc -w ../work/e1-gate.md</code></pre>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>diff -ruN -x .build -x .claude -x specs -x run-log.md ../sandbox/swift . | grep '^diff '</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin -x .claude -x specs -x run-log.md ../sandbox/kotlin . | grep '^diff '</code></pre>
+    </div>
+
+    <p>The first prints a number between 1 and 5: the cap is <code>MAX_ITERATIONS = 5</code>, and
+    only a pass through the loop carries the word <code>iteration</code>. The second prints your
+    gate and the answer you gave it; nothing printed means no gate fired, or you answered in the
+    chat and it never reached the log, the version that survives. If a <code>GATE</code> row
+    names the condition you wrote in step 4, your gate fired; that is a result, not a fault, and
+    the answer row should say what you did about it. The third prints a word count above zero.
+    The fourth names your lane's two in-bounds files and <code>run-log.template.md</code>; another
+    path is the runner leaving its bounds.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> your own gate is in the copy's
+  <code>SKILL.md</code> and <code>../work/e1-gate.md</code> says why you chose it, the run ended on
+  its own rather than because you interrupted it, <code>run-log.md</code> has one row per iteration
+  and a final line of prose naming the exit, a copy of it is in <code>../work/e1-run-log.md</code>, your own test run
+  is green, the gated run fails on the JPY case alone, and the diff against the shipped lane names
+  no file the spec put out of bounds.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <details class="reveal">
+    <summary>The three exits and the three gate conditions, in the runner's own words</summary>
+    <p>From the shipped <code>SKILL.md</code>, with the Markdown emphasis and backticks
+    stripped and the wording untouched. Take them from the file, not from memory of Lesson 2. Your
+    copy has a fourth condition; it is yours, and nothing here grades it. The
+    exits:</p>
+    <pre data-lang="text"><code>- Green. The verification command exited zero and its summary line says
+  so, in the words the spec gives for success (Swift: the Executed … tests
+  line with 0 failures; Kotlin: BUILD SUCCESSFUL in …). Print that line and
+  the last line of run-log.md, then stop.
+- The cap. MAX_ITERATIONS = 5. Iteration five is the last one you run.
+  If it ends red, stop anyway, print the failure, and say the cap fired.
+  Five passes that did not converge is information, not a reason for a
+  sixth.
+- A gate. One of the three conditions below became true. Stop mid-repair
+  and ask.</code></pre>
+    <p>The gates:</p>
+    <pre data-lang="text"><code>- A file outside the spec's bounds must change, or is the better home for
+  the change. Including a test file the spec does not list. Do not widen
+  the bounds yourself, and do not quietly take the in-bounds route either:
+  offer it as an answer.
+- The same failure twice, byte for byte. Compare the failure text from this
+  iteration with the previous one. Identical text means the repair changed
+  nothing the test can see, and a third attempt will not either.
+- The diff exceeds the spec's line budget. Measure against the shipped
+  lane this copy came from (../sandbox/swift when this folder has
+  Package.swift, ../sandbox/kotlin otherwise), added plus deleted:
+  diff -ruN -x .build -x build -x .gradle -x .kotlin -x .claude -x specs -x run-log.md ../sandbox/swift . | grep -vE '^(--- |\+\+\+ )' | grep -cE '^[+-]'
+  (Kotlin: the same with ../sandbox/kotlin). If the spec states no budget,
+  treat 200 changed lines as the budget and say so at the gate.</code></pre>
+    <p>The spec you ran states its own budget, 250 changed lines, so the third gate uses that
+    number and not 200. Green is keyed to the summary line by what it says, not to whatever
+    prints last, because in both lanes a banner prints after it; that line is the evidence step 8
+    asks for. The file also says what a gate is made of: the question, the evidence
+    quoted rather than described, and two or three answers you can say back in a sentence. A stop
+    that is missing the evidence is not a gate, and answering it is guessing.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>A reference run log: four iterations, one gate, exit green</summary>
+    <p>This is
+    <code>../day-2-loops-and-your-environment/starter/reference/after-e1/run-log.md</code>, a
+    reference log in the layout this skill uses, not a recording of a run. It names the Swift lane's
+    files, and its title and table header are left out here.
+    Exercise 2 shows that the implementation shipped beside it does not do everything the log says.
+    Your own log will differ. What should match is the shape: one row per pass, a
+    <code>GATE</code> row with its <code>ANSWER</code> beneath it, and a final line of prose naming
+    the exit.</p>
+    <pre data-lang="text"><code>| iteration 1 | added CurrencyTotal, replaced DaySection.totalMinor with totals, left byDay alone | build failed: LedgerSummaryTests references totalMinor in 2 places | that file is in bounds; rewrite its two assertions |
+| iteration 2 | rewrote LedgerSummaryTests against the new shape; byDay still groups and sums the old way | 3 failures: declined counted, no pending figure, days oldest first | implement the grouping and the totals properly in byDay |
+| iteration 3 | byDay now splits posted and pending per currency and reverses the day order | 1 failure: the totals order is not stable across runs | sort the currency list; see the gate below |
+| GATE | — | criterion 4 asks for currency-code order; the tidiest home for a comparator is Sources/LedgerKit/Transaction.swift, which the spec lists as out of bounds | stopped and asked: A widen the bounds, B keep the sort private inside LedgerSummary.swift, C stop and re-scope |
+| ANSWER | — | B | keeping it private costs four lines and touches no file outside the bounds; a shared comparator is a separate change with its own spec |
+| iteration 4 | sorted the per-currency totals inside LedgerSummary.totals, no new file | Executed 32 tests, with 1 test skipped and 0 failures | green |
+
+Exit: green, on the fourth pass. `diff -ruN` against `../sandbox/swift` counted
+171 changed lines, under the spec's 250: the two in-bounds files and the 34 lines
+of `run-log.template.md`, nothing else.</code></pre>
+    <p>The gate in this log is the first one: the better home for the change is a file the spec
+    fenced off, even though an in-bounds route exists, and the runner is forbidden from widening the
+    fence itself or settling the trade-off for you. Answer B is the ordinary
+    answer. It is worth noticing what the log records about it, which is not the decision but the
+    reason.</p>
+    <p>If the gate you wrote in step 4 is the falling test count, it would have fired on this log
+    too: iteration 4 reports 32 tests where step 1 printed 34, and nothing in the log says which two
+    went. That stop is the gate doing its job. The answer starts with reading the diff for the
+    deleted tests and checking that each criterion still has its assertion.</p>
+    <p>The gate almost nobody reaches is the second, the byte-identical repeat failure. It needs two
+    consecutive passes whose failure text matches exactly, and most people interrupt the run
+    somewhere in the first of those two passes, because watching a repair fail twice is
+    uncomfortable and typing something feels like helping. It is not: a new instruction resets what
+    the runner is comparing against, and the gate that would have told you the repair loop was stuck
+    never fires. If your run ended because you typed, record that as the exit. It is the most
+    useful result this exercise produces.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Every Day 2 exercise resets the same way: quit Claude Code, then from inside
+  <code>day2-work</code> run your lane's line. It replaces the copy with a fresh one from the
+  shipped lane and leaves you inside it; <code>sandbox/</code> and your answers in
+  <code>../work/</code> are untouched.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/swift day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work</code></pre>
+  </div>
+
+  <p>A fresh copy is the shipped lane and nothing else, so re-run this page's setup before you
+  continue: from inside the new copy, paste the setup block's lines after
+  <code>cd day2-work</code>. <code>run-log.md</code> goes with the old copy, which is why you copied
+  it into <code>../work/</code>.</p>
+
+  <p>Do not reset when you have finished: Exercise 2 audits the implementation this run leaves in
+  <code>day2-work</code>. Reset only to run this exercise again.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-e1-done" data-progress="d2-e1-done">
+      <label for="d2-e1-done">Exercise 1 finished: my gate is in the runner, the run ended on its
+      own, the log names the exit, and the diff is in bounds.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-automation-01</code>, <code>cc-automation-03</code> &mdash; a project skill lives
+    at <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> and is invoked by name with arguments
+    after it, from
+    <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener noreferrer">Agent
+    Skills</a>.</li>
+    <li><code>cc-core-41</code> &mdash; the directory you launch Claude Code in is the session's
+    primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Configure
+    permissions</a>, accessed 2026-09-23.</li>
+    <li><code>cc-core-07</code> &mdash; default mode allows reads only; file edits and commands
+    need approval, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>.</li>
+    <li><code>cc-core-39</code> &mdash; &ldquo;Yes, and don't ask again&rdquo; saves the rule to
+    <code>.claude/settings.local.json</code> at the root of the git repository, and a file-edit
+    approval lasts only for the session, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Configure
+    permissions</a>.</li>
+    <li><code>cc-core-35</code> &mdash; automatic compaction replaces the conversation with a
+    structured summary, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Explore
+    the context window</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this exercise was checked against, Claude Code
+    2.1.280, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li>The quoted test and diff output was recorded on this machine on 2026-09-23 in a fresh copy
+    made by this page's setup block, one run per lane; where it says so, with
+    <code>../day-2-loops-and-your-environment/starter/reference/after-e1/</code> copied in to stand
+    for the runner's result. The runner, the spec and the reference run log ship verbatim in
+    <code>../day-2-loops-and-your-environment/starter/</code>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/02-the-runner.html">Lesson 2: The runner: non-stop until a stop condition,
+    with limited gates</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/03-recursive-self-improvement.html">Lesson 3: Recursive self-improvement:
+    the output, the instructions, the workflow</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280. Where this page quotes terminal output, it was recorded
+    on this machine on 2026-09-23.</p>
+  </div>
+</footer>
+</body>
+</html>

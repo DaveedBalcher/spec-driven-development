@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat vs agent, and the four-part prompt</title>
+<meta name="description" content="Day 1, Lessons 1 and 2: what tools, a working directory and a loop do to the unit of work you are responsible for, and the four parts of a prompt that commissions that work.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="14">
+<meta name="course:slot" content="d1-l1">
+<meta name="course:video" content="6bs5b4FltCU">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-19 cc-core-31 cc-core-32 cc-core-41">
+  <h1>Chat vs agent, and the four-part prompt</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Lessons 1 and 2 of 6, with
+  <a href="#lesson-2">Lesson 2</a> starting halfway down &middot; <span class="timing">14 min</span></p>
+
+  <p class="lede">The model you have been pasting from all year is the same model. What changes
+  today is what sits around it: tools, a working directory, and a loop that runs until something
+  says the work is finished. Your unit of work stops being an answer you paste and becomes a diff
+  you have to check, and your prompt stops being a question and becomes an assignment: the outcome
+  you want, the files that may change, the command that decides, and the condition that sends the
+  work back to you.</p>
+
+  <div class="video" data-video-id="6bs5b4FltCU" data-start="0" data-end="170"
+       data-video-title="How Claude Code Works (Claude, 2026-05-13)">
+    <span class="video-kicker">Watch first &middot; 3 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=6bs5b4FltCU"
+      target="_blank" rel="noopener noreferrer">How Claude Code Works</a></p>
+    <p class="video-meta">Claude, 2026-05-13, 2 min 50 s. Watch for the three beats it draws,
+    which this page calls plan, execute and verify. Count how many times verify sends the run back
+    to plan, because that return path is what a chat window has no way to perform.
+    Keep one question open: at which beat is a human still required? The section
+    &ldquo;The loop: plan, execute, verify&rdquo; below is where you settle it.</p>
+  </div>
+
+  <p>Also worth five minutes, outside the lesson's fourteen:
+  <a href="https://www.youtube.com/watch?v=qyPCVqFUyDo&amp;t=1172s" target="_blank"
+  rel="noopener noreferrer">Boris Cherny: We Cut 80% of Claude Code&rsquo;s Prompt</a> (Y Combinator,
+  2026-07-27), chapters at 19:32 and 21:57. Listen for what a prompt is for once the model can
+  act.</p>
+
+  <h2 id="different">What comes back is different</h2>
+
+  <p>Ask chat to fix a currency-formatting bug and you get text: an explanation and a corrected
+  function. Nothing has happened to your repository. You are the step between the answer and the
+  file, so every mistake is caught at paste time, by you &mdash; and that safety property is the
+  one you give up today.</p>
+
+  <p>Ask an agent the same thing and what comes back is a changed working tree plus a transcript of
+  the commands it ran. The artifact you review is a diff: a pull request nobody else has read.</p>
+
+  <h2 id="three">Tools, a working directory, and a loop</h2>
+
+  <p>Three things get added to the same model. It can read and edit files. It can run commands and
+  read their output, so a failing test is information it receives rather than something you relay.
+  And it repeats, deciding for itself whether the task is finished.</p>
+
+  <p>It starts in the directory you launch it from. What it may actually read, edit and run is
+  decided by permission rules, which you meet on Day 2; today the bounds you write into the prompt
+  do that work.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 380 248" role="img" aria-labelledby="ca-title ca-desc">
+      <title id="ca-title">Chat ends in text; the agent loop ends in a diff</title>
+      <desc id="ca-desc">The same task drawn twice, with time running left to right in both rows.
+      In the chat row, your prompt produces text back, which you apply yourself to your files;
+      there is no return path anywhere, because you are the step between the answer and the
+      repository. In the agent row, your prompt enters a bordered region called the loop, which
+      holds plan, execute and verify in that order; a failing verify returns to plan on its own,
+      without you, and the loop's output is a diff, which is the thing you review.</desc>
+
+      <defs>
+        <marker id="ca-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="ca-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <text x="18" y="18" font-size="15" font-weight="650" fill="var(--accent)">chat</text>
+
+      <rect x="18" y="32" width="70" height="44" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="53" y="51" text-anchor="middle" font-size="15" fill="var(--fg)">your</text>
+      <text x="53" y="67" text-anchor="middle" font-size="15" fill="var(--fg)">prompt</text>
+
+      <line x1="88" y1="54" x2="102" y2="54" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="104" y="32" width="70" height="44" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="139" y="51" text-anchor="middle" font-size="15" fill="var(--fg)">text</text>
+      <text x="139" y="67" text-anchor="middle" font-size="15" fill="var(--fg)">back</text>
+
+      <line x1="174" y1="54" x2="188" y2="54" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="190" y="32" width="70" height="44" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="225" y="51" text-anchor="middle" font-size="15" fill="var(--fg)">you</text>
+      <text x="225" y="67" text-anchor="middle" font-size="15" fill="var(--fg)">apply it</text>
+
+      <line x1="260" y1="54" x2="274" y2="54" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="276" y="32" width="70" height="44" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="311" y="51" text-anchor="middle" font-size="15" fill="var(--fg)">your</text>
+      <text x="311" y="67" text-anchor="middle" font-size="15" fill="var(--fg)">files</text>
+
+      <text x="268" y="94" text-anchor="middle" font-size="15" fill="var(--muted)">you are the step</text>
+
+      <text x="18" y="128" font-size="15" font-weight="650" fill="var(--accent)">agent</text>
+
+      <rect x="18" y="160" width="70" height="44" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="53" y="179" text-anchor="middle" font-size="15" fill="var(--fg)">your</text>
+      <text x="53" y="195" text-anchor="middle" font-size="15" fill="var(--fg)">prompt</text>
+
+      <line x1="88" y1="182" x2="102" y2="182" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <text x="104" y="141" font-size="15" font-weight="650" fill="var(--fg)">the loop</text>
+      <rect x="104" y="148" width="198" height="92" fill="none" stroke="var(--fg)" stroke-width="1.5"></rect>
+
+      <rect x="110" y="164" width="44" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="132" y="187" text-anchor="middle" font-size="15" fill="var(--fg)">plan</text>
+
+      <line x1="154" y1="182" x2="166" y2="182" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="168" y="164" width="64" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="200" y="187" text-anchor="middle" font-size="15" fill="var(--fg)">execute</text>
+
+      <line x1="232" y1="182" x2="244" y2="182" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="246" y="164" width="50" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="271" y="187" text-anchor="middle" font-size="15" fill="var(--fg)">verify</text>
+
+      <path d="M271,200 C271,224 132,224 132,202" fill="none" stroke="var(--accent)" stroke-width="1.5"
+            stroke-dasharray="5 4" marker-end="url(#ca-arrow-accent)"></path>
+      <text x="200" y="234" text-anchor="middle" font-size="15" fill="var(--accent)">test red</text>
+
+      <line x1="302" y1="182" x2="314" y2="182" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#ca-arrow-fg)"></line>
+
+      <rect x="316" y="164" width="48" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="340" y="187" text-anchor="middle" font-size="15" fill="var(--fg)">diff</text>
+
+      <text x="340" y="218" text-anchor="middle" font-size="15" fill="var(--muted)">you review</text>
+      <text x="340" y="234" text-anchor="middle" font-size="15" fill="var(--muted)">this</text>
+    </svg>
+    <figcaption>Same task, two shapes: chat ends at text you apply; the agent's loop ends at a
+    diff you read.</figcaption>
+  </figure>
+
+  <h2 id="loop">The loop: plan, execute, verify</h2>
+
+  <p><strong>Plan</strong> is the change it intends, from what it has read: which files, and what
+  it expects to be true afterwards. <strong>Execute</strong> is the edits.
+  <strong>Verify</strong> is a command it runs and whose exit status it reads. A red test sends it
+  back to plan, without you.</p>
+
+  <p>This is the whole course. Day 1 runs the loop once by hand. Day 2 lets it run unattended
+  between stopping points you choose. Day 3 puts a team's framework around it.</p>
+
+  <p>An agent with no verify step is a code generator that writes to disk. The loop cannot close
+  without a command that can fail, which is why every prompt in this course that commissions a
+  change carries one &mdash; the four-part prompt below makes it the third part.</p>
+
+  <h2 id="done">"Done" is a command you ran and its output</h2>
+
+  <p>The agent reporting that the fix is in is a claim. The evidence is the verification command and
+  the line it printed, copied out of your terminal. For LedgerKit that command is one line, the same
+  line every time today, and the same command on Days 2 and 3, run from that day's own copy of the
+  lane:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift"
+         data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+    <p>The two lines that carry the counts, from a green run here on 2026-09-22 (a swift-testing
+    banner prints after them):</p>
+    <pre data-lang="text"><code>Test Suite 'All tests' passed at 2026-09-22 17:15:20.343.
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.019 (0.024) seconds</code></pre>
+    <p>Your timestamp and durations will differ; the counts will not. The skipped test is
+    deliberate, and you meet it in Exercise 2.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+    <p>A green run on this machine on 2026-09-22 printed the build verdict and the task
+    count:</p>
+    <pre data-lang="text"><code>BUILD SUCCESSFUL in …
+5 actionable tasks: 5 executed
+Consider enabling configuration cache to speed up this build: …</code></pre>
+    <p>The task count varies with what Gradle rebuilds. This lane gates its known-issue case on an
+    environment variable rather than skipping it, so no test counts appear; Exercise 2 turns it
+    on.</p>
+  </div>
+
+  <p>A useful team norm: every result anyone reports carries its command and the line that carries
+  the verdict, because the command is the part a reviewer can run again.</p>
+
+  <h2 id="lesson-2">Lesson 2: The four-part prompt</h2>
+
+  <p>The agent does the work and "done" is a command. This half is how you write the prompt that
+  commissions it.</p>
+
+  <h2 id="assignment">A prompt to an agent is an assignment</h2>
+
+  <p>In chat you ask for text and judge it as it arrives; a bad prompt costs you a bad paragraph.
+  An agent prompt commissions work that runs whether or not you are watching, and you cannot judge
+  it until the files have changed.</p>
+
+  <p>So the prompt is a brief with parts: the outcome, what may change to reach it, what decides
+  that it worked, and what brings it back to you unfinished. All four get answered on every run, by
+  you or by the agent.</p>
+
+  <h3 id="goal">Goal: the outcome, not the steps</h3>
+
+  <p>State the behaviour you want afterwards, in one or two sentences, in the domain's words rather
+  than the code's. <em>Searching for cafe finds Cafe Lumiere, and so does searching for CAFE.</em>
+  Anyone can tell whether that is true.</p>
+
+  <p>Steps are the agent's job, and it has read this code more recently than you have; a list of
+  steps is a plan, and Lesson 3 shows where a plan belongs. A goal has to be able to be wrong, and
+  "improve merchant search" cannot be.</p>
+
+  <h3 id="bounds">Bounds: which files may change</h3>
+
+  <p>Name the file or directory that may change, and name at least one that may not. The second
+  half rules out the plausible neighbouring edit: the helper lifted into a shared type, the
+  signature widened on the way past.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p>In bounds: <code>Sources/LedgerKit/LedgerFilter.swift</code> and its tests. Out of bounds,
+    and worth naming: <code>Sources/LedgerKit/Money.swift</code>. The fixtures file the prompt below
+    protects is <code>Tests/LedgerKitTests/Fixtures/transactions.tsv</code>.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p>In bounds: <code>src/main/kotlin/ledgerkit/LedgerFilter.kt</code> and its tests. Out of
+    bounds, and worth naming: <code>src/main/kotlin/ledgerkit/Money.kt</code>. The fixtures file the
+    prompt below protects is <code>Fixtures/transactions.tsv</code>.</p>
+  </div>
+
+  <p>They also give you a check cheaper than reading every hunk: count the files touched. A filter
+  change that edited the money type is out of bounds however green the suite is.</p>
+
+  <h3 id="verification">Verification: the command that decides</h3>
+
+  <p>Give the exact command, the one in the section above, and say what the output has to look
+  like; without that the agent picks its own finish line and stops when the change reads as
+  complete.</p>
+
+  <p>Ask for the output, not a verdict. "Verify it" gets a sentence, and a sentence about tests
+  passing is cheap to produce; asking for the line that carries the verdict, the one quoted under
+  your lane's command above, asks for the run.</p>
+
+  <h3 id="stop">Stop: when to come back and ask</h3>
+
+  <p>One or two named triggers, written as conditions rather than as warnings. <em>If the fix needs
+  a file outside those two paths, stop and say which and why. If the same test fails twice in the
+  same way, stop and show me the failure.</em> Both are checkable by the thing doing the work, which
+  separates a stop condition from a plea to be careful.</p>
+
+  <p>A stop condition turns a surprise into a question instead of a diff, and it is where your own
+  uncertainty goes. Day 2 turns these conditions into a runner's gates.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 346" role="img" aria-labelledby="parts-title parts-desc">
+      <title id="parts-title">The four parts of an agent prompt and the failure each blank causes</title>
+      <desc id="parts-desc">One outlined rectangle labelled one agent prompt holds four stacked bands, read top to bottom. Goal, the outcome you want to exist; left blank, the agent picks what 'better' meant. Bounds, files that may and may not change; left blank, neighbouring files change and green hides it. Verification, the command that decides; left blank, the agent sets its own finish line. Stop, the condition that sends it back; left blank, the surprise arrives as a diff, not a question. A bracket down the left of all four bands is labelled you answer these, or the agent does.</desc>
+
+      <text x="30" y="16" font-size="15" fill="var(--accent)">one agent prompt</text>
+
+      <path d="M26,34 H20 V328 H26" fill="none" stroke="var(--accent)" stroke-width="1.5"></path>
+      <text x="12" y="181" font-size="15" fill="var(--accent)" text-anchor="middle"
+            transform="rotate(-90 12 181)">you answer these, or the agent does</text>
+
+      <rect x="30" y="24" width="160" height="314" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+      <line x1="196" y1="34" x2="196" y2="328" stroke="var(--border)" stroke-width="1"></line>
+
+      <rect x="36" y="34" width="148" height="66" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="44" y="55" font-size="15" font-weight="650" fill="var(--fg)">Goal</text>
+      <text x="44" y="73" font-size="15" fill="var(--fg)">the outcome you</text>
+      <text x="44" y="91" font-size="15" fill="var(--fg)">want to exist</text>
+      <text x="204" y="55" font-size="15" fill="var(--muted)">blank: the agent</text>
+      <text x="204" y="73" font-size="15" fill="var(--muted)">picks what 'better'</text>
+      <text x="204" y="91" font-size="15" fill="var(--muted)">meant</text>
+
+      <rect x="36" y="110" width="148" height="66" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="44" y="131" font-size="15" font-weight="650" fill="var(--fg)">Bounds</text>
+      <text x="44" y="149" font-size="15" fill="var(--fg)">files that may and</text>
+      <text x="44" y="167" font-size="15" fill="var(--fg)">may not change</text>
+      <text x="204" y="131" font-size="15" fill="var(--muted)">blank: neighbouring</text>
+      <text x="204" y="149" font-size="15" fill="var(--muted)">files change and</text>
+      <text x="204" y="167" font-size="15" fill="var(--muted)">green hides it</text>
+
+      <rect x="36" y="186" width="148" height="66" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="44" y="207" font-size="15" font-weight="650" fill="var(--fg)">Verification</text>
+      <text x="44" y="225" font-size="15" fill="var(--fg)">the command that</text>
+      <text x="44" y="243" font-size="15" fill="var(--fg)">decides</text>
+      <text x="204" y="207" font-size="15" fill="var(--muted)">blank: the agent</text>
+      <text x="204" y="225" font-size="15" fill="var(--muted)">sets its own</text>
+      <text x="204" y="243" font-size="15" fill="var(--muted)">finish line</text>
+
+      <rect x="36" y="262" width="148" height="66" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="44" y="283" font-size="15" font-weight="650" fill="var(--fg)">Stop</text>
+      <text x="44" y="301" font-size="15" fill="var(--fg)">the condition that</text>
+      <text x="44" y="319" font-size="15" fill="var(--fg)">sends it back</text>
+      <text x="204" y="283" font-size="15" fill="var(--muted)">blank: the surprise</text>
+      <text x="204" y="301" font-size="15" fill="var(--muted)">arrives as a diff,</text>
+      <text x="204" y="319" font-size="15" fill="var(--muted)">not a question</text>
+    </svg>
+    <figcaption>Each blank has a failure that belongs to it; the agent fills it either
+    way.</figcaption>
+  </figure>
+
+  <h2 id="pair">The same assignment, twice</h2>
+
+  <p>The same task, written both ways. First, as you would ask a colleague:</p>
+
+  <pre data-lang="text"><code>The merchant search in this project doesn't work very well - searching
+for cafe doesn't find Cafe Lumiere. Can you fix that?</code></pre>
+
+  <p>The second is the same request with the four questions answered:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="text"><code>Goal: LedgerFilter's merchant match should ignore case and diacritics, so the query "cafe" matches the merchant "Cafe Lumiere" and the query "CAFE" matches it too.
+
+Bounds: you may change Sources/LedgerKit/LedgerFilter.swift and Tests/LedgerKitTests/LedgerFilterTests.swift and nothing else. Do not change Sources/LedgerKit/Money.swift, Sources/LedgerKit/TransactionFormatter.swift, Sources/LedgerKit/LedgerSummary.swift, the fixtures file, or CLAUDE.md.
+
+Verification: run swift test and show me the Executed line right under Test Suite 'All tests' passed (or failed). Add at least one test for the diacritic case and one for the case-insensitive case, using merchants that already exist in the fixtures.
+
+Stop: if the change needs a file outside those two paths, stop and tell me which file and why, without editing it. If the same test fails twice in the same way, stop and show me the failure.</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="text"><code>Goal: LedgerFilter's merchant match should ignore case and diacritics, so the query "cafe" matches the merchant "Cafe Lumiere" and the query "CAFE" matches it too.
+
+Bounds: you may change src/main/kotlin/ledgerkit/LedgerFilter.kt and src/test/kotlin/ledgerkit/LedgerFilterTest.kt and nothing else. Do not change src/main/kotlin/ledgerkit/Money.kt, src/main/kotlin/ledgerkit/TransactionFormatter.kt, src/main/kotlin/ledgerkit/LedgerSummary.kt, the fixtures file, or CLAUDE.md.
+
+Verification: run ./gradlew test and show me the BUILD line. Add at least one test for the diacritic case and one for the case-insensitive case, using merchants that already exist in the fixtures.
+
+Stop: if the change needs a file outside those two paths, stop and tell me which file and why, without editing it. If the same test fails twice in the same way, stop and show me the failure.</code></pre>
+  </div>
+
+  <p>The premise in both prompts is deliberately wrong: there is no Cafe Lumiere in the fixture,
+  and the merchant match already folds case and diacritics. The verification line guards against
+  taking it on trust. The good outcome is the agent reporting that the search already works, with
+  the suite's verdict line as evidence; any tests it adds pass on their first run, pinning
+  behaviour that was already there.</p>
+
+  <p>Exercise 1 runs both prompts for real, each in a fresh session (<code>/clear</code> empties
+  the conversation).</p>
+
+  <h2 id="chat">When chat, or one line, is the right tool</h2>
+
+  <p>If there is no file to change, there is nothing for verify to run, and a loop that cannot close
+  is overhead you pay for in file reads and turns. Explaining a stack trace, or arguing about where
+  state belongs before you commit to an approach: chat answers both in one turn, and neither ends in
+  a diff. Reach for the agent when the outcome you want is a diff, and for chat when it is a
+  sentence.</p>
+
+  <p>Nor should the prompt cost more than the change it commissions. If you can review the diff cold
+  in under a minute without being told the bounds &mdash; a rename, a typo, a version bump &mdash;
+  one line is enough. Three tells push the other way: the change spans files, so the file list no
+  longer fits in your head; you will not be watching it run; or you will run it again next month,
+  and what you left implicit gets re-invented. Any one of those and the four parts pay for
+  themselves.</p>
+
+  <p>Every keystroke, flag and path in this course was checked against Claude Code v2.1.280 on
+  2026-09-22; <code>claude --version</code> shows yours. If your terminal disagrees with a page,
+  your terminal is right.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your prompt reads "make the merchant search better". Which missing part lets a wrong
+    result look finished, and what happens because of it?</summary>
+    <p>Verification. With no command that decides, the agent sets its own finish line and stops
+    when the change reads as complete, so you learn what "better" meant only by reading the whole
+    diff. The goal is missing too, but a goal says what right looks like; only the command decides
+    when the work is done.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>A colleague asks why the build got slow. Nothing in the repo has to change. Why
+    is running that through the agent loop a poor trade?</summary>
+    <p>There is no diff, so verify has nothing to run and the loop cannot tell itself it is
+    finished. You pay for file reads and tool turns to get an answer chat gives you in one.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-l1-done" data-progress="d1-l1-read">
+      <label for="d1-l1-done">Lessons 1 and 2 read, and I can name the four parts without
+      looking.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation, accessed 2026-09-22 against version 2.1.280.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-31</code>, <code>cc-core-32</code> &mdash; <code>claude --version</code>
+    reports the installed version, and v2.1.280 (September 22, 2026) is the version every mechanical
+    claim in this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>cc-core-41</code> &mdash; the directory you launch Claude Code in is the session's
+    primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>,
+    accessed 2026-09-23.</li>
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code> resets the session to an empty context,
+    from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li>The Swift and Kotlin output quoted above was recorded from the course sandbox on this
+    machine on 2026-09-22.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../index.html">Day 1: From chat to spec, and the opening video</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/01-same-task-two-prompts.html">Exercise 1: Same task, two prompts</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page quotes terminal output,
+    it was recorded on this machine on that date.</p>
+  </div>
+</footer>
+</body>
+</html>

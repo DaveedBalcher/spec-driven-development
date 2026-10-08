@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Change C through your track</title>
+<meta name="description" content="Day 3, Exercise 2: drive the statement-periods brief through your framework's own artifacts and commands to a green suite, then grade it with an acceptance suite the framework never saw.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="2">
+<meta name="course:minutes" content="55">
+<meta name="course:slot" content="d3-e2">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="openspec-01 openspec-04 openspec-08 openspec-09 openspec-13 openspec-16 openspec-17 openspec-18 openspec-obs-06 openspec-obs-07 openspec-obs-08 lid-06 lid-11 lid-13 lid-25 lid-obs-02 lid-obs-05 lid-obs-08 bmad-06 bmad-07 bmad-11 bmad-obs-01 bmad-obs-05 bmad-obs-10 bmad-obs-11 cc-core-07 cc-core-19">
+  <h1>Run Change C through your track</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot;
+  Exercise 2 of 3 &middot; <span class="timing">55 min</span></p>
+
+  <p class="lede">By the end you will have driven one brief through your framework's own artifacts,
+  commands and implementation, and graded the result with an acceptance suite it never saw.</p>
+
+  <p class="callout note">This continues <a href="01-install-and-orient.html">Exercise 1</a>'s
+  <code>day3-work</code>. Starting here? Run the setup block, then your track's install-and-init
+  steps there.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>Quit Claude Code and paste one block from the course root (<code>cd ..</code> first if you are
+  in the copy). It keeps an existing <code>day3-work</code>, adds the brief and the cycle fixture,
+  and leaves you inside it, where every later command runs.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="Fixtures/:&#10;cycle-config.tsv"><code>mkdir -p work
+{ [ -d day3-work ] || cp -R sandbox/swift day3-work; } &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+cp ../day-3-choose-your-adventure/starter/fixtures/cycle-config.tsv Tests/LedgerKitTests/Fixtures/
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md Tests/LedgerKitTests/Fixtures/</code></pre>
+    <p>The fixtures folder lists <code>cycle-config.tsv</code>.</p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="resources/:&#10;cycle-config.tsv"><code>mkdir -p work
+{ [ -d day3-work ] || cp -R sandbox/kotlin day3-work; } &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+cp ../day-3-choose-your-adventure/starter/fixtures/cycle-config.tsv src/test/resources/
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md src/test/resources/</code></pre>
+    <p><code>src/test/resources/</code> lists <code>cycle-config.tsv</code>.</p>
+  </div>
+
+  <p>Start <code>claude</code> there, with a second terminal tab for shell commands. In default
+  mode Claude Code asks before each edit and command; approving is not steering.</p>
+
+  <p>The brief pins the type names and entry point, so a test against them compiles, and nothing
+  else: no acceptance criteria, two unmarked ambiguities.</p>
+
+  <p>Note the time: 25 minutes to the checkpoint in step 6, reading the brief included; then
+  implementing takes about 10 on OpenSpec, 17 on LID and 20 on BMAD, whose build reviews its diff
+  with three subagents; then 8 to grade. That is 43, 50 or 53 of the 55; the rest is reading this
+  page and its reveals.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p>Read the brief before typing anything. In <code>../work/ambiguities.md</code>, list
+      every place two reasonable engineers would build different things.</p>
+    </li>
+
+    <li>
+      <p>Confirm the suite is green, as in Exercise 1.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift"
+             data-expect="Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at ….
+	 Executed 34 tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <pre data-lang="text"><code>BUILD SUCCESSFUL in …</code></pre>
+        <p>Gradle prints no count; read it from the report:</p>
+        <pre data-lang="bash" data-run="kotlin" data-expect="skipped=&quot;1&quot;"><code>cat build/test-results/test/TEST-*.xml | grep -c '&lt;testcase '
+grep -o 'skipped="[0-9]*"' build/test-results/test/TEST-ledgerkit.KnownIssueTest.xml</code></pre>
+        <p>It prints <code>85</code>, then <code>skipped="1"</code>.</p>
+      </div>
+    </li>
+
+    <li>
+      <p>Start planning with <a href="#track">your tab's</a> prompt, pasted whole: whether the
+      framework reads the file is part of the test.</p>
+    </li>
+
+    <li>
+      <p>When the planning output appears (some commands, <code>/opsx:propose</code> among them,
+      write several files at once), mark each item on your list: asked, recorded as an open
+      question, or silently chosen; the third is what matters. Then send:</p>
+
+      <pre data-lang="text"><code>Do not change any code yet. List every behaviour in the brief that you had to decide without the brief telling you, one line each, with the decision you made and the file where that decision is now written down. If a decision is only in this conversation and not in a file, say so explicitly for that line.</code></pre>
+    </li>
+
+    <li>
+      <p>Resolve each ambiguity in the framework's own artifact (your tab names it), not in chat:
+      <code>/clear</code> empties the conversation, and a decision kept there goes with it. Then
+      send:</p>
+
+      <pre data-lang="text"><code>I have written my decisions into &lt;the file your tab names&gt;. Re-read it from disk, treat those open questions as closed, and continue to your next step without changing them. Do not write any code yet.</code></pre>
+    </li>
+
+    <li>
+      <p>Checkpoint at 25 minutes. If planning is unfinished, quit Claude Code, copy in your track's
+      reference planning artifacts (made by its workflow on the build machine) with your tab's
+      lines, restart <code>claude</code>, and continue at step 7. Taking it is not failing.</p>
+
+    </li>
+
+    <li>
+      <p>Run your tab's implementation prompt. Do not hand-edit source while it runs.</p>
+    </li>
+
+    <li>
+      <p>Run your lane's suite. If anything is red, send your tab's repair prompt with the failing
+      output in place of <code>&lt;paste&gt;</code>, and re-run until green.
+      The count now includes your framework's own tests: it is grading itself.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="with 1 test skipped and 0 failures (0 unexpected)"><code>swift test</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+      </div>
+    </li>
+
+    <li>
+      <p>Copy in the acceptance suite, outside <code>day3-work</code> until now and the same for
+      every track, then run the <a href="#self-check">self-check</a>.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="ChangeCAcceptanceTests.swift&#10;"><code>cp ../day-3-choose-your-adventure/starter/acceptance/ChangeCAcceptanceTests.swift Tests/LedgerKitTests/
+ls Tests/LedgerKitTests/</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="ChangeCAcceptanceTest.kt&#10;"><code>cp ../day-3-choose-your-adventure/starter/acceptance/ChangeCAcceptanceTest.kt src/test/kotlin/
+ls src/test/kotlin/</code></pre>
+      </div>
+    </li>
+
+    <li>
+      <p>Check the bounds: the known-issue run, then a diff against the shipped lane. Below, the
+      reference implementation stands in.</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 swift test
+diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/swift .</code></pre>
+        <p>Known-issue run:</p>
+        <pre data-lang="text"><code>…/Tests/LedgerKitTests/KnownIssueTests.swift:35: error: -[LedgerKitTests.KnownIssueTests testLEDGER7_JPYRendersWithTwoDecimalPlaces] : XCTAssertEqual failed: ("-¥1,280.00") is not equal to ("-¥128,000") - LEDGER-7: LK-014 (JPY) rendered the wrong amount.
+  expected: -¥128,000
+  actual:   -¥1,280.00
+…
+	 Executed … tests, with 1 failure (0 unexpected) in … (…) seconds</code></pre>
+        <p>Diff:</p>
+        <pre data-lang="text"><code>Only in ./Sources/LedgerKit: StatementPeriods.swift
+Only in ./Tests/LedgerKitTests: ChangeCAcceptanceTests.swift
+Only in ./Tests/LedgerKitTests/Fixtures: cycle-config.tsv
+Only in .: change-c-brief.md</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>LEDGER_RUN_KNOWN_ISSUES=1 ./gradlew test
+diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/kotlin .</code></pre>
+        <p>Known-issue run:</p>
+        <pre data-lang="text"><code>KnownIssueTest &gt; LEDGER-7 the JPY row renders with decimal places it should not have() FAILED
+    org.opentest4j.AssertionFailedError: … ==&gt; expected: &lt;-¥128,000&gt; but was: &lt;-¥1,280.00&gt;
+…
+… tests completed, 1 failed
+…
+BUILD FAILED in …</code></pre>
+        <p>Diff:</p>
+        <pre data-lang="text"><code>Only in .: change-c-brief.md
+Only in ./src/main/kotlin/ledgerkit: StatementPeriods.kt
+Only in ./src/test/kotlin: ChangeCAcceptanceTest.kt
+Only in ./src/test/resources: cycle-config.tsv</code></pre>
+      </div>
+
+      <p>One failure, the JPY case. Read
+      the diff as in Exercise 1: every line must be in your source or test folders, the brief, or
+      your map's list, and no <code>differ</code> line may name <code>Money</code> or
+      <code>LedgerFilter</code>. Your diff will be longer than the four lines above: your track
+      adds its own folders (on OpenSpec, <code>openspec/</code> and <code>.claude/</code>) and its
+      own test file; those are in your map's list.</p>
+    </li>
+
+    <li>
+      <p>Under <code>## Change C notes</code> in <code>../work/map.md</code>, write three lines:
+      which ambiguity your framework caught, which one it chose without asking, and which file the
+      resolution ended up in.</p>
+    </li>
+  </ol>
+
+  <h2 id="track">Your track</h2>
+
+  <div class="tabs" data-show-all="true">
+    <div role="tablist" aria-label="Framework track" hidden>
+      <button type="button" role="tab" data-track="openspec" id="tab-openspec"
+              aria-controls="panel-openspec">OpenSpec</button>
+      <button type="button" role="tab" data-track="lid" id="tab-lid"
+              aria-controls="panel-lid">LID</button>
+      <button type="button" role="tab" data-track="bmad" id="tab-bmad"
+              aria-controls="panel-bmad">BMAD</button>
+    </div>
+    <button type="button" data-show-all-toggle hidden>Show all three</button>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-openspec"
+             aria-labelledby="tab-openspec">
+      <h3>OpenSpec: plan (step 3)</h3>
+
+      <pre data-lang="text"><code>/opsx:propose Statement periods for LedgerKit. The full brief is in change-c-brief.md in this project folder — read that file, do not work from this sentence. Produce the proposal and the delta specs for this change, plus whatever design note and task list your workflow normally produces. Do not write implementation code in this step. Where the brief leaves a behaviour genuinely undetermined, do not ask me before creating the change or choose for me: record it under a heading "Open questions", still write the design note and task list, mark each task that depends on an open question blocked, and stop. Keep every code change inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane, or src/main/kotlin/ and src/test/kotlin/ on the Kotlin lane.</code></pre>
+
+      <p><code>/opsx:propose</code> writes every artifact under <code>openspec/changes/</code> and stops on the open
+      questions.</p>
+
+      <h3>Where a decision lives (step 5)</h3>
+
+      <p>In the delta spec: a <code>### Requirement:</code> under <code>## ADDED
+      Requirements</code>, pinned by a <code>#### Scenario:</code>. The build run also recorded
+      each decision in <code>proposal.md</code>, but the delta spec is the copy
+      <code>/opsx:apply</code> implements. Validate by the name <code>openspec list</code>
+      shows:</p>
+
+      <pre data-lang="bash"><code>openspec list
+openspec validate &lt;name&gt;</code></pre>
+
+      <p>On the build machine (1.13.1, 2026-09-22): <code>Change 'add-statement-periods' is
+      valid</code>.</p>
+
+      <h3>Checkpoint (step 6)</h3>
+
+      <p>Move any change of your own out first:</p>
+
+      <pre data-lang="bash"><code>mv openspec/changes/&lt;your-change&gt; ../work/
+cp -R ../day-3-choose-your-adventure/starter/checkpoints/openspec/changes/. openspec/changes/</code></pre>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <p>Its tasks and design assume Swift; paste this under <code># Tasks</code> in
+        <code>openspec/changes/add-statement-periods/tasks.md</code>:</p>
+        <pre data-lang="text"><code>Kotlin lane: this checkout is the Kotlin lane, and this line overrides every Swift path and command in these tasks and in design.md. Code goes in src/main/kotlin/ledgerkit/, tests in src/test/kotlin/, fixtures in src/test/resources/, and ./gradlew test replaces swift build and swift test.</code></pre>
+      </div>
+
+      <h3>Implement (step 7)</h3>
+
+      <p>Send <code>/opsx:apply</code> with the change name <code>openspec list</code> shows
+      (after the checkpoint, <code>add-statement-periods</code>) and your bounds:</p>
+
+      <pre data-lang="text"><code>/opsx:apply &lt;name&gt; Work this change's task list. Implement only what the delta specs describe. Stay inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane, or src/main/kotlin/ and src/test/kotlin/ on the Kotlin lane, and stop when the task list is complete. Do not use git in this folder: where a task runs git, run diff -rq -x .build -x build -x .gradle -x .kotlin ../sandbox/swift . (on the Kotlin lane, ../sandbox/kotlin) instead.</code></pre>
+
+      <h3>Repair (step 8)</h3>
+
+      <p><code>/opsx:apply</code> again, then:</p>
+
+      <pre data-lang="text"><code>The test suite is red. Here is the failing output, verbatim: &lt;paste&gt;. Fix it by working the task list and the delta specs — if the delta spec is what is wrong, change the delta spec first and then the code. Do not edit the tests to make them pass.</code></pre>
+
+      <details class="reveal">
+        <summary>What OpenSpec produced on the build run: the proposal and the delta spec</summary>
+        <p>OpenSpec 1.13.1, 2026-09-22, in a fresh copy of the Swift lane, handed the planning
+        prompt above. The full folder is
+        <code>../day-3-choose-your-adventure/starter/checkpoints/openspec/</code>.</p>
+        <pre data-lang="text"><code>openspec/changes/add-statement-periods/proposal.md
+openspec/changes/add-statement-periods/design.md
+openspec/changes/add-statement-periods/tasks.md
+openspec/changes/add-statement-periods/.openspec.yaml
+openspec/changes/add-statement-periods/specs/statement-cycle/spec.md
+openspec/changes/add-statement-periods/specs/statement-periods/spec.md</code></pre>
+        <p>It stopped on four open questions with the dependent tasks blocked. After the answers
+        were folded back in, the proposal's last section reads, headings only:</p>
+        <pre data-lang="text"><code>## Decisions on what the brief left open
+### OQ-1. Placement date: the posted date
+### OQ-2. Short months: clamp the start day to the month's last day
+### OQ-3. Rule combination: single rule only
+### OQ-4. Malformed table rows: skip the row</code></pre>
+        <p>The first requirement of <code>specs/statement-periods/spec.md</code>, with its first
+        scenario:</p>
+        <pre data-lang="text"><code>### Requirement: A transaction is placed by its posted date
+The date that decides which period a transaction belongs to SHALL be the UTC
+calendar date of its `postedAt`, the same date the existing day grouping uses.
+The authorized date SHALL never decide membership. This applies to every
+status: a pending or declined transaction is placed by its `postedAt` like any
+other.
+
+#### Scenario: Fixture row LK-015 is placed by its posted date
+- **WHEN** the twenty transactions of `transactions.tsv` are grouped with the
+  `standard` cycle from the shipped cycle table
+- **THEN** `LK-015` (authorized `2026-03-04`, posted `2026-03-05`) is in the
+  period starting `2026-03-05` and ending `2026-04-04`, not in the period
+  ending `2026-03-04`</code></pre>
+      </details>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-lid"
+             aria-labelledby="tab-lid">
+      <h3>LID: plan (step 3)</h3>
+
+      <p>Describe the change: the <code>## LID</code> block Exercise 1 added to
+      <code>CLAUDE.md</code> sends it down the arrow through the <code>linked-intent-dev</code>
+      skill (<code>/linked-intent-dev:update-lid</code> is for drift and mode changes). Paste as an
+      ordinary message:</p>
+
+      <pre data-lang="text"><code>Statement periods for LedgerKit. The full brief is in change-c-brief.md in this project folder — read that file, do not work from this message. This module already has a design tree from Exercise 1, so extend it rather than proposing a new architecture. Give the new EARS requirements the prefix LK-PERIOD. Stop for my review at the end of each phase. Where the brief leaves a behaviour genuinely undetermined, raise it rather than choosing for me.</code></pre>
+
+      <p>The skill stops for approval after each phase: high-level design, low-level design, EARS
+      requirements, edge audit, tests. Read each, then send:</p>
+
+      <pre data-lang="text"><code>Approved. Continue to the next phase.</code></pre>
+
+      <h3>Where a decision lives (step 5)</h3>
+
+      <p>Before requirements exist, in the leaf's design doc under Decisions &amp; Alternatives;
+      after, in the <code>LK-PERIOD</code> requirement it cascades to
+      (<code>docs/intent/&lt;segment&gt;/&lt;segment&gt;-specs.md</code>), one EARS sentence per
+      decision.</p>
+
+      <h3>Checkpoint (step 6)</h3>
+
+      <p>Move any leaf of your own out first, and delete any <code>LK-PERIOD</code> segment it
+      added to <code>docs/arrows/index.yaml</code>:</p>
+
+      <pre data-lang="bash"><code>mv docs/intent/&lt;your-leaf&gt; ../work/
+cp -R ../day-3-choose-your-adventure/starter/checkpoints/lid/docs/intent/statement-period docs/intent/</code></pre>
+
+      <p>Then copy in the arrow doc and make by hand the three edits
+      <code>../day-3-choose-your-adventure/starter/checkpoints/lid/CHECKPOINT.md</code> lists, in
+      <code>docs/arrows/index.yaml</code>, <code>docs/high-level-design.md</code> and
+      <code>CLAUDE.md</code>, which a copy would overwrite. The overlay snippet comes in both
+      shapes an <code>index.yaml</code> can have; match yours.</p>
+
+      <h3>Implement (step 7)</h3>
+
+      <p>At the stop before tests (after the checkpoint, as your first message), send:</p>
+
+      <pre data-lang="text"><code>Continue down the arrow: write the tests for the LK-PERIOD requirements first, then the code, and annotate each with // @spec and its requirement ID on the topmost function that owns the behaviour. Keep code and tests inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane; on the Kotlin lane, in src/main/kotlin/ledgerkit/ and src/test/kotlin/, in place of any Swift file the design names. Do not change any requirement to match code you have already written — if the code cannot satisfy a requirement, stop and tell me which one.</code></pre>
+
+      <p>Each annotation is <code>// @spec</code> and comma-separated IDs, each a design-tree path
+      plus a number. List them:</p>
+
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>grep -rn '@spec LK-PERIOD' Sources Tests</code></pre>
+      </div>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>grep -rn '@spec LK-PERIOD' src</code></pre>
+      </div>
+
+      <h3>Repair (step 8)</h3>
+
+      <pre data-lang="text"><code>The test suite is red. Here is the failing output, verbatim: &lt;paste&gt;. Decide first whether the failure means the code is wrong or the requirement is wrong. If the requirement is wrong, fix the low-level design and cascade downstream; if the code is wrong, fix the code and leave the requirement alone. Tell me which of the two you concluded and which artifact you changed. Do not edit the tests to make them pass.</code></pre>
+
+      <details class="reveal">
+        <summary>What LID produced on the build run: the design addition and the LK-PERIOD
+        block</summary>
+        <p>LID at commit 831c1959, 2026-09-22, in a fresh copy of the Swift lane with the design
+        tree already mapped. That run could not stop for a person at its phase boundaries, so it
+        was handed the planning prompt plus the answers to the two ambiguities up front. It was
+        started as <code>/linked-intent-dev:update-lid</code> with the prompt as its argument; the
+        plain-message start this tab uses was not run on the build machine, so your run is the
+        first observation of it. This is
+        what it produced, not a fixed file list; the files are in
+        <code>../day-3-choose-your-adventure/starter/checkpoints/lid/</code>.</p>
+        <pre data-lang="text"><code>docs/high-level-design.md                                  the new leaf added to the high-level design
+docs/intent/statement-period/statement-period-design.md   the low-level design addition
+docs/intent/statement-period/statement-period-specs.md    22 EARS requirements, LK-PERIOD-001..022
+docs/arrows/index.yaml                                     a new LK-PERIOD segment
+CLAUDE.md                                                  PERIOD added to the leaf list</code></pre>
+        <p>The design doc's sections run Purpose, Scope, Design, Interfaces, Decisions &amp;
+        Alternatives, Open Questions &amp; Future Decisions, and Verification. Two of the
+        requirements:</p>
+        <pre data-lang="text"><code>**LK-PERIOD-008** When a calendar month has fewer days than the cycle's
+start day, the statement-period grouping shall open that month's period on
+the last day of that month, and shall leave every other month's opening
+day unchanged (a start day of 31 opens the February 2026 period on
+2026-02-28 and the March 2026 period on 2026-03-31).
+Verified by: (no test yet).
+
+**LK-PERIOD-013** The statement-period grouping shall place each
+transaction in the period whose `start` and `end` days, both inclusive,
+contain the transaction's `postedDay` (the UTC calendar day of
+`postedAt`), and shall never use `authorizedDay` to decide membership
+(fixture row `LK-015`, authorized 2026-03-04 and posted 2026-03-05,
+belongs on a start-day-5 cycle to the period that opens on 2026-03-05).
+Verified by: (no test yet).</code></pre>
+        <p>Every requirement reads <code>(no test yet)</code>: the arrow had reached requirements
+        and not tests. The run also reported three sibling documents from the mapping as stale
+        rather than editing them, because a sibling is not downstream on the arrow.</p>
+      </details>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-bmad"
+             aria-labelledby="tab-bmad">
+      <h3>BMAD: plan (step 3)</h3>
+
+      <pre data-lang="text"><code>/bmad-build Statement periods for LedgerKit. The full brief is in change-c-brief.md in this project folder — read that file, do not work from this sentence. Ask your clarifying questions before you plan, and show me the plan for approval before you implement anything. Where the brief leaves a behaviour genuinely undetermined, ask rather than choosing for me. Keep every code change inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane, or src/main/kotlin/ and src/test/kotlin/ on the Kotlin lane.</code></pre>
+
+      <p><code>/bmad-build</code> opens with a <code>uv run</code> command naming <code>_bmad/scripts/render_skill.py</code>: approve it.
+      Without <code>uv</code>, or with that command refused, it halts.</p>
+
+      <h3>Where a decision lives (step 5)</h3>
+
+      <p>In the spec <code>/bmad-build</code> writes under
+      <code>_bmad-output/implementation-artifacts/</code>: by its step-01 text one
+      <code>spec-&lt;slug&gt;.md</code>; on the build machine,
+      <code>statement-periods/SPEC.md</code>. Answer its Open Questions there, as decisions inside its
+      <code>&lt;frozen-after-approval&gt;</code> block.</p>
+
+      <h3>Checkpoint (step 6)</h3>
+
+      <p>Move any spec of your own out first. <code>cp -R</code> into a missing folder renames the
+      copy, so <code>mkdir</code> comes first:</p>
+
+      <pre data-lang="bash"><code>mv _bmad-output/implementation-artifacts/&lt;your spec file or folder&gt; ../work/
+mkdir -p _bmad-output/implementation-artifacts
+cp -R ../day-3-choose-your-adventure/starter/checkpoints/bmad/statement-periods _bmad-output/implementation-artifacts/</code></pre>
+
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <p>The implementing subagent reads only the spec, so in the frozen block of
+        <code>statement-periods/SPEC.md</code> cut <code>or a Kotlin lane</code> and its
+        parenthesis from <strong>Never:</strong> and add under <strong>Always:</strong></p>
+        <pre data-lang="text"><code>- This repository is the Kotlin lane, and this line overrides every Swift name, path and command in this spec: use the brief's Kotlin block, code in src/main/kotlin/ledgerkit/, tests in src/test/kotlin/, fixtures in src/test/resources/, and run ./gradlew test.</code></pre>
+      </div>
+
+      <h3>Implement (step 7)</h3>
+
+      <p>After reviewing its plan:</p>
+
+      <pre data-lang="text"><code>Approved — build the plan you just showed me. Implement only what the spec describes, keep every change inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane, or src/main/kotlin/ and src/test/kotlin/ on the Kotlin lane, and stop when the spec's status reaches done. Do not use git in this folder: wherever your workflow needs a diff, use the output of diff -ruN -x .build -x build -x .gradle -x .kotlin -x _bmad -x _bmad-output -x .claude ../sandbox/swift . (on the Kotlin lane, ../sandbox/kotlin) as the provided diff, and do not commit.</code></pre>
+
+      <p>After the checkpoint, hand <code>/bmad-build</code> the spec; at
+      <code>ready-for-dev</code> it goes straight to implementation:</p>
+
+      <pre data-lang="text"><code>/bmad-build _bmad-output/implementation-artifacts/statement-periods/SPEC.md Implement this spec. Implement only what the spec describes, keep every change inside Sources/LedgerKit/ and Tests/LedgerKitTests/ on the Swift lane, or src/main/kotlin/ and src/test/kotlin/ on the Kotlin lane, and stop when the spec's status reaches done. Do not use git in this folder: wherever your workflow needs a diff, use the output of diff -ruN -x .build -x build -x .gradle -x .kotlin -x _bmad -x _bmad-output -x .claude ../sandbox/swift . (on the Kotlin lane, ../sandbox/kotlin) as the provided diff, and do not commit.</code></pre>
+
+      <p>No git: in a clone of the course, git reports on the whole course.</p>
+
+      <h3>Repair (step 8)</h3>
+
+      <p>BMAD's phase-4 chain runs <code>bmad-sprint-planning</code>,
+      <code>bmad-build</code>, <code>bmad-code-review</code>; your repair prompt re-enters it at the
+      review.</p>
+
+      <pre data-lang="text"><code>The test suite is red. Here is the failing output, verbatim: &lt;paste&gt;. Re-enter at bmad-code-review for the spec or story that owns this behaviour, then bmad-build to apply the fix. Do not edit the tests to make them pass, and tell me which one you reopened. Do not use git in this folder: wherever your workflow needs a diff, use the output of diff -ruN -x .build -x build -x .gradle -x .kotlin -x _bmad -x _bmad-output -x .claude ../sandbox/swift . (on the Kotlin lane, ../sandbox/kotlin) as the provided diff, and do not commit.</code></pre>
+
+      <details class="reveal">
+        <summary>What BMAD produced on the build run: SPEC.md and stories.yaml</summary>
+        <p>BMAD 6.12.0, 2026-09-22, in a fresh copy of the Swift lane, handed the planning prompt
+        above and told to halt after planning. That run could not answer in conversation, so it wrote its five clarifying
+        questions into the spec; the answers were then folded in by a second pass. This is what
+        it produced, not a fixed file list; the folder is
+        <code>../day-3-choose-your-adventure/starter/checkpoints/bmad/</code>.</p>
+        <pre data-lang="text"><code>_bmad-output/implementation-artifacts/statement-periods/SPEC.md
+_bmad-output/implementation-artifacts/statement-periods/stories.yaml
+_bmad-output/implementation-artifacts/statement-periods/stories/1-parse-cycle-configuration.md
+_bmad-output/implementation-artifacts/statement-periods/stories/2-group-into-statement-periods.md</code></pre>
+        <p>The frontmatter of <code>SPEC.md</code>, which goes on to a frozen decision block, a
+        25-row edge-case matrix, tasks and acceptance criteria:</p>
+        <pre data-lang="text"><code>---
+title: 'Statement periods'
+type: 'feature'
+created: '2026-09-22'
+status: 'ready-for-dev'
+route: 'dispatch'
+review_loop_iteration: 0
+context:
+  - '{project-root}/change-c-brief.md'
+---</code></pre>
+        <p><code>stories.yaml</code>, whole:</p>
+        <pre data-lang="text"><code># Story set for SPEC.md (statement periods). Execution order is list order.
+# The five planning questions were answered on 2026-09-22; the decisions live
+# under "Decided" in the SPEC.md frozen block. Both stories are unblocked.
+- id: "1"
+  title: Parse a cycle configuration from TSV
+  description: &gt;-
+    Add CycleRule and StatementCycle with parse(tsv:named:) as fixed in
+    change-c-brief.md, covering every "parse" row of the SPEC.md matrix. A
+    malformed row is skipped; nil only when no usable row carries the name.
+  spec_checkpoint: true
+  invoke_dev_with: &gt;-
+    Read the Decided list in the SPEC.md frozen block first; the frozen block
+    is locked and settles every parse row. Hand-rolled parsing only.
+- id: "2"
+  title: Group transactions into statement periods
+  description: &gt;-
+    Add StatementPeriod and StatementPeriods.periods(for:cycle:), placing by
+    posted day, newest period first, contiguous, empty middle periods
+    included, short months clamped, one governing rule per list, covering
+    every grouping row of the SPEC.md matrix. Depends on story 1.
+  spec_checkpoint: true
+  invoke_dev_with: &gt;-
+    Read the Decided list in the SPEC.md frozen block first; membership is by
+    posted day, a missing start day clamps to the month's last day, and one
+    rule governs the whole list. Reuse UTCDay and ISO8601.daysSinceEpoch from
+    Transaction.swift for all date arithmetic.</code></pre>
+      </details>
+    </section>
+  </div>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <div class="callout warning">
+    <p class="callout-title">Likely wrong turns</p>
+    <ul>
+      <li>The acceptance suite does not compile: a type is named differently from the brief, or
+      missing. Rename through the framework's artifact, never
+      the acceptance file. With no Change C:
+        <div class="lane-block lane-swift">
+          <span class="lane-name">Swift lane</span>
+          <pre data-lang="text"><code>…/Tests/LedgerKitTests/ChangeCAcceptanceTests.swift:109:23: error: cannot find 'StatementPeriods' in scope</code></pre>
+        </div>
+        <div class="lane-block lane-kotlin">
+          <span class="lane-name">Kotlin lane</span>
+          <pre data-lang="text"><code>e: …/src/test/kotlin/ChangeCAcceptanceTest.kt:29:38 Unresolved reference 'StatementCycle'.</code></pre>
+        </div>
+      </li>
+      <li>Red only in <code>testAuthorizedVsPostedMembership</code> or
+      <code>testFebruaryCycleStart</code>: your framework read an ambiguity the other way. Record
+      it for step 11, then change the decision in the artifact and repair.</li>
+      <li class="lane-kotlin"><code>cycle-config.tsv is not on the test classpath -
+      copy it into src/test/resources/</code> means the setup's fixture line did not run.</li>
+      <li class="lane-swift"><code>error: PCH was compiled with module cache path
+      '…/sandbox/swift/.build/…'</code> means the copy brought a build folder along; run
+      <code>rm -rf .build</code> and test again.</li>
+      <li>To start over, use the reset below; it spares <code>../work/</code>, so move your planning
+      folder there first to keep it.</li>
+    </ul>
+  </div>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">The acceptance suite decides it</p>
+    <p>Run it after step 9 and any repair.</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>swift test 2&gt;&amp;1 | grep -A1 -e "Test Suite 'ChangeCAcceptanceTests' [pf]" -e "Test Suite 'All tests' [pf]"</code></pre>
+      <p>With the reference implementation in place it printed:</p>
+      <pre data-lang="text"><code>Test Suite 'ChangeCAcceptanceTests' passed at ….
+	 Executed 6 tests, with 0 failures (0 unexpected) in … (…) seconds
+--
+Test Suite 'All tests' passed at ….
+	 Executed … tests, with 1 test skipped and 0 failures (0 unexpected) in … (…) seconds</code></pre>
+      <p>Pass is both suites <code>passed</code>. <code>failed</code> on either is a red test; no
+      output means no compile.</p>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>./gradlew test
+grep -o 'tests="[0-9]*" skipped="[0-9]*" failures="[0-9]*" errors="[0-9]*"' build/test-results/test/TEST-ledgerkit.ChangeCAcceptanceTest.xml</code></pre>
+      <p>With the reference implementation in place the <code>grep</code> printed:</p>
+      <pre data-lang="text"><code>tests="6" skipped="0" failures="0" errors="0"</code></pre>
+      <p>Pass is <code>BUILD SUCCESSFUL in …</code> from the first command and exactly that line
+      from the second. After <code>BUILD FAILED</code> with <code>e:</code> lines, the report is
+      left over from an earlier run.</p>
+    </div>
+
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> the six acceptance tests pass in a green
+  suite, the known-issue run fails on JPY alone, the diff shows nothing out of bounds, decisions
+  live in artifacts, and your three lines sit under <code>## Change C notes</code> in
+  <code>../work/map.md</code>.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <details class="reveal">
+    <summary>The two deliberate ambiguities, and which track surfaced them on the build
+    run</summary>
+    <p>First: whether a transaction belongs to a period by its authorized date or its posted
+    date. The brief says the two are often different days and never says which one counts.
+    Fixture row <code>LK-015</code>, authorized 2026-03-04 and posted 2026-03-05, lands in
+    different periods under the <code>standard</code> cycle depending on the answer.
+    <code>testAuthorizedVsPostedMembership</code> holds one reading.</p>
+    <p>Second: what a cycle that starts on day 31 does in February. The brief allows any start day
+    from the 1st to the 31st, and the cycle table your setup copied in carries a
+    <code>month-end</code> configuration on the 31st.
+    <code>testFebruaryCycleStart</code> holds one reading.</p>
+    <p>On the build machine on 2026-09-22, one run per track: OpenSpec found both unprompted,
+    recorded them as blocking open questions without recommending an answer, named
+    <code>LK-015</code> and the <code>month-end</code> configuration as its evidence, and refused
+    to implement. BMAD found both among five clarifying questions, each with options and a
+    recommendation. LID was handed both answers in its prompt because that run could not stop for
+    a person, so it turned them into requirements rather than questions, and its finding of them is
+    the least independently shown of the three. None of the three chose silently. That is one
+    observation on one machine on one date, not a property of the frameworks: your run is the
+    evidence for your card in Exercise 3.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>Quit Claude Code, then from inside <code>day3-work</code> run your lane's line. It replaces the
+  copy with a fresh one and leaves you inside it; <code>sandbox/</code> and <code>../work/</code>
+  are untouched.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <p>Then paste this page's setup lines after <code>cd day3-work</code> and redo your track's
+  install-and-init steps from Exercise 1. OpenSpec on your PATH and the LID plugins at user scope
+  survive; BMAD lives in the project, so rerun its installer. Do not reset at the end:
+  Exercise 3 continues in this <code>day3-work</code>.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-e2-done" data-progress="d3-e2-done">
+      <label for="d3-e2-done">Exercise 2 finished: acceptance suite green, known-issue run failing on
+      JPY alone, three lines in <code>../work/map.md</code>.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>openspec-08</code>, <code>openspec-09</code>, <code>openspec-18</code> &mdash;
+    <code>/opsx:propose &lt;feature description&gt;</code>, <code>/opsx:apply</code>,
+    <code>openspec list</code> and <code>openspec validate</code>, from OpenSpec's
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/getting-started.md" target="_blank" rel="noopener noreferrer">getting-started
+    guide</a>.</li>
+    <li><code>openspec-13</code>, <code>openspec-16</code>, <code>openspec-17</code> &mdash;
+    <code>## ADDED Requirements</code>, <code>### Requirement:</code> and <code>#### Scenario:</code>,
+    from OpenSpec's
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">concepts
+    page</a>.</li>
+    <li><code>openspec-01</code> &mdash; the npm install command, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    installation</a>.</li>
+    <li><code>openspec-04</code> &mdash; version 1.13.1, from the
+    <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">OpenSpec
+    latest release</a>.</li>
+    <li><code>lid-06</code> &mdash; <code>/linked-intent-dev:update-lid</code> reconciles drift or
+    changes mode, from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">LID
+    repository</a>.</li>
+    <li><code>lid-11</code>, <code>lid-13</code> &mdash; the <code>// @spec</code> annotation and
+    the semantic ID shape, from LID's
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">AGENTS.md</a>.</li>
+    <li><code>lid-25</code> &mdash; commit 831c1959, from the
+    <a href="https://api.github.com/repos/jszmajda/lid/commits/main" target="_blank" rel="noopener noreferrer">LID
+    commit history</a>.</li>
+    <li><code>bmad-06</code> &mdash; <code>bmad-build</code> halts without <code>uv</code>, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">BMAD
+    changelog</a> (v6.11.0).</li>
+    <li><code>bmad-07</code> &mdash; <code>/bmad-build</code> followed by what you want built, from
+    BMAD's
+    <a href="https://docs.bmad-method.org/start/build-your-first-change/" target="_blank" rel="noopener noreferrer">Build
+    your first change</a>.</li>
+    <li><code>bmad-11</code> &mdash; the phase-4 chain, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">BMAD
+    changelog</a>.</li>
+    <li><code>cc-core-07</code> &mdash; default mode asks before edits and commands, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>; <code>cc-core-19</code> &mdash; <code>/clear</code> empties the conversation, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Commands</a>.</li>
+    <li>From the pinned snapshots under
+    <code>../day-3-choose-your-adventure/starter/vendored/</code>: the
+    <code>linked-intent-dev</code> skill's phases and its stop after each one
+    (<code>lid-831c1959</code>, <code>skills/linked-intent-dev/SKILL.md</code>);
+    <code>/opsx:apply</code> selecting a named change and working its task list
+    (<code>openspec-1.13.1</code>, <code>.claude/commands/opsx/apply.md</code>); the
+    <code>bmad-build</code> skill's opening <code>uv run</code> command and halt, its
+    <code>spec-&lt;slug&gt;.md</code> file name and route from a <code>ready-for-dev</code> spec to
+    implementation, Open Questions answered into the frozen block, an implementing subagent that
+    reads only the spec, and three reviewer subagents (<code>bmad-6.12.0</code>,
+    <code>.claude/skills/bmad-build/</code>: <code>SKILL.md</code>,
+    <code>step-01-clarify-and-route.md</code>, <code>step-02-plan.md</code>,
+    <code>step-03-implement.md</code>, <code>customize.toml</code>). The Swift paths and the
+    Kotlin-lane lines the Kotlin notes replace are in the checkpoints'
+    <code>tasks.md</code>, <code>design.md</code> and <code>SPEC.md</code>.</li>
+    <li>Observed on the build machine on 2026-09-22, one scratch copy of the Swift lane per
+    track: <code>openspec-obs-06</code> (<code>openspec validate</code> output),
+    <code>openspec-obs-07</code> (the change folder), <code>openspec-obs-08</code> (both
+    ambiguities found), <code>lid-obs-02</code> (the LID plugins installed at user scope),
+    <code>lid-obs-05</code> (the <code>## LID</code> block, its paths and its arrow rule),
+    <code>lid-obs-08</code> (cascade stops at a sibling), <code>bmad-obs-01</code> (version 6.12.0),
+    <code>bmad-obs-05</code> (the install writes into the project),
+    <code>bmad-obs-10</code> (no skill starts without its <code>uv</code> command),
+    <code>bmad-obs-11</code> (the spec folder). The planning runs behind every reveal are described
+    in each track's <code>CHECKPOINT.md</code> under
+    <code>../day-3-choose-your-adventure/starter/checkpoints/</code>.</li>
+    <li>The quoted test and diff output was recorded on this machine on 2026-09-23 in a fresh copy
+    made by this page's setup block, one run per lane; where it says so, with the reference Change C
+    implementation copied in to stand for a framework's result.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="01-install-and-orient.html">Exercise 1: Install your track and map what it
+    wrote</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../lessons/04-choosing.html">Lesson 4: Pick by the failure you actually
+    have</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Framework runs recorded on 2026-09-22 with OpenSpec 1.13.1, LID at commit 831c1959 and BMAD
+    6.12.0; test output recorded on this machine on 2026-09-23.</p>
+  </div>
+</footer>
+</body>
+</html>

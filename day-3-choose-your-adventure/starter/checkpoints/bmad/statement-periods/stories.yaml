@@ -1,0 +1,26 @@
+# Story set for SPEC.md (statement periods). Execution order is list order.
+# The five planning questions were answered on 2026-09-22; the decisions live
+# under "Decided" in the SPEC.md frozen block. Both stories are unblocked.
+- id: "1"
+  title: Parse a cycle configuration from TSV
+  description: >-
+    Add CycleRule and StatementCycle with parse(tsv:named:) as fixed in
+    change-c-brief.md, covering every "parse" row of the SPEC.md matrix. A
+    malformed row is skipped; nil only when no usable row carries the name.
+  spec_checkpoint: true
+  invoke_dev_with: >-
+    Read the Decided list in the SPEC.md frozen block first; the frozen block
+    is locked and settles every parse row. Hand-rolled parsing only.
+- id: "2"
+  title: Group transactions into statement periods
+  description: >-
+    Add StatementPeriod and StatementPeriods.periods(for:cycle:), placing by
+    posted day, newest period first, contiguous, empty middle periods
+    included, short months clamped, one governing rule per list, covering
+    every grouping row of the SPEC.md matrix. Depends on story 1.
+  spec_checkpoint: true
+  invoke_dev_with: >-
+    Read the Decided list in the SPEC.md frozen block first; membership is by
+    posted day, a missing start day clamps to the month's last day, and one
+    rule governs the whole list. Reuse UTCDay and ISO8601.daysSinceEpoch from
+    Transaction.swift for all date arithmetic.

@@ -1,0 +1,36 @@
+{
+  "title": "Linked-Intent Development",
+  "tagline": "How do you know your agent built what you meant?",
+  "framing": [
+    "Because you wrote it down — a design, in plain English.",
+    "Because everything the agent builds comes from that design.",
+    "Because you can check: one ID grep returns the requirement, its tests, and its code.",
+    "Because LID helped you get there."
+  ],
+  "repoUrl": "https://github.com/jszmajda/lid",
+  "repoSlug": "jszmajda/lid",
+  "description": "Linked-Intent Development for agentic coding — write the design in plain English; your agent derives one-line requirements with greppable IDs, then tests and code that cite them. Claude Code plugins; rule-file adapters for Cursor, Windsurf, Copilot, and other tools.",
+  "quickstart": [
+    {
+      "cmd": "/plugin marketplace add jszmajda/lid",
+      "note": "Register the plugin source in Claude Code."
+    },
+    {
+      "cmd": "/plugin install linked-intent-dev@jszmajda-lid",
+      "note": "Install the core workflow plugin."
+    },
+    {
+      "cmd": "/plugin install arrow-maintenance@jszmajda-lid",
+      "note": "Install arrow-maintenance, which tracks the links between specs and code in projects too big for one context window."
+    },
+    {
+      "cmd": "/linked-intent-dev",
+      "note": "Describe what you want to build. The workflow scaffolds the docs/ tree and CLAUDE.md as it walks you through the design."
+    }
+  ],
+  "experimental": {
+    "name": "lid-experimental",
+    "blurb": "Opt-in experimental skills that aren't part of the core workflow. Currently bundles bidirectional-differential — audits EARS↔code coherence by reconstructing each side from the other in fresh Claude sessions.",
+    "installCmd": "/plugin install lid-experimental@jszmajda-lid"
+  }
+}

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 3: Choose your adventure</title>
+<meta name="description" content="Day 3 index: the opening video, five lessons on four pages and three exercises that take one feature brief through one spec framework of your choice, grade it with an acceptance suite the framework did not see while it built, and end with a comparison card for your team.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="index">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="0">
+<meta name="course:slot" content="d3-index">
+<meta name="course:video" content="1wIHIwS2EWo">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-08 cc-core-31 cc-core-32 openspec-01 openspec-03 openspec-04 lid-01 lid-02 lid-03 lid-obs-01 lid-obs-02 bmad-01 bmad-05 bmad-06 bmad-obs-01 bmad-obs-05">
+  <h1>Day 3: Choose your adventure</h1>
+
+  <p class="meta-line"><a href="../index.html">3 Days of Spec-Driven Development</a> &middot; Day 3
+  of 3 &middot; five lessons on four pages, three exercises, a wrap-up &middot; about three hours:
+  <span class="timing">180 minutes including the opener</span></p>
+
+  <blockquote class="quote">
+    <p>Specs win. Fix the code, or fix the spec and cascade.</p>
+    <cite>the Linked-Intent Development README (jszmajda/lid), read 2026-09-22</cite>
+  </blockquote>
+
+  <p class="lede">Two days ago you had a chat window. You now have a spec with criteria that can
+  fail, a runner that goes to green on its own, and a critic that audits the result. Today is about
+  handing that to five other people. You will meet three spec frameworks, install exactly one, run
+  one deliberately vague feature brief through it, take a late requirement on the chin, and leave
+  with a comparison card your team can read without taking this course. Pick your track in
+  Lesson 3; your choice sticks for the rest of the day.</p>
+
+  <h2 id="opener">Watch this first</h2>
+
+  <div class="video" data-video-id="1wIHIwS2EWo" data-start="0" data-end="600"
+       data-video-title="#17 - How Zalando Engineers Software &amp; AI at Scale - Bartosz Ocytko (Executive Principal Engineer) (bynd code, 2026-09-20)">
+    <span class="video-kicker">Opener &middot; 10 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=1wIHIwS2EWo&amp;t=0s"
+      target="_blank" rel="noopener noreferrer">#17 - How Zalando Engineers Software &amp; AI at
+      Scale - Bartosz Ocytko (Executive Principal Engineer)</a></p>
+    <p class="video-meta">bynd code, 2026-09-20. Watch 0:00 to 10:00, the opening of the chapter
+    <q>How Zalando Scales AI Engineering</q>. Lessons 1 and 2 replay the five minutes from 35:19
+    that Day 2 Lesson 4 offered.</p>
+    <p class="video-meta"><strong>What to listen for.</strong> Listen for the moment the speaker
+    stops describing their own workflow and starts describing a team's. Note what the speaker says a
+    team needs before it lets go of a control. Research found no
+    head-to-head talk comparing the three frameworks, so treat this opener as
+    adoption evidence, not as a recommendation.</p>
+  </div>
+
+  <h2 id="before">Before you start</h2>
+
+  <p>Day 3 works in <code>day3-work</code>, a copy of your lane at the course root. The shipped
+  <code>sandbox/</code> is never edited, so what a track wrote is a diff against it. Exercise 1
+  opens with this block, pasted from the course root. It makes <code>work/</code> for your answers,
+  copies your lane to <code>day3-work</code>, moves you into it, and copies in the Change C brief
+  and the blank map as <code>../work/map.md</code>, never over a map you have started. If
+  <code>day3-work</code> already exists, run <code>rm -rf day3-work</code> first: <code>cp -R</code>
+  into an existing folder nests a second copy inside it.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-cwd="." data-expect="change-c-brief.md"><code>mkdir -p work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md ../work/map.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-cwd="." data-expect="change-c-brief.md"><code>mkdir -p work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work
+cp ../day-3-choose-your-adventure/starter/change-c-brief.md .
+{ [ -f ../work/map.md ] || cp ../day-3-choose-your-adventure/starter/map-template.md ../work/map.md; }
+ls change-c-brief.md ../work/map.md</code></pre>
+  </div>
+
+  <p>Start Claude Code there with <code>claude</code>. <code>day3-work</code> is the day's project
+  root, the folder holding <code>CLAUDE.md</code>, read from <code>./CLAUDE.md</code>, and your
+  framework is initialized in it. Setup blocks are pasted from the course root; every other Day 3 command runs from inside
+  <code>day3-work</code>. Starters are at <code>../day-3-choose-your-adventure/starter/</code>; answers go in
+  <code>../work/</code>.</p>
+
+  <p>To reset, quit Claude Code, then from inside <code>day3-work</code> run your lane's line.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/swift day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day3-work &amp;&amp; cp -R sandbox/kotlin day3-work &amp;&amp; cd day3-work</code></pre>
+  </div>
+
+  <p>It re-copies the shipped lane, leaves you inside it, and leaves <code>../work/</code>
+  untouched. Then, in Exercise 1 or 2, re-run that page's setup copy lines (everything after its
+  <code>cd day3-work</code>) and your track's install-and-init steps from Exercise 1. OpenSpec on
+  your PATH and the LID plugins at user scope survive the reset; BMAD lives in the project, so you
+  run its installer again. A fresh copy has no Change C, so in Exercise 3 run your track's
+  install-and-init from Exercise 1, then Exercise 2 through its self-check (its checkpoint saves
+  time), then <code>cd ..</code> and Exercise 3's setup block. Do not reset between exercises: each
+  one continues from what the one before left.</p>
+
+  <div class="callout note">
+    <span class="callout-title">What today needs</span>
+    <ul>
+      <li>Claude Code, signed in. <code>claude --version</code> prints your version; these pages
+      were checked against 2.1.280 on 2026-09-22.</li>
+      <li>Your lane's toolchain from Setup: Swift 6.2, or JDK 17 or later.</li>
+      <li>What your track needs, checked before you choose it. OpenSpec installs with
+      <code>npm</code>, from the registry or a local mirror, and needs Node.js 20.19.0 or later. LID installs inside Claude Code through
+      its <code>/plugin</code> command. BMAD installs with
+      <code>npx bmad-method install</code> and needs Node.js 20.12 or later and <code>uv</code> with Python 3.11 or later;
+      without <code>uv</code>, <code>bmad-build</code> and <code>bmad-build-auto</code> halt, and
+      the offline snapshot cannot supply it.</li>
+      <li>Network access for the install, or the offline snapshot each track's "Network blocked?"
+      box points at. The pages pin OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0.</li>
+      <li>Two terminal tabs in <code>day3-work</code>, one for the shell and one for Claude
+      Code.</li>
+    </ul>
+  </div>
+
+  <h2 id="order">The day in order</h2>
+
+  <p>Eight pages after the video. Lessons 1 and 2 share a page, so the five lessons take four
+  pages.</p>
+
+  <ol class="progress">
+    <li>
+      <input type="checkbox" id="seq-d3-l1" data-progress="d3-l1-read">
+      <label for="seq-d3-l1"><a href="lessons/01-why-a-framework.html">Lessons 1 and 2: Why a
+      framework, and what they share</a> <span class="timing">16 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-l3" data-progress="d3-l3-read">
+      <label for="seq-d3-l3"><a href="lessons/03-meet-the-three.html">Lesson 3: Meet the
+      three</a> <span class="timing">12 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-e1" data-progress="d3-e1-done">
+      <label for="seq-d3-e1"><a href="exercises/01-install-and-orient.html">Exercise 1: Install
+      your track and map what it wrote</a> <span class="timing">25 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-e2" data-progress="d3-e2-done">
+      <label for="seq-d3-e2"><a href="exercises/02-run-change-c.html">Exercise 2: Run Change C
+      through your track</a> <span class="timing">55 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-l4" data-progress="d3-l4-read">
+      <label for="seq-d3-l4"><a href="lessons/04-choosing.html">Lesson 4: Pick by the failure you
+      actually have</a> <span class="timing">15 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-e3" data-progress="d3-e3-done">
+      <label for="seq-d3-e3"><a href="exercises/03-late-change-and-card.html">Exercise 3: A late
+      change, then the card you hand your team</a> <span class="timing">25 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-l5" data-progress="d3-l5-read">
+      <label for="seq-d3-l5"><a href="lessons/05-adopting-without-a-rewrite.html">Lesson 5:
+      Adopting without a rewrite</a> <span class="timing">12 min</span></label>
+    </li>
+    <li>
+      <input type="checkbox" id="seq-d3-wrap" data-progress="d3-wrap-up-done">
+      <label for="seq-d3-wrap"><a href="wrap-up.html">Day 3 wrap-up: recap, ten review questions,
+      three challenges</a> <span class="timing">10 min</span></label>
+    </li>
+  </ol>
+
+  <p class="progress-note" data-progress-note="">Ticks need JavaScript and stay in this browser.</p>
+
+  <h2 id="starter">Starter files</h2>
+
+  <p>Each exercise copies the file it needs from
+  <code>../day-3-choose-your-adventure/starter/</code> at the step that needs it, so your framework
+  never reads Change C's acceptance suite while it plans and builds. Exercise 3's two late-change
+  assertions are the exception: its setup copies them in, your framework can read them, and step
+  3's red, before any code changes, proves they bite.</p>
+
+  <ul>
+    <li><code>README.md</code> &mdash; what each file is for, and which step copies it where.</li>
+    <li><code>change-c-brief.md</code> &mdash; the statement-periods feature brief, with two
+    ambiguities it does not mark.</li>
+    <li><code>map-template.md</code> &mdash; the blank five-question map Exercise 1 copies to
+    <code>../work/map.md</code>.</li>
+    <li><code>fixtures/cycle-config.tsv</code> &mdash; the cycle-configuration fixture, identical
+    in both lanes.</li>
+    <li><code>acceptance/</code> &mdash; the hidden Change C suite and the two late-change
+    assertions, in both lanes.</li>
+    <li><code>late-change.md</code> &mdash; the three-sentence late requirement for Exercise 3.</li>
+    <li><code>comparison-card.md</code> &mdash; the blank eight-question card.</li>
+    <li><code>checkpoints/</code> &mdash; each track's reference planning artifacts, for when
+    planning overruns Exercise 2's 25-minute checkpoint.</li>
+    <li><code>vendored/</code> &mdash; the offline snapshot of each framework, for a blocked
+    network.</li>
+    <li><code>track-notes/</code> and <code>answers/</code> &mdash; page material, never copied into
+    <code>day3-work</code>.</li>
+  </ul>
+
+  <h2 id="alongside">Videos and reading</h2>
+
+  <p>No video is required to finish an exercise.</p>
+
+  <ul>
+    <li><a href="../resources/videos.md">Recommended videos</a> &mdash; the opener and the lesson
+    clips, with segments.</li>
+    <li><a href="../resources/reading.md">Reading</a> &mdash; the articles, docs and repositories
+    behind the lessons.</li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li>The day's quote is from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">Linked-Intent
+    Development README</a>, read 2026-09-22.</li>
+    <li><code>cc-core-08</code> &mdash; a project's <code>CLAUDE.md</code> is read from
+    <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Memory</a>.</li>
+    <li><code>cc-core-31</code>, <code>cc-core-32</code> &mdash; <code>claude --version</code>, and
+    the version checked against here, Claude Code 2.1.280 on 2026-09-22, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>openspec-01</code> &mdash; the <code>npm</code> install, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    installation</a>; <code>openspec-03</code> &mdash; Node.js 20.19.0 or later, from the
+    <a href="https://registry.npmjs.org/@fission-ai/openspec/latest" target="_blank" rel="noopener noreferrer">npm
+    registry entry</a>; <code>openspec-04</code> &mdash; release 1.13.1, dated 2026-09-17, from
+    <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">the
+    OpenSpec releases</a>.</li>
+    <li><code>lid-01</code>, <code>lid-02</code>, <code>lid-03</code> &mdash; LID's marketplace is
+    added and its two plugins installed in Claude Code with <code>/plugin</code>, from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">LID
+    repository</a>; <code>lid-obs-01</code> &mdash; commit 831c1959 was still the tip of its main
+    branch, observed on the build machine on 2026-09-22; <code>lid-obs-02</code> &mdash; the LID plugins
+    install at user scope, observed on the build machine on 2026-09-22.</li>
+    <li><code>bmad-01</code>, <code>bmad-05</code> &mdash; the install command and Node.js 20.12 or
+    later, from
+    <a href="https://docs.bmad-method.org/start/install-bmad/" target="_blank" rel="noopener noreferrer">Install
+    BMAD</a>; <code>bmad-06</code> &mdash; <code>uv</code> with Python 3.11 or later is required, and
+    <code>bmad-build</code> and <code>bmad-build-auto</code> halt without it, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">BMAD
+    changelog</a> (v6.11.0), and the Python 3.11 or later from the <code>requires-python</code>
+    line of <code>_bmad/scripts/render_skill.py</code> in the vendored <code>bmad-6.12.0</code>
+    snapshot, whose <code>SNAPSHOT.md</code> says it cannot supply <code>uv</code>; <code>bmad-obs-01</code> &mdash; the npm package was at 6.12.0 on its
+    latest tag, observed on the build machine on 2026-09-22; <code>bmad-obs-05</code> &mdash; a BMAD
+    install writes its <code>_bmad/</code> tree and 29 skills under <code>.claude/skills/</code>
+    into the project, observed on the build machine on 2026-09-22.</li>
+    <li>The setup block above was run on the build machine on 2026-09-23, once per lane, each from
+    its own fresh copy of the course root.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../day-2-loops-and-your-environment/wrap-up.html">Day 2 wrap-up</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="lessons/01-why-a-framework.html">Lessons 1 and 2: Why a framework, and what they share</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280, OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0 on
+    2026-09-22. Where a page names a command or a file, keep its linked source open.</p>
+  </div>
+</footer>
+</body>
+</html>

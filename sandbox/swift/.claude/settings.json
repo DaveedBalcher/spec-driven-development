@@ -1,0 +1,4 @@
+{
+  "claudeMdExcludes": ["**/!(day*-work|.claude)/CLAUDE?(.local).md"],
+  "autoMemoryEnabled": false
+}

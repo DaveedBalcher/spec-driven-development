@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2 wrap-up</title>
+<meta name="description" content="Day 2 wrap-up: what the day established, ten review questions to answer from memory, and three challenges with no solutions.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="wrap-up">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d2-wrap-up">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-automation-01 cc-automation-03 cc-core-19 cc-core-21 cc-core-22 cc-core-25 cc-core-27 cc-core-32 cc-core-35 cc-core-38 enterprise-01 enterprise-07 enterprise-11 practitioners-04">
+  <h1>Day 2 wrap-up</h1>
+
+  <p class="meta-line"><a href="index.html">Day 2: Loops and your environment</a> &middot; Wrap-up
+  &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">This morning you approved each edit. Now a procedure runs without you and stops
+  in three named ways, a critic reads what it did not write, and your environment is written down, with permission rules and one write path to match.</p>
+
+  <h2 id="review">Review</h2>
+
+  <p>Answer from memory before you read the recap below, then check yourself against it; there is
+  no answer key. A question you cannot answer names, in brackets, the lesson to re-read.</p>
+
+  <ol>
+    <li>Name the four places drift enters the loop and one detector for each. (Lesson 1)</li>
+    <li>What are the three exits a runner can take, and what different action does each one ask of
+    you? (Lesson 2)</li>
+    <li>Rewrite <q>Is this okay?</q> as a gate, using the three parts a gate needs. (Lesson 2)</li>
+    <li>Why does the runner keep its history in a file rather than in the conversation? (Lesson 2)</li>
+    <li>Your auditor returns findings on a change you already accepted. What does that cost you, and
+    what do you fix? (Lesson 3)</li>
+    <li>What does the net-zero line cap require before a new line stays in <code>CLAUDE.md</code>,
+    and what is the alternative to adding the line at all? (Lesson 3)</li>
+    <li>You claim your workflow change halved the iteration count. What must you have done for that
+    claim to mean anything, and what qualifier belongs on it? (Lesson 3)</li>
+    <li>Settings allow <code>Bash(gh pr view *)</code> and deny <code>Bash(gh *)</code>. Which
+    applies, and what rule of evaluation decides it? (Lesson 4)</li>
+    <li>A teammate answered <q>don't ask again</q> last week and you are still prompted. Which file
+    holds a rule kept to one person, and what has to happen for the team to get it? (Lesson 4)</li>
+    <li>List the five properties of a vetted write wrapper and say which one a reviewer asks about
+    first when the wrapper changes. (Lesson 4)</li>
+  </ol>
+
+  <h2 id="learned">What you learned</h2>
+
+  <ul>
+    <li>Drift is a bookkeeping gap, not a model failure. It enters at four moments, spec to plan,
+    plan to diff, diff to tests, and run to run, each with a detector that costs under a
+    minute.</li>
+
+    <li>Guides push instructions forward; sensors report back, and a sensor fails loudly where
+    guidance is ignored quietly.</li>
+
+    <li>A runner is a skill file, <code>.claude/skills/run-spec/SKILL.md</code>, invoked as
+    <code>/run-spec</code>, with three exits: green, the iteration cap, or a gate. A gate is a
+    question, the evidence to answer it in under a minute, and two or three answers.</li>
+
+    <li>The loop's memory is the filesystem. One line per iteration in <code>run-log.md</code>
+    survives a compaction, a <code>/clear</code> and tomorrow morning; a transcript survives none of
+    them.</li>
+
+    <li>Improvement runs in three rings: the output, the instructions, the workflow. A finding
+    tagged to an existing criterion is ring one: fix the code. Most <code>NO-CRITERION</code>
+    findings become a new or sharpened acceptance criterion; the rest become a line in the standing
+    instructions, under the net-zero line cap, for a fact that outlives this change, or go in the bin with one sentence saying why. Only
+    the outer ring owes a measurement: re-run from a fresh copy and compare iteration counts, or do
+    not claim the workflow got better.</li>
+
+    <li>The critic, <code>.claude/agents/spec-auditor.md</code>, is a subagent that starts with a
+    fresh, isolated context window, and its <code>tools:</code> line holds it to reading.</li>
+
+    <li>Read-only is a property of how a connector was deployed, not a promise a prompt can make.
+    Permission rules, written <code>Tool(pattern)</code>, are evaluated <code>deny</code>, then
+    <code>ask</code>, then <code>allow</code>, the first match winning regardless of
+    specificity.</li>
+
+    <li>Writes leave through one wrapper that holds the credential, checks an allowlist, dry-runs,
+    confirms and logs; a change to it goes by pull request, and the reviewer asks what the allowlist
+    now permits that it did not. <code>.claude/settings.json</code> is shared,
+    <code>.claude/settings.local.json</code> is yours, and promoting a rule from the second to the
+    first makes your habit the team's.</li>
+  </ul>
+
+  <h2 id="challenges">Challenges</h2>
+
+  <p>No reveals, no solutions; one is enough.</p>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-1">1. A gate on quality, not correctness</h3>
+    <p>The gate you wrote in Exercise 1 was mechanical: a count, a file list. Replace it with one
+    that fires when a new test asserts the behavior the code has rather than the behavior the spec
+    names, which the runner can only judge by reading intent. Write its question, evidence and
+    answers, then run Change B (Exercise 1's spec) in a fresh <code>day2-work</code> and see whether
+    it fires on a run you would have accepted.</p>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-2">2. Three runs, and what three runs prove</h3>
+    <p>Run the same spec three times, each in a fresh <code>day2-work</code>, with three
+    <code>CLAUDE.md</code> variants and everything else identical: the shipped file, the shipped
+    file plus one line you would add after today, and the shipped file minus one line you think
+    does no work. Copy each
+    <code>run-log.md</code> into <code>../work/</code> before the next reset. Write five sentences on
+    what n&nbsp;=&nbsp;3 does and does not let you conclude, including what changed between runs that
+    you did not control.</p>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-3">3. An auditor you can trust twice</h3>
+    <p>Tune <code>.claude/agents/spec-auditor.md</code> until it catches all six reference findings
+    from Exercise 2 (the defects in the finished run its catch-up block copies in) and returns
+    nothing on a change you already accepted. Record which single change did the most work.</p>
+  </section>
+
+  <div class="callout warning">
+    <span class="callout-title">Before you close the laptop</span>
+    <p>Day 3 starts in <code>day3-work</code>, a fresh copy of the shipped lane, so nothing in
+    <code>day2-work</code> travels. Copy the keepers into <code>../work/</code> first:
+    <code>.claude/settings.json</code>, the runner or auditor if you edited them, and your wrapper
+    change.</p>
+
+    <p>To clean up, quit Claude Code, then from inside <code>day2-work</code> run this line. It
+    leaves <code>../work/</code> and your keepers alone. Keep <code>../work/</code> itself: Day 3
+    writes its map and answers there too.</p>
+
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work</code></pre>
+
+    <p>Only if you do the challenges: reset instead of cleaning up, and do Challenge 3's silent half
+    first, before any reset or cleanup, because it needs the change you accepted in your current
+    <code>day2-work</code>. Quit Claude Code, then from
+    inside <code>day2-work</code> run your lane's line. It also leaves <code>../work/</code> alone.</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/swift day2-work &amp;&amp; cd day2-work</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day2-work &amp;&amp; cp -R sandbox/kotlin day2-work &amp;&amp; cd day2-work</code></pre>
+    </div>
+
+    <p>A fresh <code>day2-work</code> is the shipped lane and nothing else. For challenge 1 or 2,
+    re-run Exercise 1's setup block, pasting only its lines after <code>cd day2-work</code>.
+    Challenge 3's silent half runs in your current <code>day2-work</code>, before any reset: it
+    holds the change you accepted in Exercise 2. For the six findings, reset, <code>cd ..</code>, and paste Exercise 2's setup
+    block, then its catch-up block; they put back the auditor, the spec and the reference run the
+    six were scored against. Then copy your tuned auditor back from <code>../work/</code>.</p>
+  </div>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-wrap-done" data-progress="d2-wrap-up-done">
+      <label for="d2-wrap-done">Day 2 finished: recap read, ten questions answered from
+      memory.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-automation-01</code>, <code>cc-automation-03</code> &mdash; the project skill path
+    <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> and invoking a skill by name, from
+    <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener noreferrer">Agent
+    Skills</a>.</li>
+    <li><code>cc-core-19</code> &mdash; <code>/clear</code>, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-35</code> &mdash; compaction replaces the conversation with a structured
+    summary, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">The
+    context window</a>.</li>
+    <li><code>cc-core-21</code>, <code>cc-core-22</code>, <code>enterprise-07</code> &mdash; the
+    <code>Tool(pattern)</code> rule format with its space-star spelling, and evaluation running
+    <code>deny</code> then <code>ask</code> then <code>allow</code> with the first match winning
+    regardless of specificity, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-25</code>, <code>cc-core-27</code>, <code>cc-core-38</code> &mdash; a subagent
+    as a frontmatter-plus-body file under <code>.claude/agents/</code>, the <code>tools:</code> line
+    that limits it to reading, and the fresh, isolated context window each subagent starts with,
+    from
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>.</li>
+    <li><code>enterprise-11</code> &mdash; <code>.claude/settings.json</code> as the committed,
+    project-wide file and <code>.claude/settings.local.json</code> as the personal one, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+    <li><code>enterprise-01</code> &mdash; read-only as a deployment setting of the connector
+    (<code>--read-only</code>, <code>GITHUB_READ_ONLY</code>, or the
+    <code>X-MCP-Readonly: true</code> header), from the
+    <a href="https://github.com/github/github-mcp-server/blob/main/docs/server-configuration.md" target="_blank" rel="noopener noreferrer">GitHub
+    MCP server configuration reference</a>.</li>
+    <li><code>practitioners-04</code> &mdash; guides and sensors as the two halves of harness
+    engineering, from
+    <a href="https://se-radio.net/2026/07/se-radio-730-birgitta-boeckeler-on-harness-engineering-for-ai-agents/" target="_blank" rel="noopener noreferrer">Birgitta
+    Böckeler on harness engineering for AI agents, SE Radio 730</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="exercises/04-extend-a-vetted-write-script.html">Exercise 4: Use and extend a vetted write script</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../day-3-choose-your-adventure/index.html">Day 3: Choose your adventure</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a settings key or a
+    file path, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

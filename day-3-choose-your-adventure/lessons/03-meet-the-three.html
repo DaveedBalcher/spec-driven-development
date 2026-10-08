@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meet the three</title>
+<meta name="description" content="Day 3, Lesson 3: OpenSpec, LID and BMAD, one tab each, answering the same five questions in the same order.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="3">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d3-l3">
+<meta name="course:video" content="mNlXDfAa22k">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="openspec-01 openspec-03 openspec-04 openspec-05 openspec-06 openspec-07 openspec-08 openspec-09 openspec-10 openspec-13 openspec-14 openspec-15 openspec-16 openspec-17 openspec-20 openspec-obs-02 openspec-obs-03 openspec-obs-07 lid-01 lid-02 lid-03 lid-05 lid-06 lid-07 lid-08 lid-09 lid-11 lid-12 lid-13 lid-25 lid-obs-01 lid-obs-03 lid-obs-04 lid-obs-05 lid-obs-06 lid-obs-07 lid-obs-08 bmad-01 bmad-05 bmad-06 bmad-07 bmad-09 bmad-11 bmad-12 bmad-13 bmad-19 bmad-obs-01 bmad-obs-02 bmad-obs-03 bmad-obs-05 bmad-obs-06 bmad-obs-07 bmad-obs-08 bmad-obs-09 bmad-obs-10 bmad-obs-11 bmad-obs-13">
+  <h1>Meet the three</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot; Lesson 3 of 5
+  &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">Three frameworks, one page, and the same five questions for each. Each tab answers them for one
+  framework, and Exercise 1 installs the one you pick.</p>
+
+  <h2 id="how">How to read this page</h2>
+
+  <p>Pick a tab and read only that one: the panels answer the same questions in the same order, so
+  skipping two costs you nothing the exercises need. The <strong>Show all three</strong> button
+  beside the tabs stacks every panel on one page; it then reads <strong>Show one track</strong>,
+  which takes you back. Your choice sticks for the rest of Day 3, and <code>?track=lid</code> on this page's address opens the
+  LID tab.</p>
+
+  <p>What a panel says a tool wrote was observed on the build machine on 2026-09-22, in copies of
+  the Swift lane; Exercise 1's diff shows what yours writes. Read the install commands here and run nothing yet: Exercise 1 runs them
+  from inside <code>day3-work</code>.</p>
+
+  <h2 id="questions">The five questions every panel answers</h2>
+
+  <ol>
+    <li>What it installs, and what that needs.</li>
+    <li>Where specs live once it is initialized.</li>
+    <li>The command that creates a spec.</li>
+    <li>The command that implements one.</li>
+    <li>What happens to the spec after the change ships.</li>
+  </ol>
+
+  <p>Exercise 1 asks questions 2 to 5 again, from your own install.</p>
+
+  <div class="tabs" data-show-all="true">
+    <div class="tabs-tools">
+      <div role="tablist" aria-label="Framework track" hidden>
+        <button type="button" role="tab" data-track="openspec" id="tab-openspec"
+                aria-controls="panel-openspec" aria-selected="true">OpenSpec</button>
+        <button type="button" role="tab" data-track="lid" id="tab-lid"
+                aria-controls="panel-lid" aria-selected="false">LID</button>
+        <button type="button" role="tab" data-track="bmad" id="tab-bmad"
+                aria-controls="panel-bmad" aria-selected="false">BMAD</button>
+      </div>
+      <button type="button" data-show-all-toggle hidden>Show all three</button>
+    </div>
+
+    <section class="tab-panel" role="tabpanel" data-track="openspec" id="panel-openspec"
+             aria-labelledby="tab-openspec">
+      <h2 id="openspec">Panel: OpenSpec</h2>
+
+      <div class="video" data-video-id="mNlXDfAa22k" data-start="71" data-end="364"
+           data-video-title="OpenSpec GitHub Tutorial: Spec-Driven Development for AI Coding Assistants (Alex Hitt, 2026-07-01), 1:11 to 6:04">
+        <span class="video-kicker">Watch first &middot; 5 min</span>
+        <p class="video-title"><a href="https://www.youtube.com/watch?v=mNlXDfAa22k&amp;t=71s"
+          target="_blank" rel="noopener noreferrer">OpenSpec GitHub Tutorial: Spec-Driven
+          Development for AI Coding Assistants</a></p>
+        <p class="video-meta">Alex Hitt, 2026-07-01, 1:11 to 6:04, delta specs through the
+        explore-propose-apply-archive workflow. Watch for the step that moves text from the changes
+        folder into the specs folder.</p>
+      </div>
+
+      <p>OpenSpec installs from npm as a global command (<code>-g</code> puts <code>openspec</code>
+      on your PATH for every project) and needs Node 20.19.0 or higher.</p>
+
+      <pre data-lang="bash"><code>npm install -g @fission-ai/openspec@latest</code></pre>
+
+      <p><code>openspec init</code> asks which tools to set up,
+      and you choose Claude Code. On the build machine it wrote fifteen new files: <code>openspec/config.yaml</code>,
+      placeholders that create <code>openspec/specs/</code> and
+      <code>openspec/changes/archive/</code>, and six <code>/opsx</code> commands and six skills
+      under <code>.claude/</code>. Specs live in <code>openspec/specs/</code>, the requirements that
+      are true of the system now.</p>
+
+      <p><code>/opsx:explore</code> surveys the code before you commit to anything.
+      <code>/opsx:propose</code> plus a feature description creates a change folder under
+      <code>openspec/changes/</code>; on the build machine, Change C's folder held
+      <code>proposal.md</code>, <code>design.md</code>, <code>tasks.md</code>,
+      <code>.openspec.yaml</code> and a delta spec per capability under <code>specs/</code>. <code>/opsx:apply</code> implements it from the task
+      list. <code>/opsx:archive</code> folds the deltas into <code>openspec/specs/</code> and moves
+      the folder to <code>changes/archive/</code> under a date-prefixed name.</p>
+
+      <p>A delta spec holds only what the change does, under <code>## ADDED Requirements</code>,
+      <code>## MODIFIED Requirements</code> or <code>## REMOVED Requirements</code>: each
+      <code>### Requirement:</code> with <code>#### Scenario:</code> blocks in GIVEN, WHEN and THEN
+      lines.</p>
+
+      <figure class="figure" id="fig-openspec">
+        <svg viewBox="0 0 360 400" role="img" aria-labelledby="os-title os-desc">
+        <title id="os-title">OpenSpec: where a change's files go</title>
+        <desc id="os-desc">Top to bottom. An arrow labelled openspec init leads to openspec/specs/,
+        the live requirements. An arrow labelled /opsx:propose leads to
+        openspec/changes/&lt;name&gt;/, which holds proposal.md, design.md, tasks.md and specs/
+        with the deltas. An arrow labelled /opsx:apply leads to code. From code, an arrow labelled
+        /opsx:archive splits two ways: a dashed arrow, deltas folded in, runs back up into
+        openspec/specs/, and an accent arrow leads down to the boxed destination after ship,
+        changes/archive/&lt;date&gt;-&lt;name&gt;/.</desc>
+
+        <defs>
+          <marker id="os-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                  markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+          </marker>
+          <marker id="os-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                  markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+          </marker>
+        </defs>
+
+        <line x1="40" y1="4" x2="40" y2="42" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#os-arrow-fg)"></line>
+        <text x="52" y="28" font-size="15" fill="var(--fg)">openspec init</text>
+
+        <rect x="4" y="44" width="236" height="54" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="66" font-size="15" font-weight="650" fill="var(--fg)">openspec/specs/</text>
+        <text x="14" y="88" font-size="15" fill="var(--muted)">live requirements</text>
+
+        <line x1="40" y1="98" x2="40" y2="128" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#os-arrow-fg)"></line>
+        <text x="52" y="119" font-size="15" fill="var(--fg)">/opsx:propose</text>
+
+        <rect x="4" y="130" width="236" height="82" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="152" font-size="15" font-weight="650" fill="var(--fg)">openspec/changes/&lt;name&gt;/</text>
+        <text x="14" y="176" font-size="15" fill="var(--fg)">proposal.md, design.md,</text>
+        <text x="14" y="198" font-size="15" fill="var(--fg)">tasks.md, specs/ (deltas)</text>
+
+        <line x1="40" y1="212" x2="40" y2="240" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#os-arrow-fg)"></line>
+        <text x="52" y="232" font-size="15" fill="var(--fg)">/opsx:apply</text>
+
+        <rect x="4" y="242" width="236" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="265" font-size="15" font-weight="650" fill="var(--fg)">code</text>
+
+        <line x1="40" y1="278" x2="40" y2="306" stroke="var(--fg)" stroke-width="1.5"></line>
+        <text x="52" y="298" font-size="15" fill="var(--fg)">/opsx:archive</text>
+        <circle cx="40" cy="306" r="3" fill="var(--fg)"></circle>
+        <path d="M40,306 H330 V71 H244" fill="none" stroke="var(--fg)" stroke-width="1.5"
+              stroke-dasharray="5 4" marker-end="url(#os-arrow-fg)"></path>
+        <text x="285" y="160" text-anchor="middle" font-size="15" fill="var(--fg)">deltas</text>
+        <text x="285" y="178" text-anchor="middle" font-size="15" fill="var(--fg)">folded in</text>
+
+        <line x1="40" y1="306" x2="40" y2="338" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#os-arrow-accent)"></line>
+        <rect x="4" y="340" width="236" height="54" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+        <text x="14" y="362" font-size="15" font-weight="650" fill="var(--fg)">changes/archive/</text>
+        <text x="14" y="384" font-size="15" font-weight="650" fill="var(--fg)">&lt;date&gt;-&lt;name&gt;/</text>
+        <text x="252" y="372" font-size="15" fill="var(--accent)">after ship</text>
+      </svg>
+        <figcaption>A change lives in its
+      own folder until archive folds it into the live specs and files the folder by
+      date.</figcaption></figure>
+
+      <h3 class="quick-check">Quick check</h3>
+
+      <details class="reveal">
+        <summary>In OpenSpec, you finish a change and archive it. Which spec folder got
+        bigger, and which listing lost an entry?</summary>
+        <p>The live tree under <code>openspec/specs/</code> absorbed the delta sections and grew. The
+        change folder left the active list in <code>openspec/changes/</code> and reappeared,
+        date-prefixed, under <code>openspec/changes/archive/</code>.</p>
+      </details>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="lid" id="panel-lid"
+             aria-labelledby="tab-lid">
+      <h2 id="lid">Panel: LID</h2>
+
+      <p>No video on this tab: research found no LID walkthrough on any channel.</p>
+
+      <p>LID installs as two Claude Code plugins, typed inside Claude Code: the marketplace, then
+      the workflow and its arrow-maintenance overlay. They need nothing installed beyond Claude
+      Code itself. On the build machine the two added about 1,090 tokens to every session:</p>
+
+      <pre data-lang="text"><code>/plugin marketplace add jszmajda/lid
+/plugin install linked-intent-dev@jszmajda-lid
+/plugin install arrow-maintenance@jszmajda-lid</code></pre>
+
+      <p>The arrow is LID's one-way chain: high-level design, low-level designs, EARS requirements,
+      tests, code, with changes flowing down and never up. <code>/linked-intent-dev</code>
+      bootstraps a new project. LedgerKit already has code, so Exercise 1 runs
+      <code>/arrow-maintenance:map-codebase</code>, which builds the tree from it. On the build
+      machine, in a run that could not load the skill's own text, it wrote
+      <code>docs/high-level-design.md</code>, a design file and a specs file per segment under
+      <code>docs/intent/&lt;segment&gt;/</code>, and an overlay index,
+      <code>docs/arrows/index.yaml</code>; the skill itself also asks for an arrow doc per segment
+      under <code>docs/arrows/</code>.</p>
+
+      <p>Specs live in the specs files. Each requirement has a path-shaped ID,
+      <code>FEATURE-NNN</code> growing one segment per level of nesting as in
+      <code>PEVAL-RUN-014</code>, and a status: <code>[x]</code> implemented, <code>[ ]</code> gap,
+      <code>[D]</code> deferred. Code cites it with <code>// @spec AUTH-UI-001, AUTH-UI-002</code> on
+      the topmost function or module that owns the behavior, and tests carry it too.</p>
+
+      <p>No command creates a change's spec: the directives LID appends to <code>CLAUDE.md</code>
+      send any change that could touch code through the linked-intent-dev skill, so Exercise 2
+      starts Change C as an ordinary message. None of the five entry points the two plugins install
+      implements one either: the same walk continues down the arrow to tests, then code.
+      <code>/arrow-maintenance:arrow-maintenance</code> audits code against the tree. After ship
+      nothing is archived; the design tree stays the source of truth.</p>
+
+      <figure class="figure" id="fig-lid">
+        <svg viewBox="0 0 360 544" role="img" aria-labelledby="lid-title lid-desc">
+        <title id="lid-title">LID: the arrow from design to code</title>
+        <desc id="lid-desc">Top to bottom. An arrow labelled /arrow-maintenance:map-codebase, or
+        /linked-intent-dev for a new project, leads into a chain of five files, each joined to the
+        next by an arrow that points down only: docs/high-level-design.md; then, per segment,
+        docs/intent/&lt;segment&gt;/&lt;segment&gt;-design.md; then &lt;segment&gt;-specs.md, EARS
+        requirements marked [x], [ ] or [D]; then tests carrying // @spec, tests first; then code
+        carrying // @spec. An accent box around the whole chain
+        reads after ship: the tree stays the source of truth. Below it, a dashed note:
+        docs/arrows/index.yaml plus an arrow doc per segment, an overlay audited by
+        /arrow-maintenance:arrow-maintenance. No arrow points up.</desc>
+
+        <defs>
+          <marker id="lid-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                  markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+          </marker>
+        </defs>
+
+        <line x1="26" y1="4" x2="26" y2="58" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#lid-arrow-fg)"></line>
+        <text x="38" y="18" font-size="15" fill="var(--fg)">/arrow-maintenance:map-codebase</text>
+        <text x="38" y="38" font-size="15" fill="var(--muted)">new project: /linked-intent-dev</text>
+
+        <rect x="2" y="48" width="356" height="384" fill="none" stroke="var(--accent)" stroke-width="1.5"></rect>
+
+        <rect x="8" y="60" width="202" height="34" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="16" y="82" font-size="15" fill="var(--fg)">docs/high-level-design.md</text>
+
+        <line x1="26" y1="94" x2="26" y2="120" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#lid-arrow-fg)"></line>
+        <text x="38" y="113" font-size="15" fill="var(--fg)">per segment</text>
+
+        <rect x="8" y="122" width="202" height="52" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="16" y="143" font-size="15" fill="var(--fg)">docs/intent/&lt;segment&gt;/</text>
+        <text x="16" y="165" font-size="15" fill="var(--fg)">&lt;segment&gt;-design.md</text>
+
+        <line x1="26" y1="174" x2="26" y2="200" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#lid-arrow-fg)"></line>
+        <text x="38" y="193" font-size="15" fill="var(--fg)">then specs</text>
+
+        <rect x="8" y="202" width="202" height="52" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="16" y="223" font-size="15" fill="var(--fg)">&lt;segment&gt;-specs.md</text>
+        <text x="16" y="245" font-size="15" fill="var(--muted)">EARS, [x] [ ] [D]</text>
+
+        <line x1="26" y1="254" x2="26" y2="280" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#lid-arrow-fg)"></line>
+        <text x="38" y="273" font-size="15" fill="var(--fg)">tests first</text>
+
+        <rect x="8" y="282" width="202" height="34" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="16" y="304" font-size="15" fill="var(--fg)">tests (// @spec)</text>
+
+        <line x1="26" y1="316" x2="26" y2="342" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#lid-arrow-fg)"></line>
+        <text x="38" y="335" font-size="15" fill="var(--fg)">then code</text>
+
+        <rect x="8" y="344" width="202" height="34" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="16" y="366" font-size="15" fill="var(--fg)">code (// @spec)</text>
+
+        <text x="12" y="402" font-size="15" font-weight="650" fill="var(--accent)">after ship: the tree stays</text>
+        <text x="12" y="422" font-size="15" font-weight="650" fill="var(--accent)">the source of truth</text>
+
+        <rect x="2" y="442" width="356" height="98" fill="var(--bg)" stroke="var(--fg)" stroke-width="1" stroke-dasharray="4 3"></rect>
+        <text x="12" y="464" font-size="15" font-weight="650" fill="var(--fg)">docs/arrows/index.yaml</text>
+        <text x="12" y="486" font-size="15" fill="var(--fg)">+ an arrow doc per segment</text>
+        <text x="12" y="508" font-size="15" fill="var(--muted)">overlay, audited by</text>
+        <text x="12" y="530" font-size="15" fill="var(--fg)">/arrow-maintenance:arrow-maintenance</text>
+      </svg>
+        <figcaption>Every link in the chain
+      is a file that outlives the change, and edits travel only downward.</figcaption></figure>
+
+      <h3 class="quick-check">Quick check</h3>
+
+      <details class="reveal">
+        <summary>You add a helper function that computes part of a behavior LID already has a
+        requirement for. Where does the <code>@spec</code> annotation go?</summary>
+        <p>Not on the helper. It goes on the topmost function or module that owns the behavior, so a
+        reader walking down from the requirement lands once, at the entry point.</p>
+      </details>
+    </section>
+
+    <section class="tab-panel" role="tabpanel" data-track="bmad" id="panel-bmad"
+             aria-labelledby="tab-bmad">
+      <h2 id="bmad">Panel: BMAD</h2>
+
+      <div class="video" data-video-id="4VPoGSeI2sw" data-start="394" data-end="683"
+           data-video-title="BMad V6 is Finally Here… /bmad-help, /party-mode... Pure Magic (BMad Code, 2026-02-23), 6:34 to 11:23">
+        <span class="video-kicker">Watch first &middot; 5 min</span>
+        <p class="video-title"><a href="https://www.youtube.com/watch?v=4VPoGSeI2sw&amp;t=394s"
+          target="_blank" rel="noopener noreferrer">BMad V6 is Finally Here&hellip; /bmad-help,
+          /party-mode... Pure Magic</a></p>
+        <p class="video-meta">BMad Code, 2026-02-23, 6:34 to 11:23, the installer walkthrough. At
+        each installer choice, ask
+        whether you could make it where you cannot install Python tooling. It predates the 6.11.0
+        renames, so some skill names on screen are old.</p>
+      </div>
+
+      <p>BMAD needs Node 20.12 or later and <code>uv</code>, a Python package and environment
+      runner:</p>
+
+      <pre data-lang="bash"><code>npx bmad-method install</code></pre>
+
+      <p><code>uv</code> is not optional. <code>/bmad-build</code> and <code>/bmad-build-auto</code>
+      open by running a <code>uv run</code> shell command, and their own text says to halt if it
+      fails, <code>uv</code> missing included. On the build machine, a session that could not run
+      shell commands halted before planning. In a locked-down environment that blocks either, they
+      do not degrade; they do not start.</p>
+
+      <p>On the build machine, BMAD 6.12.0's install, with Claude Code as its tool (your answer at
+      <code>Integrate with:</code>), wrote 235 files: a <code>_bmad/</code> tree, 29 skills under
+      <code>.claude/skills/</code>, and an empty <code>_bmad-output/</code>.</p>
+
+      <p>Specs live in <code>_bmad-output/implementation-artifacts/</code>, one
+      <code>spec-&lt;slug&gt;.md</code> per change. <code>/bmad-build</code> creates it. The same
+      <code>/bmad-build</code> run implements it after you answer its questions and approve its
+      plan; a small change with no open questions and nothing irreversible skips both. The docs
+      show <code>/bmad-build write an implementation of mars rover kata</code>; larger work chains
+      <code>bmad-sprint-planning</code>, <code>bmad-build</code>, then
+      <code>bmad-code-review</code>.</p>
+
+      <p>On the build machine on 2026-09-22, handed Exercise 2's prompt and told to halt after
+      planning, <code>/bmad-build</code> wrote a folder instead: <code>statement-periods/</code>,
+      holding <code>SPEC.md</code>, <code>stories.yaml</code> and a
+      <code>stories/&lt;id&gt;-&lt;slug&gt;.md</code> per story, the layout BMAD's docs give for
+      work split into stories. Exercise 2's checkpoint copies it in.</p>
+
+      <p>The <code>status</code> in the spec's frontmatter moves through <code>draft</code>,
+      <code>ready-for-dev</code>, <code>in-progress</code>, <code>in-review</code> and
+      <code>done</code>; BMAD's unattended loop, <code>/bmad-build-auto</code>, can also stop it at
+      <code>blocked</code>. After ship the spec stays where it was written, its status at
+      <code>done</code>.</p>
+
+      <figure class="figure" id="fig-bmad">
+        <svg viewBox="0 0 360 446" role="img" aria-labelledby="bm-title bm-desc">
+        <title id="bm-title">BMAD: one skill writes the spec, then builds it</title>
+        <desc id="bm-desc">Top to bottom. An arrow labelled npx bmad-method install leads to
+        _bmad/ and .claude/skills/bmad-*. An arrow labelled /bmad-build leads to
+        _bmad-output/implementation-artifacts/, which holds one spec file, spec-&lt;slug&gt;.md,
+        with a muted note: the build run wrote a SPEC.md folder. The same run continues to code,
+        and beside that arrow the spec's frontmatter status moves through draft, ready-for-dev,
+        in-progress, in-review and done. An accent arrow labelled ship
+        leads to the boxed destination: after ship the spec stays where it was written, status
+        done.</desc>
+
+        <defs>
+          <marker id="bm-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                  markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+          </marker>
+          <marker id="bm-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                  markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+          </marker>
+        </defs>
+
+        <line x1="30" y1="4" x2="30" y2="42" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#bm-arrow-fg)"></line>
+        <text x="42" y="28" font-size="15" fill="var(--fg)">npx bmad-method install</text>
+
+        <rect x="4" y="44" width="352" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="67" font-size="15" font-weight="650" fill="var(--fg)">_bmad/ and .claude/skills/bmad-*</text>
+
+        <line x1="30" y1="80" x2="30" y2="108" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#bm-arrow-fg)"></line>
+        <text x="42" y="100" font-size="15" fill="var(--fg)">/bmad-build</text>
+
+        <rect x="4" y="110" width="352" height="100" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="132" font-size="15" font-weight="650" fill="var(--fg)">_bmad-output/</text>
+        <text x="14" y="152" font-size="15" font-weight="650" fill="var(--fg)">implementation-artifacts/</text>
+        <text x="14" y="178" font-size="15" fill="var(--fg)">spec-&lt;slug&gt;.md</text>
+        <text x="14" y="198" font-size="15" fill="var(--muted)">build run: a SPEC.md folder</text>
+
+        <line x1="30" y1="210" x2="30" y2="318" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#bm-arrow-fg)"></line>
+        <text x="42" y="230" font-size="15" fill="var(--fg)">/bmad-build, same run</text>
+        <text x="42" y="254" font-size="15" fill="var(--muted)">status: draft → ready-for-dev</text>
+        <text x="42" y="276" font-size="15" fill="var(--muted)">→ in-progress → in-review</text>
+        <text x="42" y="298" font-size="15" fill="var(--muted)">→ done</text>
+
+        <rect x="4" y="320" width="352" height="36" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+        <text x="14" y="343" font-size="15" font-weight="650" fill="var(--fg)">code</text>
+
+        <line x1="30" y1="356" x2="30" y2="384" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#bm-arrow-accent)"></line>
+        <text x="42" y="376" font-size="15" fill="var(--fg)">ship</text>
+
+        <rect x="4" y="386" width="352" height="56" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+        <text x="14" y="408" font-size="15" font-weight="650" fill="var(--fg)">after ship: the spec stays</text>
+        <text x="14" y="430" font-size="15" fill="var(--fg)">where it was written, status: done</text>
+      </svg>
+        <figcaption>One skill writes the spec and builds it; after ship the spec stays, marked
+      done.</figcaption></figure>
+
+      <h3 class="quick-check">Quick check</h3>
+
+      <details class="reveal">
+        <summary>In BMAD, a change ships. Where is its spec now, and what in it
+        changed?</summary>
+        <p>Where it was written, <code>_bmad-output/implementation-artifacts/spec-&lt;slug&gt;.md</code>.
+        Only the <code>status</code> in its frontmatter moved, to <code>done</code>.</p>
+      </details>
+    </section>
+  </div>
+
+  <h2 id="instructions">What each one does to your standing instructions (all tracks)</h2>
+
+  <p><code>CLAUDE.md</code> is the standing part of your spec, and Day 1 taught you to keep it
+  short. On the build machine only LID wrote into it: OpenSpec 1.13.1's init left it untouched and
+  created no <code>AGENTS.md</code>, and BMAD's install did the same. The published sources
+  disagree about OpenSpec, and Exercise 1 has you check your own run. BMAD's managed region, <code>&lt;!-- bmad:context --&gt;</code>
+  to <code>&lt;!-- /bmad:context --&gt;</code> in <code>AGENTS.md</code> at the repo root, is written
+  only by its <code>bmad-project-context</code> skill, when you invoke it.</p>
+
+  <p>LID's mapping run appended a 29-line <code>## LID</code> section with no marker comments:
+  mode, version, ID prefix, where the design documents live, and the rule that any change that
+  could touch code walks the arrow. That run could not load the plugin's own skill body. LID's own
+  template, in the pinned <code>update-lid</code> skill, is longer, about 48 lines in Full mode: a
+  <code>## LID</code> block with mode and version, then a <code>## Linked-Intent Development
+  (MANDATORY)</code> section with the arrow rule, a navigation table, terminology and the
+  <code>@spec</code> rule. Exercise 1 has you read yours.</p>
+
+  <h2 id="versions">Shelf life and pinned versions (all tracks)</h2>
+
+  <p>This page was checked against OpenSpec 1.13.1, released 2026-09-17; LID commit
+  <code>831c1959</code> of 2026-08-12, still the tip of main on 2026-09-22; and BMAD 6.12.0, the latest on npm on
+  2026-09-22.</p>
+
+  <p>If an install hands you something newer, re-check BMAD's command names first. Its 6.11.0
+  release renamed <code>bmad-quick-dev</code> to <code>bmad-build</code> and
+  <code>bmad-dev-auto</code> to <code>bmad-build-auto</code>, and a default 6.12.0 install leaves
+  the old names out, so a tutorial's <code>/bmad-quick-dev</code> is an unknown command.</p>
+
+  <h2 id="wrong-tab">When your tab is the wrong tab (all tracks)</h2>
+
+  <p>If you picked BMAD for a blog's roster of named agents, the personas still ship as
+  <code>bmad-agent-*</code> skills, but v6 is a catalog of skills you invoke, and Change C uses <code>/bmad-build</code>.
+  If you cannot install <code>uv</code> on this machine, pick again now.</p>
+
+  <p>If you picked LID for a video, there is none. If you picked the track that looked lightest,
+  Lesson 4 asks the question again from the failure you actually have.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>On the build machine, which of the three wrote into <code>CLAUDE.md</code>?</summary>
+    <p>Only LID: its mapping run appended a 29-line <code>## LID</code> section. OpenSpec's init
+    and BMAD's install left it untouched, and BMAD writes its <code>AGENTS.md</code> region only
+    when you invoke <code>bmad-project-context</code>.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-l3-done" data-progress="d3-l3-read">
+      <label for="d3-l3-done">Lesson 3 read, and I can answer the five questions for my
+      track.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <details>
+  <summary>Every citation for this page</summary>
+
+  <p>Each project's own documentation and repository, accessed 2026-09-22, and observations on the
+  build machine the same day.</p>
+
+  <ul class="sources">
+    <li><code>openspec-01</code> &mdash; the npm install command, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/installation.md" target="_blank" rel="noopener noreferrer">OpenSpec installation</a>.</li>
+    <li><code>openspec-03</code> &mdash; the Node requirement, from
+    <a href="https://registry.npmjs.org/@fission-ai/openspec/latest" target="_blank" rel="noopener noreferrer">the
+    npm registry entry for @fission-ai/openspec</a>.</li>
+    <li><code>openspec-04</code> &mdash; version 1.13.1 and its release date, from
+    <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">OpenSpec's
+    latest release</a>.</li>
+    <li><code>openspec-05</code>, <code>openspec-06</code> &mdash; <code>openspec init</code> and the
+    folders it scaffolds, from
+    <a href="https://openspec.dev/docs/setup" target="_blank" rel="noopener noreferrer">OpenSpec setup</a>.</li>
+    <li><code>openspec-07</code>, <code>openspec-08</code>, <code>openspec-09</code>,
+    <code>openspec-10</code> &mdash; the four <code>/opsx</code> commands, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/getting-started.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    getting started</a>.</li>
+    <li><code>openspec-13</code> to <code>openspec-17</code>, <code>openspec-20</code> &mdash; the
+    delta spec headers, requirement and scenario syntax, and what archive does, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li><code>lid-01</code>, <code>lid-02</code>, <code>lid-03</code>, <code>lid-05</code>,
+    <code>lid-06</code>, <code>lid-07</code>, <code>lid-08</code>, <code>lid-09</code> &mdash; the
+    plugin install commands and the five LID commands, from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">LID
+    README</a>.</li>
+    <li><code>lid-11</code>, <code>lid-12</code>, <code>lid-13</code> &mdash; the <code>@spec</code>
+    annotation, the status markers and the ID shape, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">LID's
+    AGENTS.md</a>.</li>
+    <li><code>lid-25</code> &mdash; commit <code>831c1959</code> and its date, from
+    <a href="https://api.github.com/repos/jszmajda/lid/commits/main" target="_blank" rel="noopener noreferrer">LID's
+    main branch</a>.</li>
+    <li>The directives LID appends to <code>CLAUDE.md</code> and their line count, from
+    <code>plugins/linked-intent-dev/skills/update-lid/references/agents-md-template.md</code>, and the
+    per-segment arrow docs, from Phase 5 of
+    <code>plugins/arrow-maintenance/skills/map-codebase/SKILL.md</code>, both in the pinned snapshot
+    under <code>starter/vendored/lid-831c1959/lid/</code>. On the build machine the Change C run
+    started with <code>/linked-intent-dev:update-lid</code> (<code>lid-06</code>,
+    <code>lid-obs-07</code>), which the README lists for drift and configuration.</li>
+    <li><code>bmad-01</code>, <code>bmad-05</code> &mdash; the install command and the Node
+    requirement, from
+    <a href="https://docs.bmad-method.org/start/install-bmad/" target="_blank" rel="noopener noreferrer">Install
+    BMAD</a>.</li>
+    <li><code>bmad-06</code>, <code>bmad-09</code>, <code>bmad-11</code> &mdash; the
+    <code>uv</code> requirement, the 6.11.0 renames and the three-skill chain, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">BMAD
+    changelog</a>.</li>
+    <li><code>bmad-07</code> &mdash; the <code>/bmad-build</code> example, from
+    <a href="https://docs.bmad-method.org/start/build-your-first-change/" target="_blank" rel="noopener noreferrer">Build
+    your first change</a>.</li>
+    <li><code>bmad-12</code>, <code>bmad-13</code> &mdash; the status values and the folder layout
+    for work split into stories, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">Autonomous
+    development loops</a>. The spec path, the halts for your answers and your approval, the
+    small-change exception and the status at <code>done</code> are from
+    <code>step-01-clarify-and-route.md</code>, <code>step-02-plan.md</code> and
+    <code>step-05-present.md</code> of the pinned <code>bmad-build</code> skill under
+    <code>starter/vendored/bmad-6.12.0/</code>, the five values <code>/bmad-build</code> writes from
+    its <code>spec-template.md</code>, <code>blocked</code> from <code>bmad-build-auto</code>'s
+    <code>step-01-clarify-and-route.md</code> and <code>workflow.md</code>, and the folder from that snapshot's
+    <code>_bmad/config.toml</code>.</li>
+    <li><code>bmad-19</code> &mdash; the <code>bmad:context</code> region in <code>AGENTS.md</code>,
+    recorded from a search summary of
+    <a href="https://docs.bmad-method.org/explanation/project-context/" target="_blank" rel="noopener noreferrer">Project
+    context</a> rather than a fetched page; <code>bmad-obs-08</code> confirms the markers in the
+    installed skill.</li>
+    <li>Observed on the build machine on 2026-09-22, in copies of the Swift lane, after each tool's
+    own install and initialization: <code>openspec-obs-02</code>, <code>openspec-obs-03</code>,
+    <code>openspec-obs-07</code> (the fifteen files, the untouched
+    <code>CLAUDE.md</code>, the change folder); <code>lid-obs-01</code>, <code>lid-obs-03</code> to
+    <code>lid-obs-08</code> (the pinned commit, the five entry points, the token cost, the
+    <code>## LID</code> section, the mapped tree, the skill body that did not load, the Change C run's
+    design and specs); <code>bmad-obs-01</code>, <code>bmad-obs-02</code>, <code>bmad-obs-03</code>,
+    <code>bmad-obs-05</code> to <code>bmad-obs-11</code>, <code>bmad-obs-13</code> (the npm
+    version, the installer's <code>uv</code> warning and tool prompt, the 235 files, the 29 skills,
+    the missing old names, the <code>bmad:context</code> marker, the personas, the halt without
+    shell access, the folder the Change C run wrote when told to halt after planning, recorded in
+    <code>starter/checkpoints/bmad/CHECKPOINT.md</code>).</li>
+  </ul>
+  </details>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="01-why-a-framework.html">Lessons 1 and 2: Why a framework, and what they share</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/01-install-and-orient.html">Exercise 1: Install your track and map what it wrote</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked on 2026-09-22 against OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0. Where
+    this page names a framework command, keep that project's own docs open.</p>
+  </div>
+</footer>
+</body>
+</html>

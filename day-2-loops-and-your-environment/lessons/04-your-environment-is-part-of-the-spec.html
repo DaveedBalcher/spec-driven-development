@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your environment: profile, permissions, write path</title>
+<meta name="description" content="Day 2, Lesson 4: writing down what your workplace allows, encoding the part that matters as permission rules, and sending every write out through one reviewed path.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="4">
+<meta name="course:minutes" content="16">
+<meta name="course:slot" content="d2-l4">
+<meta name="course:video" content="tuY2ChJIx48">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-06 cc-core-07 cc-core-15 cc-core-18 cc-core-21 cc-core-22 cc-core-23 cc-core-24 cc-core-32 cc-core-36 cc-core-39 cc-automation-01 cc-automation-09 cc-automation-10 cc-automation-11 enterprise-01 enterprise-02 enterprise-03 enterprise-04 enterprise-05 enterprise-06 enterprise-07 enterprise-09 enterprise-10 enterprise-11 enterprise-12 enterprise-13 enterprise-14">
+  <h1>Your environment: profile, permissions, write path</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot; Lesson 4 of 4
+  &middot; <span class="timing">16 min</span></p>
+
+  <p class="lede">Which connectors can write, what the network lets out, which commands are
+  sanctioned, which models you can pick: those are facts about your workplace, not your ticket. You
+  write them down once, encode the part that has to be enforced as permission rules, and send every
+  write out through one narrow path that somebody reviewed.</p>
+
+  <div class="video" data-video-id="tuY2ChJIx48" data-start="0" data-end="300"
+       data-video-title="Beyond the basics with Claude Code (Claude, 2026-05-22), 0:00 to 5:00">
+    <span class="video-kicker">Watch first &middot; 5 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=tuY2ChJIx48"
+      target="_blank" rel="noopener noreferrer">Beyond the basics with Claude Code</a></p>
+    <p class="video-meta">Claude, 2026-05-22. Segment 0:00 to 5:00. Watch the order in which they
+    set the session up: what the agent is told about its situation before anything is asked of it.
+    Note which of those decisions sit in a file somebody committed and which get answered live in
+    the terminal, because the section on shared and personal settings files turns on that
+    split. The rest of the 47-minute session is optional, outside today's three hours.</p>
+  </div>
+
+  <p>Also worth five minutes, outside today's three hours:
+  <a href="https://www.youtube.com/watch?v=1wIHIwS2EWo&amp;t=2119s" target="_blank"
+  rel="noopener noreferrer">How Zalando Engineers Software &amp; AI at Scale &mdash; Bartosz
+  Ocytko</a> (bynd code, 2026-09-20), 35:19 to 40:19. Count how many of the things an engineer is
+  handed only answer questions and how many can change something other people see, and listen for
+  who holds the credential in each case.</p>
+
+  <h2 id="inputs">Constraints are inputs, not obstacles</h2>
+
+  <p>An agent that does not know the network is closed will plan a dependency install. One that does
+  not know the ticket tracker is read-only will plan to move the ticket. Yesterday's spec said what
+  done means; the environment says what is possible. A constraint the agent knows about becomes a
+  different plan. One it discovers becomes a failed command and a repair loop.</p>
+
+  <h2 id="profile">The profile: one file, filled once</h2>
+
+  <p><code>env-profile.md</code>, your own file and not the course's <code>env-profile.js</code>,
+  has six rows, reused on every brief: connectors and their
+  direction; egress, which for most teams here means <span data-env="sandboxNetwork">outbound
+  network access is blocked from the agent's sandbox</span>; sanctioned write commands and where
+  they run; the models you can pick between; where shared configuration lives; and the writable
+  directory with the iteration cap. Keep every line generic: no employer, internal system,
+  repository or hostname. Exercise 3 has you fill it in.</p>
+
+  <p>Skip it for a one-off script in a throwaway repo with no connectors attached: there is nothing
+  to write down. And a profile is prose; it tells the agent what is possible but binds nothing, so
+  anything that has to hold goes into rules or the environment.</p>
+
+  <h2 id="read-only">Read-only is a property of the deployment</h2>
+
+  <p>A connector is read-only because somebody launched it that way, not because the protocol makes
+  it so. On GitHub's MCP server, <code>--read-only</code> disables the write tools. Other flags
+  scope the server further, to whole toolsets or named tools; the configuration reference in
+  Sources lists them. Other vendors' servers have their own switches, or none.</p>
+
+  <h2 id="reads">Reads are cheap to permit and not free to use</h2>
+
+  <p>Split access by direction and most arguments about it end. A read that goes wrong costs tokens
+  and an iteration; a write that goes wrong is visible to other people and sometimes permanent. One
+  policy for both fails either way: too tight, and the agent plans without the ticket; too loose,
+  and the access that read the design can also post.</p>
+
+  <p>The bill for a read arrives before you ask a connector anything. At session start the window
+  already holds your <code>CLAUDE.md</code> files, the descriptions of skills Claude may invoke on
+  its own, and every attached MCP tool's name, with schemas deferred by default. Results land on top
+  of that. Claude Code limits MCP tool output to 25,000 tokens by default; a text result over the
+  limit is saved to a file, and the conversation gets a message naming the path.
+  <code>MAX_MCP_OUTPUT_TOKENS</code> raises the limit, moving more of that text into the window: it
+  spends budget; it does not create any.</p>
+
+  <p><code>/mcp</code> shows and manages the servers attached to your session, and
+  <code>/context</code> shows what the window holds; Exercise 3 has you read it with a connector
+  attached and then disabled. A connector you consult once a week is better detached. Fetch the
+  ticket when the plan needs the ticket, not at the start in case: Day 1's budget lesson, pointed at
+  connectors.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 348" role="img" aria-labelledby="env-title env-desc">
+      <title id="env-title">The environment as a boundary</title>
+      <desc id="env-desc">One rectangle, the environment, holds a single box: the agent, working in
+      your working copy. Three arrows cross the left edge inwards, for three of the read-only
+      connectors: source control, tickets and API docs. One arrow crosses the right edge outwards, the
+      vetted write script, which runs outside the sandbox, and it is the only line leaving the
+      boundary rightwards. Two further paths reach the same right edge and are struck out as
+      blocked: network egress and connector writes. Beneath the boundary, a note: permission rules
+      decide what the agent may attempt; the connector and a locked sandbox allowlist decide what is
+      possible.</desc>
+
+      <defs>
+        <marker id="env-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+        </marker>
+        <marker id="env-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <text x="112" y="18" font-size="15" font-weight="650" fill="var(--fg)">the environment</text>
+      <rect x="112" y="26" width="154" height="254" fill="none" stroke="var(--fg)" stroke-width="1.5"></rect>
+
+      <rect x="120" y="68" width="138" height="80" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="189" y="104" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">the agent</text>
+      <text x="189" y="126" text-anchor="middle" font-size="15" fill="var(--fg)">your working copy</text>
+
+      <text x="108" y="42" text-anchor="end" font-size="15" font-weight="650" fill="var(--fg)">source control</text>
+      <text x="108" y="59" text-anchor="end" font-size="15" fill="var(--fg)">(read-only)</text>
+      <line x1="96" y1="70" x2="112" y2="70" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#env-arrow-fg)"></line>
+
+      <text x="108" y="122" text-anchor="end" font-size="15" font-weight="650" fill="var(--fg)">tickets</text>
+      <text x="108" y="139" text-anchor="end" font-size="15" fill="var(--fg)">(read-only)</text>
+      <line x1="96" y1="150" x2="112" y2="150" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#env-arrow-fg)"></line>
+
+      <text x="108" y="202" text-anchor="end" font-size="15" font-weight="650" fill="var(--fg)">API docs</text>
+      <text x="108" y="219" text-anchor="end" font-size="15" fill="var(--fg)">(read-only)</text>
+      <line x1="96" y1="230" x2="112" y2="230" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#env-arrow-fg)"></line>
+
+      <text x="269" y="32" font-size="15" font-weight="650" fill="var(--accent)">vetted write</text>
+      <text x="269" y="49" font-size="15" font-weight="650" fill="var(--accent)">script</text>
+      <text x="269" y="66" font-size="15" fill="var(--accent)">runs outside</text>
+      <text x="269" y="83" font-size="15" fill="var(--accent)">the sandbox</text>
+      <line x1="258" y1="98" x2="306" y2="98" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#env-arrow-accent)"></line>
+
+      <text x="269" y="130" font-size="15" font-weight="650" fill="var(--muted)">network</text>
+      <text x="269" y="147" font-size="15" font-weight="650" fill="var(--muted)">egress</text>
+      <text x="269" y="164" font-size="15" fill="var(--muted)">blocked</text>
+      <line x1="214" y1="180" x2="266" y2="180" stroke="var(--muted)" stroke-width="1.5"></line>
+      <line x1="259" y1="172" x2="273" y2="188" stroke="var(--muted)" stroke-width="2"></line>
+
+      <text x="269" y="211" font-size="15" font-weight="650" fill="var(--muted)">connector</text>
+      <text x="269" y="228" font-size="15" font-weight="650" fill="var(--muted)">writes</text>
+      <text x="269" y="245" font-size="15" fill="var(--muted)">blocked</text>
+      <line x1="214" y1="261" x2="266" y2="261" stroke="var(--muted)" stroke-width="1.5"></line>
+      <line x1="259" y1="253" x2="273" y2="269" stroke="var(--muted)" stroke-width="2"></line>
+
+      <text x="4" y="304" font-size="15" fill="var(--muted)">permission rules decide what the agent may</text>
+      <text x="4" y="321" font-size="15" fill="var(--muted)">attempt; the connector and a locked</text>
+      <text x="4" y="338" font-size="15" fill="var(--muted)">sandbox allowlist decide what is possible</text>
+    </svg>
+    <figcaption>One reviewed path goes out; the crossed-out edges are closed in the connector's
+    configuration and in a locked sandbox allowlist.</figcaption>
+  </figure>
+
+  <h2 id="rules">Rules are enforcement, and that is different from a boundary</h2>
+
+  <p>Rules are shaped <code>Tool(pattern)</code>, such as <code>Bash(gh pr view *)</code> or
+  <code>Read(./.env)</code>, and a trailing <code>*</code> after a space means the same as the
+  <code>:*</code> suffix, the spelling the example below uses. A connector's tools take its prefix: <code>mcp__&lt;server&gt;</code> or
+  <code>mcp__&lt;server&gt;__*</code> for all of them, <code>mcp__&lt;server&gt;__&lt;tool&gt;</code>
+  for one.</p>
+
+  <p>Evaluation runs <code>deny</code>, then <code>ask</code>, then <code>allow</code>, and the first
+  match ends the decision. Specificity is never a tiebreak. A bare <code>Bash</code> in the deny list removes the tool from the agent's context
+  entirely; a scoped <code>Bash(rm *)</code> only blocks the matches.</p>
+
+  <h2 id="deny-first">Write the deny list first</h2>
+
+  <p>Start from allow and you list what you happened to think of on a Tuesday. Start from deny and
+  you list what is never acceptable here: shorter, easier to defend in review, and the part a later
+  rule cannot undo. Day 2's example,
+  <code>../day-2-loops-and-your-environment/starter/settings.example.json</code> from inside
+  <code>day2-work</code>, is written in that order, and <code>settings.example.md</code> beside it
+  explains each rule. A few of them, plus three lines the example file does not carry: the last two
+  in deny and the last in allow belong to the write path, explained further down.</p>
+
+  <pre data-lang="json"><code>{
+  "permissions": {
+    "deny":  ["Bash(rm:*)", "Bash(git push:*)", "WebFetch", "Bash(gh pr merge:*)",
+              "Bash(gh pr comment:*)", "Bash(gh api:*)"],
+    "ask":   ["Bash(gh:*)", "Bash(git commit:*)"],
+    "allow": ["Bash(git status)", "Bash(git diff:*)", "Edit(./run-log.md)",
+              "Bash(./scripts/post-pr-comment.sh:*)"]
+  }
+}</code></pre>
+
+  <p>The full example file also allows both lanes' test commands; your settings need only your
+  lane's:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="json"><code>"allow": ["Bash(swift test:*)"]</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="json"><code>"allow": ["Bash(./gradlew test)"]</code></pre>
+  </div>
+
+  <h2 id="modes">Modes, and where they are set</h2>
+
+  <p>The mode sets the default posture before any rule matches. Day 1 named the six values and
+  started a repository in plan mode with <code>defaultMode</code> in
+  <code>.claude/settings.json</code>.</p>
+
+  <p>Settings files resolve in a fixed order: managed settings (<code>managed-settings.json</code>,
+  MDM or the console), <code>claude --settings</code>, <code>.claude/settings.local.json</code>,
+  <code>.claude/settings.json</code>, then <code>~/.claude/settings.json</code>. Managed settings
+  are the one layer nothing overrides. <code>/permissions</code> is where you review and edit the
+  rules.</p>
+
+  <h2 id="team">The file that makes you part of a team</h2>
+
+  <p><code>.claude/settings.json</code> is shared and committed, for everyone in the project;
+  <code>.claude/settings.local.json</code> is personal and not shared. Answer &ldquo;Yes, and don't
+  ask again&rdquo; to a Bash command and Claude Code saves the rule to
+  <code>.claude/settings.local.json</code> at the root of the git repository, where it applies
+  anywhere in that repository; outside a git repository, on Windows, and in the other cases the
+  Settings page lists, the file stays beside <code>.claude/settings.json</code>. In a clone of this
+  course, that is the clone's root, not <code>day2-work</code>. File-edit approvals are
+  never saved.</p>
+
+  <p>The repository's instruction files reach the agent at launch (<code>CLAUDE.md</code>), on a
+  path match (rule files under <code>.claude/rules/</code>) or on request (a skill), each costing
+  context at its own moment. The configuration is committed beside them:
+  <code>.claude/settings.json</code>, and <code>.mcp.json</code>, which <code>--scope
+  project</code> writes for a server meant for the team; that collection, plus the write wrapper
+  below, is &ldquo;the team's setup&rdquo;.</p>
+
+  <p>Moving a line into the committed file makes your workflow the team's, so review it like any
+  change: a reviewer who reads <code>Bash(gh:*)</code> will ask what it lets through.</p>
+
+  <h2 id="not-a-wall">What permission rules are not</h2>
+
+  <p>Rules are policy for this tool's behaviour, not a wall around your machine, network or data: the
+  same command still runs from another session or laptop.</p>
+
+  <p>A boundary that holds decides what is possible, not what the agent may attempt. The
+  connector's configuration is one: GitHub's read-only mode takes precedence over every other
+  configuration, disabling write tools even when explicitly requested. The sandbox's network
+  allowlist, <code>sandbox.network.allowedDomains</code>, is another once it is locked. Left alone
+  it pre-allows its domains and prompts for any other domain; <code>strictAllowlist: true</code>,
+  or <code>allowManagedDomainsOnly</code> in managed settings, denies the rest instead. Your
+  profile's egress row says what yours lets out. The service account's permissions on the far side
+  are the third. If a rule is all that stands between a run and production, fix the environment, not the rule.</p>
+
+  <h2 id="wrapper">The shape of a vetted write path</h2>
+
+  <p>It is a pattern, not a product: a script one teammate wrote and another read, with five
+  properties a reviewer can check in one sitting.</p>
+
+  <ul>
+    <li>It reads the credential in one function, and nowhere else.</li>
+    <li>It runs only an allowlisted action.</li>
+    <li>It has a dry run that prints the exact request and sends nothing.</li>
+    <li>It asks for an explicit confirmation before a real send, unless the run passes
+    <code>--yes</code>.</li>
+    <li>It appends one log line per send.</li>
+  </ul>
+
+  <p>Day 2's starter folder ships one. Run its dry run from inside <code>day2-work</code>, the lane
+  copy every Day 2 command runs in (the shipped <code>sandbox/</code> is never edited):</p>
+
+  <pre data-lang="bash" data-run="swift" data-cwd="day2-work" data-expect="DRY RUN: would POST repos/local-repo/pulls/1/comments"><code>bash ../day-2-loops-and-your-environment/starter/scripts/post-pr-comment.sh \
+  --repo local-repo --pr 1 --body "Criterion 3 is not covered by the diff." --dry-run</code></pre>
+
+  <pre data-lang="text"><code>DRY RUN: would POST repos/local-repo/pulls/1/comments
+Criterion 3 is not covered by the diff.</code></pre>
+
+  <p>It sends only a body because, out of the box, it appends to a local fixture laid out like the
+  REST path; a real inline comment needs the fields below. Ask it for an action outside its list
+  and it names the action, names what it does allow, and exits non-zero.</p>
+
+  <h2 id="surface">The approved write surface</h2>
+
+  <p>For pull-request feedback the surface is small and documented. The GitHub CLI posts a comment
+  with a number and a body, or reads the body from a file:</p>
+
+  <pre data-lang="bash"><code>gh pr comment 1234 --body "Criterion 3 is not covered by the diff."
+gh pr comment 1234 --body-file review.md</code></pre>
+
+  <p>A comment on a line of the diff uses a different endpoint,
+  <code>POST /repos/{owner}/{repo}/pulls/{pull_number}/comments</code>, which requires
+  <code>body</code>, <code>commit_id</code> and <code>path</code>, plus <code>line</code>, the diff
+  line the comment applies to (<code>side</code> picks <code>LEFT</code> or <code>RIGHT</code> in a
+  split diff). A comment across several lines adds <code>start_line</code> and
+  <code>start_side</code>, and <code>line</code> marks its end.
+  <code>gh api</code> reaches it with the same fields; a wrapper calls that for the inline form. A
+  team can read a surface this small once and trust it, instead of approving every command the
+  agent proposes.</p>
+
+  <h2 id="outside">Why the write runs outside the agent's sandbox</h2>
+
+  <p>The agent proposes the command and the body text; the script, when it runs where your
+  profile says, holds the credential and refuses anything outside its allowlist. That division holds only while the wrapper
+  and the token it reads sit where your profile's sanctioned-write row puts them:
+  <span data-env="writeRunsWhere">outside the agent's sandbox, from your own terminal</span>. The
+  shipped <code>read_token</code> takes the token from the environment, so a session whose shell
+  exports <code>GH_TOKEN</code> has already handed the agent the credential. So keep the token out
+  of the shell you start Claude Code from and export it only in the terminal where you run the
+  wrapper. To check, type this at the Claude Code prompt (the leading <code>!</code> runs the rest
+  as a shell command in the session); it should print nothing:</p>
+
+  <pre data-lang="text"><code>! [ -n "$GH_TOKEN" ] &amp;&amp; echo exposed</code></pre>
+
+  <p>The settings block above makes the division visible: the wrapper's path in allow, the raw
+  commands under it in deny. The pair works because a
+  deny rule matches the commands the agent itself issues, not the <code>gh api</code> call the
+  allowed script makes inside its own process. The recommended way to use the wrapper needs no
+  allow row: the agent proposes the command, and you run it from your own terminal and answer the
+  confirmation. The allow row is for a loop that posts on its own, and it gives up the
+  confirmation: allowing the agent to run the wrapper also admits <code>--yes</code>, so on a run
+  nobody watches only the credential function and the allowlist still decide. Change the wrapper by pull request,
+  and have the reviewer ask what the allowlist now permits that it did not.</p>
+
+  <h2 id="wrong-tool">When a write path is the wrong tool</h2>
+
+  <p>If you are the only reader of the output, a wrapper is ceremony: findings written to a file
+  you open afterwards need no allowlist, confirmation or log. Build one when a second person
+  depends on the write.</p>
+
+  <p>The sharper failure is a wrapper nobody read. It is worse than pasting by hand, because it
+  looks approved, so the next engineer stops asking what it permits. Its value is the review it
+  received, not the automation. Exercise 4 copies this one into <code>day2-work/scripts/</code> (so its allow row reads
+  <code>bash scripts/post-pr-comment.sh</code>, not the <code>./scripts/</code> form above), has you
+  read it, and has you make its repository allowlist binding, which it currently is not.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your settings allow <code>Bash(gh pr view *)</code> and deny <code>Bash(gh *)</code>.
+    Which wins, and why is the more specific rule not the answer?</summary>
+    <p>The deny wins. Deny is evaluated before allow and the first match ends the decision;
+    specificity is never a tiebreak, so a broad deny swallows every narrow allow under it.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Of the wrapper's five properties, which two are what make it safer to allow than raw
+    <code>gh</code> when the agent runs it unwatched?</summary>
+    <p>The credential read in one function and the allowlisted action. The first means the agent
+    need not hold a token, provided the token lives outside the agent's environment as above; the
+    second refuses anything outside the list regardless of what it was asked to do. Both still hold
+    on a <code>--yes</code> run nobody watches, which the confirmation does not. The dry run and the
+    log line are what let a reviewer confirm both.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-l4-done" data-progress="d2-l4-read">
+      <label for="d2-l4-done">Lesson 4 read, and I know which of my connectors can write and which
+      single path my writes would leave by.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <details class="reveal">
+    <summary>Claude Code documentation accessed 2026-09-22 against version 2.1.280; GitHub CLI,
+    REST and MCP server documentation accessed the same day, except where a bullet names another
+    date.</summary>
+
+  <ul class="sources">
+    <li><code>cc-core-21</code>, <code>cc-core-22</code>, <code>cc-core-24</code>,
+    <code>enterprise-07</code>, <code>enterprise-09</code>, <code>enterprise-10</code> &mdash; the
+    <code>Tool(pattern)</code> rule format, the <code>:*</code> suffix and the space-star spelling,
+    deny then ask then allow with first match winning regardless of specificity,
+    <code>/permissions</code>, the bare-tool deny that removes a tool from context, and the
+    <code>mcp__&lt;server&gt;__&lt;tool&gt;</code> scoping, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-39</code> &mdash; &ldquo;Yes, and don't ask again&rdquo; saves the rule to
+    <code>.claude/settings.local.json</code> at the root of the git repository and applies anywhere
+    in it, the file staying beside <code>.claude/settings.json</code> outside a git repository, on
+    Windows and in the other listed cases, and file-edit approvals never saved, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>
+    and <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>,
+    accessed 2026-09-23.</li>
+    <li><code>cc-core-06</code>, <code>cc-core-07</code> &mdash; the six permission-mode values and
+    what each allows without asking, and <code>defaultMode</code> in
+    <code>.claude/settings.json</code>, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>.</li>
+    <li><code>cc-core-23</code>, <code>enterprise-11</code> &mdash; the settings file locations and
+    their precedence order, and the committed, project-wide <code>.claude/settings.json</code>
+    against the personal <code>.claude/settings.local.json</code>, from
+    <a href="https://code.claude.com/docs/en/settings" target="_blank" rel="noopener noreferrer">Settings</a>.</li>
+    <li><code>cc-core-36</code> &mdash; what is in the window before your first message: the
+    <code>CLAUDE.md</code> files, the skill descriptions, and the MCP tool names with their schemas
+    deferred by default, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Context
+    window</a>.</li>
+    <li><code>cc-core-15</code>, <code>cc-automation-01</code> &mdash; path-scoped rule files under
+    <code>.claude/rules/</code>, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Memory</a>,
+    and project skills under <code>.claude/skills/</code>, from
+    <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener noreferrer">Skills</a>.</li>
+    <li><code>cc-automation-09</code>, <code>cc-automation-10</code>, <code>cc-automation-11</code>
+    &mdash; <code>--scope project</code> and the <code>.mcp.json</code> it writes, the 25,000-token
+    default limit on MCP tool output, the file a larger text result is saved to,
+    <code>MAX_MCP_OUTPUT_TOKENS</code>, and <code>/mcp</code> as the in-session view of what is
+    attached, from
+    <a href="https://code.claude.com/docs/en/mcp" target="_blank" rel="noopener noreferrer">Connect
+    Claude Code to tools via MCP</a>; the output limit re-checked 2026-09-23.</li>
+    <li><code>cc-core-18</code> &mdash; <code>/context</code> visualizes what is in the window, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>enterprise-06</code> &mdash; <code>sandbox.network.allowedDomains</code>, which
+    pre-allows the listed domains while no domain is pre-allowed by default and any other prompts
+    for approval, and <code>strictAllowlist: true</code> or <code>allowManagedDomainsOnly</code> in
+    managed settings, which deny hosts outside the list instead of prompting, from
+    <a href="https://code.claude.com/docs/en/sandboxing" target="_blank" rel="noopener noreferrer">Sandboxing</a>,
+    accessed 2026-09-23.</li>
+    <li><code>enterprise-01</code>, <code>enterprise-02</code>, <code>enterprise-03</code>,
+    <code>enterprise-04</code>, <code>enterprise-05</code> &mdash; the read-only flag and its
+    precedence over every other configuration, disabling write tools even when explicitly
+    requested, and the flags that scope the server further: toolsets, an explicit tool allowlist, an
+    exclude list that takes precedence, and lockdown mode, a best-effort content filter rather than
+    an authorization boundary, from the
+    <a href="https://github.com/github/github-mcp-server/blob/main/docs/server-configuration.md" target="_blank" rel="noopener noreferrer">GitHub
+    MCP server configuration reference</a>, with <code>enterprise-01</code> and
+    <code>enterprise-03</code> accessed 2026-09-23.</li>
+    <li><code>enterprise-12</code> &mdash; <code>gh pr comment &lt;number&gt; --body "&lt;text&gt;"</code>
+    and its <code>--body-file</code> form, from
+    <a href="https://cli.github.com/manual/gh_pr_comment" target="_blank" rel="noopener noreferrer">the
+    <code>gh pr comment</code> manual</a>.</li>
+    <li><code>enterprise-13</code> &mdash; <code>POST /repos/{owner}/{repo}/pulls/{pull_number}/comments</code>
+    requiring <code>body</code>, <code>commit_id</code> and <code>path</code>, with
+    <code>line</code> and <code>side</code> placing a comment on the diff and
+    <code>start_line</code> and <code>start_side</code> for a range, from
+    <a href="https://docs.github.com/en/rest/pulls/comments#create-a-review-comment-for-a-pull-request" target="_blank" rel="noopener noreferrer">Create
+    a review comment for a pull request</a>, re-checked 2026-09-23.</li>
+    <li><code>enterprise-14</code> &mdash; the <code>gh api</code> call that reaches the same
+    endpoint with the same fields, from
+    <a href="https://docs.github.com/en/rest/pulls/comments" target="_blank" rel="noopener noreferrer">REST
+    API endpoints for pull request review comments</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+  </details>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/02-make-it-critique-itself.html">Exercise 2: Make it critique itself</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/03-environment-profile-and-permissions.html">Exercise 3: Your environment profile and permissions</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a flag or a settings
+    key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

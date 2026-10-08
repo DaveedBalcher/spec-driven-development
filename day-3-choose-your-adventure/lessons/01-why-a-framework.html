@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a framework, and what they share</title>
+<meta name="description" content="Day 3, Lessons 1 and 2: what a spec framework standardizes and what it costs, the five stages OpenSpec, LID and BMAD share, the three places they differ, and when to skip one.">
+<meta name="course:day" content="3">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="1">
+<meta name="course:minutes" content="16">
+<meta name="course:slot" content="d3-l1">
+<meta name="course:video" content="1wIHIwS2EWo">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="practitioners-05 bmad-07 bmad-09 bmad-12 bmad-13 bmad-obs-01 bmad-obs-05 bmad-obs-07 bmad-obs-11 bmad-obs-13 openspec-04 openspec-06 openspec-07 openspec-08 openspec-09 openspec-10 openspec-13 openspec-14 openspec-15 openspec-17 openspec-20 openspec-obs-02 openspec-obs-03 openspec-obs-07 lid-12 lid-13 lid-25 lid-obs-01 lid-obs-04 lid-obs-05 lid-obs-06 lid-obs-07 cc-core-32 cc-core-36">
+  <h1>Why a framework, and what they share</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 3: Choose your adventure</a> &middot; Lessons 1 and 2 of 5
+  &middot; <span class="timing">16 min</span></p>
+
+  <p class="lede">A spec framework is a set of shared conventions for where specs live and how they
+  move from brief to shipped code, installed as commands your agent runs. Its only benefit worth the
+  ceremony is that it makes the loop you built on Days 1 and 2 run for people who did not build
+  it. OpenSpec, LID and BMAD run the same five stages under different names and part in three
+  places. If you work alone, read <a href="#skip">When to skip it</a> first.</p>
+
+  <div class="video" data-video-id="1wIHIwS2EWo" data-start="2119" data-end="2419"
+       data-video-title="#17 - How Zalando Engineers Software &amp; AI at Scale - Bartosz Ocytko (Executive Principal Engineer) (bynd code, 2026-09-20)">
+    <span class="video-kicker">Watch first &middot; 5 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=1wIHIwS2EWo&amp;t=2119s"
+      target="_blank" rel="noopener noreferrer">#17 - How Zalando Engineers Software &amp; AI at
+      Scale - Bartosz Ocytko (Executive Principal Engineer)</a></p>
+    <p class="video-meta">bynd code, 2026-09-20; the five minutes from 35:19 to 40:19. If you watched
+    these five minutes from <a href="../../day-2-loops-and-your-environment/lessons/04-your-environment-is-part-of-the-spec.html">Day
+    2 Lesson 4</a>, listening for who holds each credential, replay them for a different question. Watch for
+    what the organization chose to make the same for every team, and what it left each team to
+    decide. For each shared piece, ask whether it exists to make the output better or to let people
+    who did not build a setup use it. Scale it down as you listen: the reasons survive at five
+    people, the machinery does not.</p>
+  </div>
+
+  <h2 id="second-person">What breaks when the second person joins</h2>
+
+  <p>Your Day 2 loop works because you hold three things in your head: which spec is current, what
+  counts as done, and which files a change may touch. Your own specs carry the answers because you
+  start each one from <code>specs/TEMPLATE.md</code>. That every spec must start there is written
+  nowhere.</p>
+
+  <p>Now a teammate picks up the next ticket. They paste it into a spec file of their own, with no
+  bounds section, and run the same runner against the same repo. The tests go green, and the diff
+  edits a file your bounds keep off limits:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <p><code>Package.swift</code></p>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <p><code>build.gradle.kts</code></p>
+  </div>
+
+  <p>In the PR review you reject it for a reason they had no way to know. The agent did what it was
+  given. The failure is an unwritten convention, and it gets worse with every person who joins.</p>
+
+  <h2 id="standardizes">What a framework actually standardizes</h2>
+
+  <p>Every framework on offer standardizes four things: where the spec file lives, what shape it
+  takes, which command moves it to the next stage, and what happens to it after the code ships.
+  That is the whole list. A framework does not standardize your prompts, your tests, or your
+  judgment about whether a criterion can fail. You are buying agreement: your teammate's spec lands
+  in the same place, in the same shape, and moves through the same commands as yours.</p>
+
+  <h2 id="lesson-2">Lesson 2: What the three share, and where they part</h2>
+
+  <h2 id="stages">The same five stages under different names</h2>
+
+  <p>Every spec framework moves a change through five stages: brief, spec (outcome and
+  acceptance criteria), plan (steps and files), implement, and close. Days 1 and 2 did the first
+  four by hand; the frameworks add the fifth, deciding what the spec becomes once the code
+  ships.</p>
+
+  <p>OpenSpec drives the stages with four slash commands. The optional
+  <code>/opsx:explore</code> surveys the problem first, <code>/opsx:propose &lt;feature
+  description&gt;</code> creates a change holding spec and plan, <code>/opsx:apply</code>
+  implements it, and <code>/opsx:archive</code> closes it.</p>
+
+  <p>LID calls its chain the arrow: HLD &rarr; LLD &rarr; EARS &rarr; Tests &rarr; Code, where
+  HLD is the high-level design and LLD a low-level design per component. EARS (Easy Approach to
+  Requirements Syntax) writes each requirement as one sentence built on <em>shall</em>, sometimes with its trigger in front, so it reads as one checkable statement. Exercise 2's LID checkpoint
+  holds real ones.</p>
+
+  <p>BMAD routes the stages through skills. One skill takes the brief as its argument,
+  <code>/bmad-build write an implementation of mars rover kata</code> in BMAD's own docs, and
+  carries it through spec, plan, and implementation.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 346" role="img" aria-labelledby="share-title share-desc">
+      <title id="share-title">Three frameworks mapped onto the same five stages</title>
+      <desc id="share-desc">Time runs left to right across five stage columns: brief, spec, plan,
+      implement, close. OpenSpec: the optional /opsx:explore under brief, drawn as an outlined
+      bar, one bar labelled /opsx:propose spanning spec and plan, /opsx:apply under implement, and
+      /opsx:archive under close. LID: HLD, the high-level design, under brief, one bar labelled LLD
+      (the low-level design), EARS, audit spanning spec and plan, tests, code under implement, and the
+      status markers [x] [ ] [D] under close. BMAD: your brief under brief, one bar labelled
+      /bmad-build spanning spec, plan and implement, with Change C's SPEC.md under spec and
+      stories.yaml under plan, and status: done under close.</desc>
+
+      <rect x="2" y="2" width="64" height="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="34" y="22" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">brief</text>
+      <rect x="66" y="2" width="64" height="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="98" y="22" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">spec</text>
+      <rect x="130" y="2" width="64" height="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="162" y="22" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">plan</text>
+      <rect x="194" y="2" width="86" height="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="237" y="22" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">implement</text>
+      <rect x="280" y="2" width="78" height="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+      <text x="319" y="22" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">close</text>
+
+      <text x="4" y="58" font-size="15" font-weight="650" fill="var(--fg)">OpenSpec</text>
+      <text x="4" y="80" font-size="15" fill="var(--fg)">/opsx:explore</text>
+      <text x="237" y="80" text-anchor="middle" font-size="15" fill="var(--fg)">/opsx:apply</text>
+      <rect x="5" y="89" width="58" height="10" fill="var(--bg)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 3"></rect>
+      <rect x="68" y="88" width="124" height="12" fill="var(--accent)"></rect>
+      <rect x="196" y="88" width="82" height="12" fill="var(--accent)"></rect>
+      <rect x="282" y="88" width="74" height="12" fill="var(--accent)"></rect>
+      <text x="130" y="120" text-anchor="middle" font-size="15" fill="var(--fg)">/opsx:propose</text>
+      <text x="356" y="120" text-anchor="end" font-size="15" fill="var(--fg)">/opsx:archive</text>
+
+      <text x="4" y="156" font-size="15" font-weight="650" fill="var(--fg)">LID</text>
+      <text x="4" y="178" font-size="15" fill="var(--fg)">HLD</text>
+      <text x="237" y="178" text-anchor="middle" font-size="15" fill="var(--fg)">tests, code</text>
+      <rect x="4" y="186" width="60" height="12" fill="var(--accent)"></rect>
+      <rect x="68" y="186" width="124" height="12" fill="var(--accent)"></rect>
+      <rect x="196" y="186" width="82" height="12" fill="var(--accent)"></rect>
+      <rect x="282" y="186" width="74" height="12" fill="var(--accent)"></rect>
+      <text x="130" y="218" text-anchor="middle" font-size="15" fill="var(--fg)">LLD, EARS, audit</text>
+      <text x="356" y="218" text-anchor="end" font-size="15" fill="var(--fg)">[x] [ ] [D]</text>
+
+      <text x="4" y="254" font-size="15" font-weight="650" fill="var(--fg)">BMAD</text>
+      <text x="4" y="276" font-size="15" fill="var(--fg)">your brief</text>
+      <text x="173" y="276" text-anchor="middle" font-size="15" fill="var(--fg)">/bmad-build</text>
+      <rect x="4" y="284" width="60" height="12" fill="var(--accent)"></rect>
+      <rect x="68" y="284" width="210" height="12" fill="var(--accent)"></rect>
+      <rect x="282" y="284" width="74" height="12" fill="var(--accent)"></rect>
+      <text x="98" y="316" text-anchor="middle" font-size="15" fill="var(--muted)">SPEC.md</text>
+      <text x="356" y="316" text-anchor="end" font-size="15" fill="var(--fg)">status: done</text>
+      <text x="162" y="338" text-anchor="middle" font-size="15" fill="var(--muted)">stories.yaml</text>
+    </svg>
+    <figcaption>Where one step covers several stages its bar spans them: OpenSpec's propose
+    covers spec and plan, BMAD's one skill covers spec, plan and implementation, and LID's shared
+    bar holds three of its phases: the low-level design, the EARS requirements and the edge
+    audit. The outlined bar is optional, BMAD's file names are Change
+    C's, and LID's close markers are explained under difference three.</figcaption>
+  </figure>
+
+  <h2 id="artifacts">Difference one: how many artifacts</h2>
+
+  <p>OpenSpec's unit is a change folder under <code>openspec/changes/</code>, and its spec is a
+  delta: sections headed <code>## ADDED Requirements</code>, <code>## MODIFIED Requirements</code>,
+  and <code>## REMOVED Requirements</code> state only what this change alters.</p>
+
+  <p>LID's unit is a design tree that persists, with requirement IDs that follow their path
+  through the tree, such as <code>PEVAL-RUN-014</code>, and mapping an existing codebase writes
+  many documents before any feature work.</p>
+
+  <p>BMAD sizes its spec to the change: work it splits into stories gets a spec folder, and a
+  small change with no open questions and nothing irreversible gets a two-section spec file.</p>
+
+  <h2 id="ceremony">Difference two: how much review before code</h2>
+
+  <p>Ceremony is the number of human reviews between the brief and the first line of
+  implementation. By their own text at the pinned versions, LID's skill stops for your review after each of
+  its first five phases, so the high-level design, the low-level design, the EARS requirements, an
+  edge audit of those requirements, and the tests each get a review before any code. OpenSpec's
+  <code>/opsx:propose</code> first asks about any ambiguity that would change scope or acceptance
+  criteria, then writes the planning artifacts and stops, and nothing is implemented until you run
+  <code>/opsx:apply</code>. <code>/bmad-build</code> investigates, then
+  decides: a small change with no open questions and nothing irreversible goes straight to
+  implementation, and anything else halts for your answers and your approval of its plan.</p>
+
+  <h2 id="living">Difference three: living specs or expiring specs</h2>
+
+  <p>OpenSpec's <code>/opsx:archive</code> moves a finished change into
+  <code>changes/archive/</code> under a date-prefixed folder and folds its deltas into the live
+  specs in <code>openspec/specs/</code>. The change record expires; the requirement lives.</p>
+
+  <p>LID keeps the design tree as the source of truth after implementation. In LID's own specs
+  each requirement carries a marker, <code>[x]</code> implemented, <code>[ ]</code> gap, or
+  <code>[D]</code> deferred; Exercise 2's LID checkpoint records the same state as
+  &ldquo;Verified by: (no test yet).&rdquo; BMAD tracks a spec through a frontmatter status,
+  <code>draft</code>, <code>ready-for-dev</code>, <code>in-progress</code>,
+  <code>in-review</code>, <code>done</code> or <code>blocked</code>. Ask which of these your team will re-read in
+  six months.</p>
+
+  <h2 id="ladder">A ladder to place yourself on</h2>
+
+  <p>Birgitta Böckeler's three levels from Day 1's Lesson 4 are spec-first, spec-anchored and
+  spec-as-source; Days 1 and 2 taught spec-first. OpenSpec's archive into live specs and LID's
+  rule, &ldquo;Specs win. Fix the code, or fix the spec and cascade,&rdquo; are spec-anchored.
+  BMAD's spec belongs to one change and anchors nothing after <code>done</code> unless your team
+  goes back to it. LID's README aims higher, at code you could regenerate from the tree, but its
+  rule still lets you fix the code, so none of the three is spec-as-source. Lesson 4 turns the
+  rung you want into a decision.</p>
+
+  <h2 id="costs">The three costs you pay</h2>
+
+  <p>The first cost is artifacts. More artifacts buy traceability, and every spec, design file and
+  story a framework creates is a file someone has to keep current, or it starts misleading the
+  agent that reads it. The artifact is the agent's input, not documentation written afterwards, so
+  walking a tree to find the requirement that governs a change can also cost more context per turn
+  than reading one file. The second cost is commands your team has to learn, in a specific order,
+  before the framework does anything useful. The third is a version treadmill.</p>
+
+  <p>BMAD is the one whose treadmill you can price. A release renamed two skills,
+  <code>bmad-quick-dev</code> to <code>bmad-build</code> and <code>bmad-dev-auto</code> to
+  <code>bmad-build-auto</code>, and after a default install of the pinned version Claude Code
+  answered <code>/bmad-quick-dev</code> as an unknown command. Every onboarding note that names a
+  framework command has an expiry date you do not choose.</p>
+
+  <p>Pay these knowingly, and do the arithmetic first. Divide the minutes an adoption costs,
+  summed across everyone who has to learn it, by the minutes it saves each ticket, and you have the
+  number of tickets before it pays back. With illustrative figures, at ten minutes saved a ticket,
+  one person's eight-hour day pays back after 48 tickets; the same day for a team of five needs
+  240.</p>
+
+  <h2 id="not-a-substitute">A framework is not a substitute for Days 1 and 2</h2>
+
+  <p>None of the three writes acceptance criteria that can fail for you. Each drafts criteria in its
+  own format, and whether each one names a command that goes red without the change is still the
+  review you learned on Day 1. If your criteria are unfalsifiable, a framework files the
+  unfalsifiable criteria neatly, in the right folder, under the right name.</p>
+
+  <p>None of them keeps your context small for you, either. Each spends Day 1's context budget
+  through the skill descriptions Claude Code loads at session start, and some through lines added
+  to <code>CLAUDE.md</code>; Lesson 5 shows what lands there and how to keep it from growing.</p>
+
+  <h2 id="two-weeks">How to tell in two weeks whether it worked</h2>
+
+  <p>Pick one signal before you start, and pick it from the failure that sent you looking. Two work
+  well for a mobile team: the number of tickets where someone had to ask what done meant, and the
+  number of diffs sent back in review because the spec never said which files were off limits.
+  Count it for two weeks before adoption and two weeks after.</p>
+
+  <p>One team, one signal, and no percentage you would quote to anyone else: a dozen tickets is not
+  a study. If the count does not move, the framework standardized something that was not your
+  problem. Lesson 4 has you write the signal into the decision itself, and Exercise 3's comparison card asks which
+  failure you would adopt your track to fix.</p>
+
+  <h2 id="skip">When to skip it</h2>
+
+  <p>Skip a framework in four cases. The first three are about coordination: you are the only
+  person who touches the module, the code will be deleted before anyone re-reads its specs, or
+  your team of two already agrees on where specs live and what done means. The ceremony is priced
+  for coordination; with nobody to coordinate with, you are paying for nothing. A one-line fix in
+  <code>TransactionFormatter</code> or a throwaway script falls under the first two: the review stops and
+  artifacts cost more than they return, and a plain prompt or a short hand-written spec like Day
+  1's is the better tool. Lesson 4 treats no framework as a real answer.</p>
+
+  <p>The fourth case: the problem you want solved is quality. A framework fixes coordination
+  between people, not the content of what they write. Adopting one to get better diffs from the
+  same vague briefs is a mis-purchase, and six weeks later you have vague briefs in a standard
+  folder. A useful team norm: adopt a framework only after two people have independently hit the
+  same coordination failure.</p>
+
+  <h2 id="limits">What this comparison does not do</h2>
+
+  <p>It does not rank them: research for this course found no talk comparing all three on the
+  same work. Every claim here traces to a project's own documentation or pinned source, to a run
+  on this course's build machine, or, for the ladder, to Böckeler's article.</p>
+
+  <p>It also has a short shelf life. It was written against the versions this course pins, which
+  are not necessarily the latest: OpenSpec 1.13.1 (released 2026-09-17), LID commit
+  <code>831c1959</code> (2026-08-12) and BMAD 6.12.0, the version npm served on 2026-09-22. On a
+  newer install, re-check the command names first.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your team adopts a framework hoping the agent will stop turning vague briefs into vague
+    diffs. Six weeks in, the briefs are still vague and so are the diffs. What did the framework
+    standardize, and what did you expect it to standardize that it does not?</summary>
+    <p>It standardized four things: where the spec file lives, what shape it takes, which command
+    moves it to the next stage, and what happens to it after the code ships. It does not
+    standardize content: your prompts, your tests, whether your acceptance criteria can fail, your
+    judgment. A vague brief filed
+    in a standard folder is still a vague brief, and the fix is Day 1's: criteria a command can
+    fail.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>A teammate says &lsquo;our specs go stale, so specs are useless.&rsquo; Which axis is
+    that complaint about, and which of the three frameworks are built to answer it?</summary>
+    <p>It is the living-versus-expiring axis. OpenSpec answers it by folding a change's deltas into
+    a live spec tree and archiving only the change record; LID answers it by making the design tree
+    the source of truth and cascading fixes downstream. A framework that only produces per-change
+    documents will not help.</p>
+  </details>
+
+  <p class="video-meta">Also worth watching, four optional minutes: <a href="https://www.youtube.com/watch?v=6mLYZF97oaU&amp;t=394s"
+  target="_blank" rel="noopener noreferrer">Spec-Driven Dev Is Back. But Not How You Think &bull;
+  Daniel Terhorst-North &amp; Gojko Adzic &bull; GOTO 2026</a> (GOTO Conferences, 2026-04-27),
+  6:34 to 10:39, on the earlier generation of tools and what went wrong last time.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d3-l1-done" data-progress="d3-l1-read">
+      <label for="d3-l1-done">Lessons 1 and 2 read, and I can name the four things a framework
+      standardizes, place each framework on the three differences, and name the four cases where I
+      would skip one.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <details>
+  <summary>Every citation for this page</summary>
+
+  <p>Each project's own documentation, Claude Code's documentation and Böckeler's article,
+  accessed 2026-09-22. Observed entries were recorded on the course's build machine on the same
+  date, in fresh copies of the Swift lane, one per framework.</p>
+
+  <ul class="sources">
+    <li><code>practitioners-05</code> &mdash; the three maturity levels, 2025-10-15:
+    <a href="https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html" target="_blank" rel="noopener noreferrer">Understanding
+    Spec-Driven Development: Kiro, spec-kit, and Tessl</a>.</li>
+    <li><code>openspec-04</code> &mdash; OpenSpec 1.13.1 and its release date, from the
+    <a href="https://api.github.com/repos/Fission-AI/OpenSpec/releases/latest" target="_blank" rel="noopener noreferrer">OpenSpec
+    latest-release record</a> as read on 2026-09-22; this course pins 1.13.1.</li>
+    <li><code>openspec-06</code> &mdash; the <code>openspec/specs/</code> and
+    <code>openspec/changes/archive/</code> folders, from
+    <a href="https://openspec.dev/docs/setup" target="_blank" rel="noopener noreferrer">OpenSpec
+    setup</a>.</li>
+    <li><code>openspec-07</code>, <code>openspec-08</code>, <code>openspec-09</code>,
+    <code>openspec-10</code> &mdash; the four slash commands, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/getting-started.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    getting started</a>. That propose asks about material ambiguity first, stops after the
+    planning artifacts and waits for you to start apply is from the pinned command file,
+    <code>starter/vendored/openspec-1.13.1/project-files/.claude/commands/opsx/propose.md</code>.</li>
+    <li><code>openspec-13</code>, <code>openspec-14</code>, <code>openspec-15</code>,
+    <code>openspec-20</code> &mdash; the delta headers and the date-prefixed archive folder,
+    from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md" target="_blank" rel="noopener noreferrer">OpenSpec
+    concepts</a>.</li>
+    <li><code>openspec-17</code>, <code>lid-12</code>, <code>bmad-obs-11</code> &mdash; each
+    framework's criteria format: OpenSpec's scenario blocks, from
+    <a href="https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md"
+    target="_blank" rel="noopener noreferrer">OpenSpec: Concepts</a>; LID's EARS requirements, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank"
+    rel="noopener noreferrer">LID's AGENTS.md</a>; BMAD's <code>SPEC.md</code> for Change C,
+    observed.</li>
+    <li><code>lid-12</code>, <code>lid-13</code> &mdash; the requirement markers and the semantic ID
+    shape, from
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/AGENTS.md" target="_blank" rel="noopener noreferrer">LID's
+    AGENTS.md</a>; the arrow is in the same file at <code>831c1959</code>, vendored under
+    <code>starter/vendored/lid-831c1959/lid/</code>. The six phases and the stop after each of the
+    first five are in the pinned linked-intent-dev skill,
+    <code>starter/vendored/lid-831c1959/lid/plugins/linked-intent-dev/skills/linked-intent-dev/SKILL.md</code>.
+    The shall-based sentence patterns are from LID's
+    <a href="https://raw.githubusercontent.com/jszmajda/lid/main/plugins/linked-intent-dev/skills/linked-intent-dev/references/ears-syntax.md" target="_blank" rel="noopener noreferrer">EARS
+    syntax reference</a>, pinned as <code>references/ears-syntax.md</code> beside that skill, and
+    the LID checkpoint's EARS requirements are in
+    <code>starter/checkpoints/lid/docs/intent/statement-period/statement-period-specs.md</code>.</li>
+    <li><code>lid-25</code> &mdash; commit <code>831c1959</code> and its date, from the
+    <a href="https://api.github.com/repos/jszmajda/lid/commits/main" target="_blank" rel="noopener noreferrer">LID
+    main-branch commit record</a>. The quotation in &ldquo;A ladder to place yourself on&rdquo; is
+    from the
+    <a href="https://github.com/jszmajda/lid" target="_blank" rel="noopener noreferrer">Linked-Intent
+    Development README</a>, which also sets the bar of regenerating code from the design
+    documents and calls them the source of truth; the pinned copy is
+    <code>starter/vendored/lid-831c1959/lid/README.md</code>.</li>
+    <li><code>bmad-07</code> &mdash; the minimal <code>/bmad-build</code> invocation, from
+    <a href="https://docs.bmad-method.org/start/build-your-first-change/" target="_blank" rel="noopener noreferrer">BMAD:
+    build your first change</a>.</li>
+    <li><code>bmad-09</code> &mdash; the 6.11.0 renames of <code>bmad-quick-dev</code> to
+    <code>bmad-build</code> and <code>bmad-dev-auto</code> to <code>bmad-build-auto</code>, from the
+    <a href="https://raw.githubusercontent.com/bmad-code-org/BMAD-METHOD/main/CHANGELOG.md"
+    target="_blank" rel="noopener noreferrer">BMAD-METHOD changelog</a> (v6.11.0, 2026-08-09).</li>
+    <li><code>bmad-12</code>, <code>bmad-13</code> &mdash; the status values and the spec folder
+    layout for work split into stories, from
+    <a href="https://docs.bmad-method.org/build/autonomous-development-loops/" target="_blank" rel="noopener noreferrer">BMAD
+    autonomous development loops</a>. The two-section spec for a small change with no open questions and nothing irreversible, and the halts for
+    open questions and plan approval, are from <code>step-02-plan.md</code> of the pinned
+    <code>bmad-build</code> skill under <code>starter/vendored/bmad-6.12.0/</code>.</li>
+    <li><code>cc-core-36</code> &mdash; skill descriptions load at session start, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Claude
+    Code: the context window</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li>Observed on the build machine: <code>openspec-obs-02</code>, <code>openspec-obs-07</code>
+    &mdash; OpenSpec's six installed skills and its change folder under
+    <code>openspec/changes/</code>; <code>openspec-obs-03</code> &mdash; <code>openspec init</code>
+    writes nothing into <code>CLAUDE.md</code>. <code>lid-obs-01</code> &mdash; the pinned LID
+    commit, 831c1959; <code>lid-obs-04</code> &mdash; the two LID plugins add about 531 and 559
+    always-on tokens to every session; <code>lid-obs-05</code> &mdash; the 29-line
+    <code>## LID</code> section appended to <code>CLAUDE.md</code>; <code>lid-obs-06</code> &mdash;
+    the map of LedgerKit; <code>lid-obs-07</code> &mdash; the mapping run could not load the
+    plugin's own skill body. <code>bmad-obs-01</code> &mdash; 6.12.0 is the version on the
+    <code>latest</code> tag, from <code>npm view bmad-method version</code>;
+    <code>bmad-obs-05</code> &mdash; the install leaves <code>CLAUDE.md</code> unmodified;
+    <code>bmad-obs-07</code>, <code>bmad-obs-13</code> &mdash; a default install records
+    <code>installShims: false</code> in its manifest, and the two old names are reported as unknown
+    commands while the new names resolve; also BMAD's 29 installed skills and its spec folder for
+    Change C under Exercise 2's prompt.</li>
+  </ul>
+  </details>
+</main>
+
+<nav class="pager wrap" aria-label="Day 3 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../index.html">Day 3: Choose your adventure, and the opening video</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="03-meet-the-three.html">Lesson 3: Meet the three</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280, OpenSpec 1.13.1, LID commit 831c1959 and BMAD 6.12.0
+    on 2026-09-22. This page quotes no terminal output. Where this page names a command, keep that
+    project's own documentation open.</p>
+  </div>
+</footer>
+</body>
+</html>

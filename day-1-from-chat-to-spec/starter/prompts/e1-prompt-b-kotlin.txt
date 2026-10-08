@@ -1,0 +1,7 @@
+Goal: LedgerFilter's merchant match should ignore case and diacritics, so the query "cafe" matches the merchant "Cafe Lumiere" and the query "CAFE" matches it too.
+
+Bounds: you may change src/main/kotlin/ledgerkit/LedgerFilter.kt and src/test/kotlin/ledgerkit/LedgerFilterTest.kt and nothing else. Do not change src/main/kotlin/ledgerkit/Money.kt, src/main/kotlin/ledgerkit/TransactionFormatter.kt, src/main/kotlin/ledgerkit/LedgerSummary.kt, the fixtures file, or CLAUDE.md.
+
+Verification: run ./gradlew test and show me the BUILD line. Add at least one test for the diacritic case and one for the case-insensitive case, using merchants that already exist in the fixtures.
+
+Stop: if the change needs a file outside those two paths, stop and tell me which file and why, without editing it. If the same test fails twice in the same way, stop and show me the failure.

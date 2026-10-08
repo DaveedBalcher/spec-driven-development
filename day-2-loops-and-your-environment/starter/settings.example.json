@@ -1,0 +1,36 @@
+{
+  "claudeMdExcludes": ["**/!(day*-work|.claude)/CLAUDE?(.local).md"],
+  "autoMemoryEnabled": false,
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh release:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "WebFetch",
+      "Read(./.env)",
+      "Read(./**/*.pem)"
+    ],
+    "ask": [
+      "Bash(gh:*)",
+      "Bash(git commit:*)"
+    ],
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(swift test:*)",
+      "Bash(./gradlew test)",
+      "Bash(rm -rf build)",
+      "Read(./**)",
+      "Edit(./Sources/**)",
+      "Edit(./src/**)",
+      "Edit(./Tests/**)",
+      "Edit(./run-log.md)"
+    ]
+  }
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 1 wrap-up</title>
+<meta name="description" content="Day 1 wrap-up: what the day established, ten review questions to answer from memory, and three challenges with no solutions.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="wrap-up">
+<meta name="course:order" content="0">
+<meta name="course:minutes" content="10">
+<meta name="course:slot" content="d1-wrap-up">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/env-profile.js"></script>
+<script src="../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-01 cc-core-02 cc-core-03 cc-core-04 cc-core-05 cc-core-06 cc-core-12 cc-core-15 cc-core-18 cc-core-19 cc-core-32 cc-core-33 cc-core-35 cc-core-36 cc-core-40">
+  <h1>Day 1 wrap-up</h1>
+
+  <p class="meta-line"><a href="index.html">Day 1: From chat to spec</a> &middot; Wrap-up
+  &middot; <span class="timing">10 min</span></p>
+
+  <p class="lede">Three hours ago a task was a question you asked and an answer you pasted. It is
+  now an assignment written in four parts, and when it matters it is a file in the
+  repository.</p>
+
+  <h2 id="learned">What you learned</h2>
+
+  <ul>
+    <li>Lesson 1: an agent has tools, a working directory and a loop, so the unit of work is a diff,
+    and <q>done</q> is the verification command plus the output line carrying its verdict.</li>
+
+    <li>Lesson 2: a prompt is goal, bounds, verification, stop; the parts you leave out get
+    invented, and your uncertainty goes in the stop condition, as a question rather than a
+    guess.</li>
+
+    <li>Lesson 3: plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd>, <code>/plan</code>,
+    <code>claude --permission-mode plan</code>) shows the proposal while rejecting it is free;
+    reject on a stated defect, and press <kbd>Ctrl</kbd>+<kbd>G</kbd> instead when the plan is
+    mostly right and one step needs fixing.</li>
+
+    <li>Lesson 4: those four parts, numbered and in a file, are a spec, and non-goals do more work
+    than goals.</li>
+
+    <li>Lesson 5: a criterion that cannot make a command exit non-zero is a hope; keep each binary,
+    one command and one assertion, and give the undecidable ones a human name.</li>
+
+    <li>Lesson 6: <code>CLAUDE.md</code> is a standing charge on every turn, so cut lines whose
+    removal causes no nameable mistake, move file-specific ones to
+    <code>.claude/rules/&lt;name&gt;.md</code> with a <code>paths:</code> glob, run
+    <code>/context</code> before deciding the file is ignored (often it never loaded, or another
+    instruction file sits beside it), and <code>/clear</code> between unrelated tasks.</li>
+  </ul>
+
+  <h2 id="review">Review</h2>
+
+  <p>Answer these from memory first. There is no answer key on purpose: the ones you cannot answer
+  name the lesson worth re-reading, and that signal goes the moment you scroll to a solution. The
+  recap gives the short answer to most; each question names the lesson with the full one.</p>
+
+  <ol>
+    <li>Name the three things an agent has that a chat session does not, and what actually decides
+    which files it may change. (Lesson 1)</li>
+    <li>What two pieces of evidence do you paste into a pull request to show an agent's change is
+    done? (Lesson 1)</li>
+    <li>List the four parts of an agent prompt, and what the agent does with each part you
+    omit. (Lesson 2)</li>
+    <li>Where does your uncertainty about an unfamiliar codebase belong in a prompt, and what does a
+    good version look like? (Lesson 2)</li>
+    <li>Give three ways to enter plan mode and one way to make it a project's default. (Lesson 3)</li>
+    <li>What does <kbd>Ctrl</kbd>+<kbd>G</kbd> do at the plan approval step, and when is it a better
+    answer than <q>No, keep planning</q>? (Lesson 3)</li>
+    <li>What is in a spec that is never in a plan, and what is in a plan that is never in a
+    spec? (Lesson 4)</li>
+    <li>Rewrite this as a criterion that can fail: <q>pending transactions are handled sensibly in
+    the daily summary</q>. (Lesson 5)</li>
+    <li>A requirement has no command that can decide it. What do you do with it, and what must you
+    not do with it? (Lesson 5)</li>
+    <li>You suspect your <code>CLAUDE.md</code> is being ignored. What do you run first, and what
+    are the two most likely findings? (Lesson 6)</li>
+  </ol>
+
+  <h2 id="challenges">Challenges</h2>
+
+  <p>No reveals, no solutions; one is enough.</p>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-1">1. The rest of LEDGER-7</h3>
+    <p>The ticket logs two more complaints &mdash; the Bahraini dinar row, <code>LK-015</code> in the
+    fixture, and the sign on the <code>LK-013</code> refund &mdash; and rules that neither is a
+    defect.</p>
+    <p>First decide whether that ruling holds. Then write the spec for your decision at
+    <code>specs/ledger-7-rest.md</code>: goal, non-goals, numbered criteria, the
+    criterion-to-command grid, bounds, verification, stop, done. If Exercise 3 ran out of time at
+    step 5, bounds and verification belong here.</p>
+    <p>The spec covers only the branch you chose. If the ruling holds, its deliverable is the
+    non-goals and a criterion pinning today's strings. If it does not, its bounds must admit you
+    are editing tests that pass today.</p>
+    <p>One snag: the gated run is already red when you start. Redo Exercise 2's fix or scope the
+    spec to the plain command, and say in verification which one decides.</p>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-2">2. Thirty lines of a file you actually depend on</h3>
+    <p>Get a <code>CLAUDE.md</code> from a repository you work in under 30 lines with the line test.
+    Prove it twice: the same real task run against both files with the diffs compared, and the whole
+    <code>/context</code> breakdown saved for both. Then write down the one line you cut that you
+    were wrong about.</p>
+  </section>
+
+  <section class="challenge callout note">
+    <h3 id="challenge-3">3. A plan that passes and still lies</h3>
+    <p>Construct a plan that passes every item on the Exercise 2 checklist in
+    <code>../work/plan.md</code> and still produces wrong code. Then write the single spec line
+    that would have caught it, and which of the four prompt parts it belongs to.</p>
+  </section>
+
+  <div class="callout warning">
+    <span class="callout-title">Before you close the laptop</span>
+    <p>Day 2 starts from the shipped <code>sandbox/</code> lane, which nothing today
+    edited, so what you built inside <code>day1-work</code> does not travel.
+    <code>../work</code> is the one directory no reset or end-of-day command here touches.</p>
+
+    <p><strong>Save.</strong> Copy the keepers (your trimmed <code>CLAUDE.md</code>, your rules
+    files, and <code>specs/daily-summary.md</code> if it is still there) into <code>../work</code>
+    with the save line from <a href="exercises/04-trim-the-context.html#reset">Exercise 4's
+    reset</a>, if you have not already.</p>
+
+    <p><strong>Reset</strong> for a clean copy to work the challenges in, from inside
+    <code>day1-work</code>:</p>
+
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+    </div>
+
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+    </div>
+
+    <p><strong>Clean up</strong> when you are done for the day, from inside <code>day1-work</code>.
+    This removes <code>day1-work</code> and keeps <code>../work</code>, as every Day 1 cleanup
+    does: Day 2 and Day 3 write there too, and the Day 3 wrap-up removes it when you are
+    done for good.</p>
+
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work</code></pre>
+  </div>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-wrap-done" data-progress="d1-wrap-up-done">
+      <label for="d1-wrap-done">Day 1 finished: recap read, ten questions answered from
+      memory.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <ul class="sources">
+    <li><code>cc-core-01</code> through <code>cc-core-06</code> and <code>cc-core-33</code> &mdash;
+    <kbd>Shift</kbd>+<kbd>Tab</kbd>, <code>/plan</code>, <code>--permission-mode plan</code>,
+    <kbd>Ctrl</kbd>+<kbd>G</kbd>, the approval answers, <code>defaultMode</code> in
+    <code>.claude/settings.json</code>, and plan mode proposing without editing, from
+    <a href="https://code.claude.com/docs/en/permission-modes" target="_blank" rel="noopener noreferrer">Permission
+    modes</a>.</li>
+    <li><code>cc-core-12</code>, <code>cc-core-15</code>, <code>cc-core-40</code> &mdash;
+    <code>@path/to/import</code> and <code>.claude/rules/&lt;name&gt;.md</code> with a
+    <code>paths:</code> list; such a rule loads when Claude reads a matching file, and imports load
+    at launch, so they do not reduce context (accessed 2026-09-23), from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>cc-core-18</code>, <code>cc-core-19</code> &mdash; <code>/context</code> and
+    <code>/clear</code>, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-35</code>, <code>cc-core-36</code> &mdash; <code>CLAUDE.md</code> loading at
+    startup before your first message, and reloading automatically after a compaction, from
+    <a href="https://code.claude.com/docs/en/context-window" target="_blank" rel="noopener noreferrer">Explore
+    the context window</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="exercises/04-trim-the-context.html">Exercise 4: Trim the context</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../day-2-loops-and-your-environment/index.html">Day 2: Loops and your environment</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    command, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

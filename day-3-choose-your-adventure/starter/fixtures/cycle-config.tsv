@@ -1,0 +1,4 @@
+name	effectiveFrom	startDay
+standard	2026-01-01	5
+month-end	2026-01-01	31
+first-of-month	2026-01-01	1

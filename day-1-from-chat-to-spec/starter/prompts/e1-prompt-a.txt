@@ -1,0 +1,1 @@
+The merchant search in this project doesn't work very well - searching for cafe doesn't find Cafe Lumiere. Can you fix that?

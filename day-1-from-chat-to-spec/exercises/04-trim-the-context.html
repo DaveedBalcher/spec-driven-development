@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trim the context</title>
+<meta name="description" content="Day 1, Exercise 4: cut a roughly 180-line CLAUDE.md to under 40 lines, then re-run Exercise 1's assignment against the smaller file and check it still stays green and in bounds.">
+<meta name="course:day" content="1">
+<meta name="course:kind" content="exercise">
+<meta name="course:order" content="4">
+<meta name="course:minutes" content="18">
+<meta name="course:slot" content="d1-e4">
+<meta name="course:video" content="">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-08 cc-core-15 cc-core-18 cc-core-19 cc-core-32 cc-core-40 cc-core-41 cc-core-42 cc-core-43 cc-core-44">
+  <h1>Trim the context</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 1: From chat to spec</a> &middot; Exercise 4 of 4
+  &middot; <span class="timing">18 min</span></p>
+
+  <p class="lede">Cut your lane's roughly 180-line <code>CLAUDE.md</code> to under 40 lines, with the
+  whole <code>/context</code> breakdown saved before and after, then re-run Exercise 1's
+  assignment against the smaller file and check it still stays green and in bounds. You are not
+  tidying: you are deciding, line by line, which instructions are worth paying for on every turn of
+  every session your team runs.</p>
+
+  <h2 id="setup">Setup</h2>
+
+  <p>You continue in <code>day1-work</code>, the copy of your lane that Exercise 1 made at the
+  course root. Every command and every path on this page is written from inside it, and the shipped
+  <code>sandbox/</code> is never edited. Exercise 3 left the copy matching the lane apart from your
+  spec, which is all step 7 needs.</p>
+
+  <p>Paste one block. It stages step 4's example rules file in <code>../work/</code>, where your
+  answers go and no reset reaches, and records the starting line count.</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="180 CLAUDE.md"><code>mkdir -p ../work &amp;&amp; cp ../day-1-from-chat-to-spec/starter/rules/EXAMPLE-formatting.md ../work/ &amp;&amp; wc -l CLAUDE.md &gt; ../work/context-before.txt &amp;&amp; cat ../work/context-before.txt</code></pre>
+    <pre data-lang="text"><code>     180 CLAUDE.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="177 CLAUDE.md"><code>mkdir -p ../work &amp;&amp; cp ../day-1-from-chat-to-spec/starter/rules/EXAMPLE-formatting.md ../work/ &amp;&amp; wc -l CLAUDE.md &gt; ../work/context-before.txt &amp;&amp; cat ../work/context-before.txt</code></pre>
+    <pre data-lang="text"><code>     177 CLAUDE.md</code></pre>
+  </div>
+
+  <details class="reveal">
+    <summary>Starting from a clean copy</summary>
+    <p>If <code>day1-work</code> carries anything besides your spec, make it again from the lane
+    and paste the setup block above. The remake throws the copy away, your Exercise 3 spec included.
+    Save the spec first if you want your own on Day 2, which runs a sharpened reference spec either
+    way; the reset at the foot of this page saves this exercise's files as well, because by then
+    there are some:</p>
+    <pre data-lang="bash"><code>mkdir -p ../work &amp;&amp; cp specs/daily-summary.md ../work/</code></pre>
+    <p>Then, from inside <code>day1-work</code>:</p>
+    <div class="lane-block lane-swift">
+      <span class="lane-name">Swift lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+    </div>
+    <div class="lane-block lane-kotlin">
+      <span class="lane-name">Kotlin lane</span>
+      <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+    </div>
+    <p>Answers already written down in <code>../work</code> outlive the remake, and a spec you saved
+    goes back with <code>cp ../work/daily-summary.md specs/</code>.</p>
+  </details>
+
+  <p>Now start Claude Code here with <code>claude</code>. Project instructions live at
+  <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>, loaded from the directory you started
+  in and every directory above it, so today's project file is <code>day1-work</code>'s. The lane's
+  <code>.claude/settings.json</code> skips any above <code>day1-work</code> and turns auto memory
+  off, so the memory files in step 1's breakdown are this project file and your personal ones. A
+  block you do not recognise is one of the others
+  <a href="../lessons/06-context-is-a-budget.html#standing-spec">Lesson 6</a> lists.</p>
+
+  <h2 id="steps">Steps</h2>
+
+  <ol>
+    <li>
+      <p><strong>Record the before state.</strong> Run <code>/context</code>. In fullscreen mode it
+      collapses the per-item breakdown to keep the grid visible; pass it <code>all</code> to expand
+      the breakdown again. Copy the whole output, exactly as your version prints it, into
+      <code>../work/context-before.txt</code> under the line count. You compare it with your own
+      after copy, not with a figure on this page.</p>
+    </li>
+    <li>
+      <p><strong>Apply the line test.</strong> Most of the file is real content, and almost none of it is
+      a lie; that is what makes the cut hard. Paste this prompt. It reports, and the cutting stays
+      yours.</p>
+      <pre data-lang="text"><code>Read CLAUDE.md in this project. For each line or section, tell me the specific
+mistake you would make if it were not there. Where you cannot name a specific
+mistake, say "no mistake". Do not edit the file and do not rewrite it for me -
+I am doing the cutting.</code></pre>
+      <p>It also ships as
+      <code>../day-1-from-chat-to-spec/starter/prompts/e4-line-test.txt</code>. While it answers,
+      read <code>CLAUDE.md</code> in your editor and start <code>../work/cut-lines.md</code>: one line
+      per section you will cut or shorten, and why. Sections that would fit any codebase need no
+      report. Then work down its answers; where no specific mistake can be named, the line goes.</p>
+    </li>
+    <li>
+      <p><strong>Get the file under 40 lines.</strong> Set aside what is worth keeping but not worth
+      paying for on every turn; step 4 gives it a home. Then record the new count:</p>
+      <pre data-lang="bash" data-run="swift" data-expect="CLAUDE.md"><code>wc -l CLAUDE.md &gt; ../work/context-after.txt &amp;&amp; cat ../work/context-after.txt</code></pre>
+    </li>
+    <li>
+      <p><strong>Move the lines that are useful but rarely needed.</strong> A line that survives the
+      line test has two places to live, and only one of them costs you every turn.</p>
+      <figure class="figure">
+        <svg viewBox="0 0 340 242" role="img" aria-labelledby="dest-title dest-desc">
+          <title id="dest-title">Two destinations for a line that passes the line test</title>
+          <desc id="dest-desc">One line of CLAUDE.md on the left, two destinations on the right,
+          each labelled with when it loads. Keep it: the line stays in CLAUDE.md and loads on every
+          turn. Scope it: the line moves to a rule file at .claude/rules/name.md whose frontmatter
+          lists a paths glob, and loads when the agent reads a file matching that glob. The line
+          survives either way; only what you pay for it changes.</desc>
+
+          <defs>
+            <marker id="dest-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                    markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"></path>
+            </marker>
+          </defs>
+
+          <text x="170" y="17" text-anchor="middle" font-size="15" fill="var(--accent)">where the line lives, and when it loads</text>
+          <line x1="4" y1="26" x2="336" y2="26" stroke="var(--border)" stroke-width="1"></line>
+
+          <rect x="4" y="96" width="116" height="84" fill="var(--bg)" stroke="var(--accent)" stroke-width="1.5"></rect>
+          <text x="12" y="120" font-size="15" font-weight="650" fill="var(--fg)">one line</text>
+          <text x="12" y="142" font-size="15" fill="var(--fg)">that passes</text>
+          <text x="12" y="164" font-size="15" fill="var(--fg)">the line test</text>
+
+          <line x1="120" y1="138" x2="132" y2="138" stroke="var(--fg)" stroke-width="1.5"></line>
+          <line x1="132" y1="60" x2="132" y2="186" stroke="var(--fg)" stroke-width="1.5"></line>
+
+          <line x1="132" y1="60" x2="144" y2="60" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#dest-arrow)"></line>
+          <rect x="150" y="32" width="186" height="56" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+          <text x="158" y="54" font-size="15" font-weight="650" fill="var(--fg)">keep it: CLAUDE.md</text>
+          <text x="158" y="76" font-size="15" fill="var(--muted)">loaded on every turn</text>
+
+          <line x1="132" y1="186" x2="144" y2="186" stroke="var(--fg)" stroke-width="1.5" marker-end="url(#dest-arrow)"></line>
+          <rect x="150" y="134" width="186" height="98" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></rect>
+          <text x="158" y="156" font-size="15" font-weight="650" fill="var(--fg)">scope it: a rule file</text>
+          <text x="158" y="178" font-size="15" fill="var(--fg)">.claude/rules/&lt;name&gt;.md</text>
+          <text x="158" y="202" font-size="15" fill="var(--muted)">loaded when a matching</text>
+          <text x="158" y="224" font-size="15" fill="var(--muted)">file is read</text>
+        </svg>
+        <figcaption>What each destination costs you: every turn, or only the turns that read a
+        matching file.</figcaption>
+      </figure>
+      <p>A file at <code>.claude/rules/&lt;name&gt;.md</code> with a <code>paths:</code> list of globs
+      in its YAML frontmatter enters the window only when the agent reads a file matching one of
+      those globs, and stays out otherwise. Put the file-specific lines you cut there. The example
+      file already holds one of them, the ban on locale APIs that <code>CLAUDE.md</code> also
+      carries. That ban must survive the trim: keep it in <code>CLAUDE.md</code>, in the rules file,
+      or both. The reference answer keeps it only in the rules file, and the reveal argues both
+      sides:</p>
+      <pre data-lang="bash" data-run="swift" data-expect="formatting.md"><code>mkdir -p .claude/rules &amp;&amp; cp ../work/EXAMPLE-formatting.md .claude/rules/formatting.md &amp;&amp; ls .claude/rules</code></pre>
+      <p>Confirm its frontmatter is these three lines, then paste your file-specific lines
+      underneath:</p>
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="text"><code>---
+paths: ["Sources/LedgerKit/*.swift"]
+---</code></pre>
+      </div>
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <p>The file ships with the Swift lane's glob. Change it to your own, and change the API names
+        in the body to <code>java.text.NumberFormat</code>, <code>DateTimeFormatter</code>,
+        <code>Locale</code> and ICU:</p>
+        <pre data-lang="text"><code>---
+paths: ["src/main/kotlin/ledgerkit/*.kt"]
+---</code></pre>
+      </div>
+    </li>
+    <li>
+      <p><strong>Measure it.</strong> Run <code>/clear</code>, which starts a new conversation with
+      an empty window, then <code>/context</code>, and paste the whole output into
+      <code>../work/context-after.txt</code> under the new line count. Without <code>/clear</code>
+      you measure this afternoon's conversation, not your file.</p>
+    </li>
+    <li>
+      <p><strong>Prove nothing broke.</strong> Paste Prompt B from Exercise 1 verbatim and let it run
+      against the trimmed file. Approve edits as they come, and do not correct it: a correction from
+      you is the information you are testing whether the file still carries. Between approvals,
+      start step 8's comparison.</p>
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <p>Prompt B ships as
+        <code>../day-1-from-chat-to-spec/starter/prompts/e1-prompt-b.txt</code>, the text
+        <a href="01-same-task-two-prompts.html">Exercise 1</a> gives in full.</p>
+      </div>
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <p>Prompt B ships as
+        <code>../day-1-from-chat-to-spec/starter/prompts/e1-prompt-b-kotlin.txt</code>, the text
+        <a href="01-same-task-two-prompts.html">Exercise 1</a> gives in full.</p>
+      </div>
+    </li>
+    <li>
+      <p><strong>Check the same two things Exercise 1 checked:</strong> green, and no source file
+      beyond <code>LedgerFilter</code> and its test touched.</p>
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash" data-run="swift" data-expect="Test Suite 'All tests' passed at"><code>swift test</code></pre>
+        <p>The verdict line names <code>All tests</code>, and the number that decides this step is
+        the zero. The skipped test is the gated LEDGER-7 case, skipped here as it was in
+        Exercise 1:</p>
+        <pre data-lang="text"><code>Test Suite 'All tests' passed at …
+	 Executed … tests, with 1 test skipped and 0 failures (0 unexpected) in … seconds</code></pre>
+      </div>
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash" data-run="kotlin" data-expect="BUILD SUCCESSFUL"><code>./gradlew test</code></pre>
+        <pre data-lang="text"><code>BUILD SUCCESSFUL in …</code></pre>
+        <p><code>BUILD SUCCESSFUL</code> is the line that decides this step. Gradle prints no skip
+        count; the gated LEDGER-7 case is skipped here as it was in Exercise 1, and only the test
+        report records it.</p>
+      </div>
+      <p>Then the file list. A recursive diff against the shipped lane one level up is the record of
+      the run, and each file that differs opens its section with a line starting
+      <code>diff</code>. Your
+      <code>CLAUDE.md</code> and the <code>.claude/rules/formatting.md</code> step 4 added are
+      certain, and so is <code>specs/daily-summary.md</code> if your spec is still in the copy.</p>
+      <div class="lane-block lane-swift">
+        <span class="lane-name">Swift lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x .build ../sandbox/swift . | grep '^diff '</code></pre>
+        <p>If the agent changed code, <code>Sources/LedgerKit/LedgerFilter.swift</code> and
+        <code>Tests/LedgerKitTests/LedgerFilterTests.swift</code> are the only two more that may
+        appear.</p>
+      </div>
+      <div class="lane-block lane-kotlin">
+        <span class="lane-name">Kotlin lane</span>
+        <pre data-lang="bash"><code>diff -ruN -x build -x .gradle -x .kotlin ../sandbox/kotlin . | grep '^diff '</code></pre>
+        <p>If the agent changed code, <code>src/main/kotlin/ledgerkit/LedgerFilter.kt</code> and
+        <code>src/test/kotlin/ledgerkit/LedgerFilterTest.kt</code> are the only two more that may
+        appear.</p>
+      </div>
+      <p>An agent that reads the code, finds the merchant match already ignores case and
+      diacritics, and changes no source file and adds no duplicate tests is behaving well, as
+      Exercise 1's key says: the case and diacritic tests Prompt B asks for are already in the
+      lane's <code>LedgerFilter</code> test file. Saying so and adding none satisfies Prompt B's
+      <q>Add at least one test</q> line; the tests that line asks for already exist. What this step
+      checks is that no third source file appears. <code>-N</code> makes a file the agent created
+      show up, and created files are the ones people forget to count.</p>
+    </li>
+    <li>
+      <p><strong>Compare.</strong> Open the reveals below: your keep list against the six lines that
+      must survive and the four that people keep and should not.</p>
+    </li>
+  </ol>
+
+  <h2 id="wrong">If you see something else instead</h2>
+
+  <ul>
+    <li><code>cp: ../day-1-from-chat-to-spec/starter/rules/EXAMPLE-formatting.md: No such file
+    or directory</code> means the shell was somewhere other than <code>day1-work</code>. Run
+    <code>pwd</code>, move back into the copy, and paste the block again; re-running it loses
+    nothing.</li>
+    <li>The diff names <code>Money</code>, <code>TransactionFormatter</code> or
+    <code>LedgerSummary</code> in your lane's source directory: you cut a line that was holding a
+    bound. Put it back and write down which one; that finding is worth more than the line
+    count.</li>
+    <li>The diff also names <code>LEDGER-7.md</code>: Exercise 2's ticket, still in the copy, and
+    harmless here.</li>
+    <li>The re-run goes red on an amount string rather than on a merchant match: the no-locale-APIs
+    rule left <code>CLAUDE.md</code> for a rules file whose glob does not cover the file the agent
+    is reading. Widen the glob, or put the line back.</li>
+  </ul>
+
+  <h2 id="self-check">Self-check</h2>
+
+  <div class="callout self-check">
+    <p class="callout-title">Run this, from inside day1-work</p>
+    <pre data-lang="bash" data-run="swift" data-expect="TRIM-TOO-LONG"><code>test "$(wc -l &lt; CLAUDE.md)" -lt 40 &amp;&amp; echo TRIM-OK || echo TRIM-TOO-LONG</code></pre>
+    <p>On an untrimmed file it prints <code>TRIM-TOO-LONG</code>, which is how you know it reads
+    the file and not your opinion of it.</p>
+    <p>Then put the two context files side by side: about 180 lines before, under 40 after, and two
+    outputs of the same command from your own version, so what differs is what the cut bought.</p>
+    <p>Last, the re-run: the test command ended green, and step 7's diff names your
+    <code>CLAUDE.md</code> and the rules file, and no source file beyond <code>LedgerFilter</code>
+    and its test.</p>
+  </div>
+
+  <p class="callout done-when"><strong>Done when:</strong> the check prints <code>TRIM-OK</code>,
+  both context files exist and differ, the Exercise 1 re-run is green and in bounds, and
+  <code>../work/cut-lines.md</code> gives a reason for every section you cut or shortened.</p>
+
+  <h2 id="reveal">Reference answers</h2>
+
+  <details class="reveal">
+    <summary>The six lines that must survive, and the four that feel load-bearing and are not</summary>
+    <p>Quoted from the Swift lane. The Kotlin lane carries the same six facts in different sentences
+    and sections, so check against your own file rather than against these strings.</p>
+    <ol>
+      <li><q>Run the tests with swift test from the package root.</q> (&sect; Testing) &mdash; without
+      it the agent guesses a test command, and a guessed command that happens to pass is worse than
+      one that fails, because you believe it.</li>
+      <li><q>The fixture at Tests/LedgerKitTests/Fixtures/transactions.tsv is the source of truth for
+      expected strings.</q> (&sect; Fixtures) &mdash; where the expected answers live. Fold in
+      <q>Never edit it</q> as you keep it (the Kotlin lane's version of this line already says so),
+      because that stops a failing test being made to pass.</li>
+      <li><q>amountMinor is an integer in the currency's minor units; a decimal point never appears in
+      stored data.</q> (&sect; Money) &mdash; the fact that cannot be recovered by reading one
+      file. Fold in
+      <q>Amounts are never floating point</q> from the ISO 4217 paragraph below it, because as
+      written this line does not forbid a floating-point value mid-calculation.</li>
+      <li><q>Negative amountMinor is a debit and prints with -; zero or positive is a credit and
+      prints with +.</q> (&sect; Money) &mdash; sign, then symbol, then digits is arbitrary, which is
+      exactly what makes it worth writing down.</li>
+      <li><q>Never use NumberFormatter, Locale, ICU or any locale API: all formatting is
+      hand-rolled.</q> (&sect; Money) &mdash; it names the wrong move before the agent makes it.
+      This is the line step 4's rules file already carries.</li>
+      <li><q>Run the tests before you say you are done, and quote the final summary line.</q>
+      (&sect; Testing) &mdash; <q>quote</q> rather than <q>summarise</q> is what makes the line
+      checkable. A summary of a test run is an opinion.</li>
+    </ol>
+    <p>The four sections people keep on the first pass, each of which feels responsible and changes
+    nothing the agent does:</p>
+    <ul>
+      <li><strong>&sect; Engineering principles and &sect; Working agreements</strong> (Kotlin:
+      &sect; Coding standards) &mdash; clean code, short functions, no repetition: true of every
+      codebase, specific to none.</li>
+      <li><strong>&sect; Style</strong> (Kotlin: &sect; Style guide) &mdash; wrong as well as
+      useless: the module's code does the opposite of most of it. A style rule that matters belongs
+      in a formatter.</li>
+      <li><strong>&sect; The ledger-sync tool</strong> (Kotlin: &sect; Working with LedgerSync)
+      &mdash; accurate, written after a painful week, and not in this repository. Background about a
+      system you cannot touch from here is a document, not an instruction.</li>
+      <li><strong>&sect; About this project and &sect; History</strong> (Kotlin: &sect; Project
+      overview and history and &sect; Directory layout) &mdash; the agent learns the module by
+      reading it, faster and more accurately than the file describes it, and a directory tree in a
+      standing file is stale the first time somebody adds a folder. History belongs in git.</li>
+    </ul>
+    <p>Two more go for the same reason in whichever lane carries them: the glossary belongs in
+    <code>README.md</code>, and the Kotlin lane's &sect; Git and review workflow belongs in
+    <code>CONTRIBUTING.md</code>. In the Kotlin lane, &sect; Domain rules holds three of your six:
+    keep those and cut the rest, which the types and <code>README.md</code> already carry. The Swift
+    lane's &sect; Code review, &sect; Performance notes, &sect; Accessibility and &sect; Security give
+    good advice about concerns this module does not have. Full key:
+    <a href="../starter/answers/e4-claude-md-keepers.md">answers/e4-claude-md-keepers.md</a>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The reference trimmed file and the reference rules file</summary>
+    <p>Fifteen lines, Swift lane, and the slack under forty is deliberate: Day 2's self-critique
+    needs somewhere to route a finding without the file starting to grow again. The Kotlin lane's copy is the same shape built from its own six lines, with
+    <code>./gradlew test</code>, <code>Fixtures/transactions.tsv</code> and the glob from step 4.</p>
+    <pre data-lang="text"><code># CLAUDE.md — LedgerKit
+
+## Testing
+
+- Run the tests with `swift test` from the package root. That is the only test command.
+- The fixture at `Tests/LedgerKitTests/Fixtures/transactions.tsv` is the source of truth for expected strings. Never edit it: it is shared byte-for-byte with the other lane.
+
+## Money
+
+- `amountMinor` is an integer in the currency's minor units. It never holds a decimal point, and no code turns it into a floating-point number.
+- Negative `amountMinor` is a debit and prints with `-`; zero or positive is a credit and prints with `+`. The sign comes before the currency symbol.
+
+## Before you say you are done
+
+- Run the tests before you say you are done, and quote the final summary line.</code></pre>
+    <p>The four headings cost four lines and make the file skimmable by whoever has to defend it in
+    six weeks; the mistake they prevent is yours. Nothing in it points at a second file: every long
+    section is a false keep named above, so it was cut rather than filed away. And the highest-value
+    line in the original is not in it, because this reference leaves it to the rules file:</p>
+    <pre data-lang="text"><code>---
+paths: ["Sources/LedgerKit/*.swift"]
+---
+
+Formatting in this module is hand-rolled: never introduce a locale-aware API (`NumberFormatter`, `DateFormatter`, `Locale`, ICU) into these files.</code></pre>
+    <p>That move is worth a minute's discomfort. For keeping the rule in <code>CLAUDE.md</code>: an
+    agent can reach for a locale API while editing a test, or a new file the glob does not cover.
+    Against: a rule paid for on every turn and needed on a tenth of them is the tax this exercise
+    teaches you to see. Either answer passes if the file is under forty lines; write down which
+    argument you were making. Longer version, both lanes:
+    <a href="../starter/answers/claude-md-trim.md">answers/claude-md-trim.md</a>.</p>
+  </details>
+
+  <h2 id="reset">Reset</h2>
+
+  <p>One line, the sandbox reset every Day 1 exercise means: delete the copy, make it again from
+  the lane, step back in. The whole copy goes, <code>.claude/rules/</code> and your
+  Exercise 3 spec included. Save what you want to keep first &mdash; your trimmed
+  <code>CLAUDE.md</code> and your rules files are this exercise's deliverables, and the Day 1 wrap-up
+  asks you to keep them:</p>
+
+  <pre data-lang="bash"><code>mkdir -p ../work/rules &amp;&amp; cp CLAUDE.md ../work/ &amp;&amp; cp .claude/rules/*.md ../work/rules/ &amp;&amp; cp specs/daily-summary.md ../work/ 2&gt;/dev/null; ls ../work ../work/rules</code></pre>
+
+  <p>Then, from inside <code>day1-work</code>:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/swift day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash"><code>cd .. &amp;&amp; rm -rf day1-work &amp;&amp; cp -R sandbox/kotlin day1-work &amp;&amp; cd day1-work</code></pre>
+  </div>
+
+  <p>Everything in <code>../work</code> outlives the reset, your context files and cut list
+  included. A spec you saved goes back with <code>cp ../work/daily-summary.md specs/</code>, and
+  your rules files with <code>mkdir -p .claude/rules &amp;&amp; cp ../work/rules/*.md .claude/rules/</code>.</p>
+
+  <p>The end-of-day cleanup is the other line, run from inside <code>day1-work</code> once Day 1 is
+  finished: <code>cd .. &amp;&amp; rm -rf day1-work</code>. This removes <code>day1-work</code> and
+  keeps <code>../work</code>; Day 2 and Day 3 write there too, so remove <code>work</code> only when
+  you no longer want the day's answers.</p>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d1-e4-done" data-progress="d1-e4-done">
+      <label for="d1-e4-done">Exercise 4 done: under 40 lines, both context files saved, and the
+      re-run green and in bounds.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation, accessed 2026-09-22 against version 2.1.280, and 2026-09-23 for
+  <code>cc-core-40</code> to <code>cc-core-44</code>.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-08</code>, <code>cc-core-15</code> &mdash; project instructions at
+    <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>, and
+    <code>.claude/rules/&lt;name&gt;.md</code> with a <code>paths:</code> frontmatter list, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>cc-core-40</code>, <code>cc-core-42</code> &mdash; a path-scoped rule loads when
+    Claude reads a matching file, and <code>CLAUDE.md</code> loads from the working directory and
+    every directory above it, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>; <code>cc-core-41</code> &mdash; the directory you launch Claude Code in is
+    the session's primary working directory, from
+    <a href="https://code.claude.com/docs/en/permissions" target="_blank" rel="noopener noreferrer">Permissions</a>.</li>
+    <li><code>cc-core-43</code>, <code>cc-core-44</code> &mdash; <code>claudeMdExcludes</code>
+    skips instruction files by glob from any settings layer, and <code>autoMemoryEnabled</code>
+    turns auto memory off for one project, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>cc-core-18</code>, <code>cc-core-19</code> &mdash; <code>/context</code> with its
+    <code>all</code> argument, and <code>/clear</code>, from
+    <a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener noreferrer">Slash
+    commands</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 1 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../lessons/06-context-is-a-budget.html">Lesson 6: Context is a budget</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../wrap-up.html">Day 1 wrap-up</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a command or a
+    frontmatter key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>

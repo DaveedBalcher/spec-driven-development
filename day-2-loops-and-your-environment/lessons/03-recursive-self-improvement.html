@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recursive self-improvement: the output, the instructions, the workflow</title>
+<meta name="description" content="Day 2, Lesson 3: three nested rings of improvement, and why only the outer one owes you a measurement.">
+<meta name="course:day" content="2">
+<meta name="course:kind" content="lesson">
+<meta name="course:order" content="3">
+<meta name="course:minutes" content="12">
+<meta name="course:slot" content="d2-l3">
+<meta name="course:video" content="n9xKblqyQ28">
+<link rel="stylesheet" href="../../assets/style.css">
+<script src="../../assets/env-profile.js"></script>
+<script src="../../assets/course.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-title" href="../../index.html">3 Days of Spec-Driven Development</a>
+    <span class="header-tools">
+      <span class="lane" role="group" aria-label="Code lane" hidden>
+        <span class="lane-legend">Lane</span>
+        <button type="button" data-lane-set="swift">Swift</button>
+        <button type="button" data-lane-set="kotlin">Kotlin</button>
+      </span>
+      <button type="button" data-theme-toggle hidden>Dark</button>
+    </span>
+  </div>
+</header>
+
+<main id="main" class="wrap" data-claims="cc-core-25 cc-core-38 cc-core-26 cc-core-27 cc-core-28 cc-core-30 cc-core-15 cc-core-40 cc-core-32 cc-automation-26 context-eng-12 practitioners-01">
+  <h1>Recursive self-improvement: the output, the instructions, the workflow</h1>
+
+  <p class="meta-line"><a href="../index.html">Day 2: Loops and your environment</a> &middot; Lesson 3 of 4
+  &middot; <span class="timing">12 min</span></p>
+
+  <p class="lede">A critique produces a fix, and the fix is the least valuable thing it produces.
+  Improvement runs in three nested rings: fix this output, change the instructions so the mistake
+  cannot recur, and change the workflow. Only the outer ring carries an obligation: you do not
+  claim an improvement you did not measure.</p>
+
+  <div class="video" data-video-id="n9xKblqyQ28" data-start="836" data-end="1115"
+       data-video-title="Why The Harness Matters More Than The Model | YC Paper Club (Y Combinator, 2026-09-07), 13:56 to 18:35">
+    <span class="video-kicker">Watch first &middot; 5 min</span>
+    <p class="video-title"><a href="https://www.youtube.com/watch?v=n9xKblqyQ28&amp;t=836s"
+      target="_blank" rel="noopener noreferrer">Why The Harness Matters More Than The Model | YC
+      Paper Club</a></p>
+    <p class="video-meta">Y Combinator, 2026-09-07. Segment 13:56 to 18:35. Watch what is being
+    improved in each example: the correction keeps moving off the individual run and into the
+    scaffolding around it. At every example, ask what would have told them the change worked.</p>
+  </div>
+
+  <h2 id="rings">Three rings</h2>
+
+  <p>The innermost ring is the code in front of you: a finding says the totals are wrong, you fix
+  them, the tests go green. It buys exactly one diff.</p>
+
+  <p>The middle ring is the instructions. The same finding, read as a class rather than an incident,
+  changes the spec or <code>CLAUDE.md</code> so the next run does not need telling again. The outer
+  ring is the workflow: which gates the runner stops at, what the auditor reads, which model does
+  which job. It pays the most, and it owes you evidence.</p>
+
+  <figure class="figure">
+    <svg viewBox="0 0 360 344" role="img" aria-labelledby="rings-title rings-desc">
+      <title id="rings-title">Three rings of improvement</title>
+      <desc id="rings-desc">Three nested bands, each one wholly inside the next: the output ring,
+      this diff, sits inside the instructions ring, the spec and CLAUDE.md, which sits inside the
+      workflow ring, the runner, the gates, the auditor and the model. The two inner bands are
+      plain: neither carries an arrow, and each is annotated with what it pays, once for the output
+      and until the file changes for the instructions. The outer band carries a single arc that
+      travels most of the way round the ring and comes back to its own start, with the arrowhead at
+      the join and a short tick at the foot of the ring marking where the measurement is taken;
+      the arc is labelled re-run from a fresh copy, compare iteration counts. The workflow ring is therefore the only
+      one of the three that closes back on itself.</desc>
+
+      <defs>
+        <marker id="rings-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+                markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+        </marker>
+      </defs>
+
+      <ellipse cx="180" cy="172" rx="178" ry="166" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></ellipse>
+      <ellipse cx="180" cy="172" rx="136" ry="100" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></ellipse>
+      <ellipse cx="180" cy="172" rx="96" ry="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="1.5"></ellipse>
+
+      <text x="180" y="44" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">workflow &#8212;</text>
+      <text x="180" y="66" text-anchor="middle" font-size="15" fill="var(--fg)">runner, gates, auditor, model</text>
+
+      <text x="180" y="98" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">instructions &#8212;</text>
+      <text x="180" y="116" text-anchor="middle" font-size="15" fill="var(--fg)">spec and CLAUDE.md</text>
+      <text x="180" y="134" text-anchor="middle" font-size="15" fill="var(--muted)">pays off until the file changes</text>
+
+      <text x="180" y="166" text-anchor="middle" font-size="15" font-weight="650" fill="var(--fg)">output &#8212; this diff</text>
+      <text x="180" y="186" text-anchor="middle" font-size="15" fill="var(--muted)">pays off once</text>
+
+      <path d="M35,257.3 A171,161 0 0 0 329.6,250 A171,161 0 0 0 180,11 A171,161 0 0 0 29,247.6"
+            fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#rings-arrow-accent)"></path>
+
+      <text x="180" y="288" text-anchor="middle" font-size="15" fill="var(--accent)">re-run from a fresh copy</text>
+      <text x="180" y="306" text-anchor="middle" font-size="15" fill="var(--accent)">compare iteration counts</text>
+      <line x1="180" y1="315" x2="180" y2="323" stroke="var(--border)" stroke-width="1"></line>
+      <line x1="180" y1="324" x2="180" y2="335" stroke="var(--accent)" stroke-width="2.5"></line>
+    </svg>
+    <figcaption>Ring one buys one diff and ring two keeps paying until the file changes; only ring
+    three closes back on itself, and only if you re-run from a fresh copy.</figcaption>
+  </figure>
+
+  <h2 id="critic">A critic that did not write the code</h2>
+
+  <p>The session that just argued itself into a design is the worst reviewer of it: it holds the
+  justification and none of the surprise. Claude Code gives you a critic outside that conversation
+  as a file, <code>.claude/agents/spec-auditor.md</code>: Markdown with YAML frontmatter, reviewed
+  like any other file.</p>
+
+  <p>A <a href="https://code.claude.com/docs/en/subagents" target="_blank"
+  rel="noopener noreferrer">subagent</a> starts with a fresh, isolated context window. It does not
+  see your conversation, the skills you invoked, or the files Claude already read; it works from a
+  delegation message Claude composes (a fork is the exception, inheriting the parent
+  conversation). <code>tools: Read, Glob, Grep</code> limits the auditor to reading, so a bad audit
+  costs a bad list, not a bad edit; omit the field and it inherits every tool. You invoke it by
+  name, as <code>@"spec-auditor (agent)"</code>, rather than hoping it gets picked. Built-in types
+  such as <code>Explore</code> and <code>Plan</code> have never read your spec.</p>
+
+  <p>This lesson has one command, a read-only <code>sed</code> you run from <code>day2-work</code>,
+  the lane copy Exercise 1's setup block made at the course root. It prints the auditor's
+  frontmatter, one file for both lanes:</p>
+
+  <div class="lane-block lane-swift">
+    <span class="lane-name">Swift lane</span>
+    <pre data-lang="bash" data-run="swift" data-expect="tools: Read, Glob, Grep"><code>sed -n '1,6p' ../day-2-loops-and-your-environment/starter/agents/spec-auditor.md</code></pre>
+  </div>
+
+  <div class="lane-block lane-kotlin">
+    <span class="lane-name">Kotlin lane</span>
+    <pre data-lang="bash" data-run="kotlin" data-expect="tools: Read, Glob, Grep"><code>sed -n '1,6p' ../day-2-loops-and-your-environment/starter/agents/spec-auditor.md</code></pre>
+  </div>
+
+  <h2 id="spec-not-story">Give the critic the spec, not the story</h2>
+
+  <p>An auditor pointed at a diff returns opinions; pointed at numbered criteria, it returns
+  violations. The difference is one instruction: tag every finding with the criterion it violates,
+  or <code>NO-CRITERION</code> when the spec is silent and the code chose. Name the spec in the
+  prompt, because the auditor starts from the task it is handed; Exercise 2 gives you the full
+  prompt.</p>
+
+  <p>That tag makes a finding routable. The <code>NO-CRITERION</code> findings are the valuable
+  half: nothing is failing, and nobody else would have looked.</p>
+
+  <h2 id="routing">Ring two: where a finding goes</h2>
+
+  <p>A finding tagged to an existing criterion is ring one: fix the code, and route it further
+  only if the rule beneath it outlives this spec. The rest have three destinations: a new or
+  sharpened acceptance criterion, where most <code>NO-CRITERION</code> findings belong because a
+  criterion is testable; a line in the standing instructions, for a fact that outlives this change,
+  such as a declined transaction counting toward no total; or the bin, with one sentence saying
+  why.</p>
+
+  <p>Standing instructions grow under a net-zero line cap: to add a line to <code>CLAUDE.md</code>
+  you remove at least one, the least valuable first, or you put the guidance in a path-scoped rule file,
+  <code>.claude/rules/&lt;name&gt;.md</code>, whose <code>paths:</code> globs let it enter the window
+  only when the agent reads a matching file. <code>wc -l CLAUDE.md</code> before and after is the
+  enforcement; same or lower passes.</p>
+
+  <h2 id="ablation">Ablation, not accumulation</h2>
+
+  <p>To find out whether a line earns its place, take it out and see whether the mistake comes
+  back. Boris Cherny described the same method for Claude Code's own system prompt, reported in
+  August 2026 as cut by about 80 percent: a dated anecdote, not a target for your file.</p>
+
+  <p>Your version is one line out, one re-run, one answer. If the mistake returns, the line was
+  working; if not, you were paying for it on every turn.</p>
+
+  <h2 id="measuring">Ring three: measuring the workflow</h2>
+
+  <p>Count the iterations before the change, apply your revised spec and <code>CLAUDE.md</code>
+  to a fresh copy, re-run the same spec, and count again; Exercise 2 gives the step order.</p>
+
+  <p>Then state the result at its size: four iterations became two, on one spec, in one lane, n
+  equals one. A useful team norm: a workflow change arrives with its two iteration counts and the
+  spec they came from, or it arrives as a proposal.</p>
+
+  <h2 id="model">Choosing a model per role</h2>
+
+  <p>The critic and the worker need not share a model. The durable lever is a <code>model:</code>
+  line in the agent file, taking <code>sonnet</code>, <code>opus</code>, <code>haiku</code>,
+  <code>fable</code>, a full model id, or <code>inherit</code>; the shipped auditor says
+  <code>model: opus</code>. The session lever is <code>/model</code>, with an alias or a picker
+  where <kbd>Enter</kbd> saves the choice as your default and <kbd>s</kbd> applies it to this
+  session only.</p>
+
+  <p>When you write your own agent file, include the <code>model:</code> line. Without it, the auditor may run on the calling session's model, and the
+  expensive-reviewer, cheap-worker split collapses into one model reviewing itself.</p>
+
+  <h2 id="theater">When self-critique is theater</h2>
+
+  <p>A critic with no spec returns taste, and taste is unroutable. If almost every finding comes
+  back <code>NO-CRITERION</code>, sharpen the spec before you touch the agent file.</p>
+
+  <p>The other failure is an auditor that always finds something. Run it on a change you already
+  accepted, where the right answer is nothing; findings there teach your team to skim. Tune it
+  until that run is silent, or stop running it. And keep the rings in
+  proportion: a one-line typo fix owes nobody a spec revision and a re-run. Skip the auditor
+  entirely before a numbered spec exists, or on a diff you can read in a minute: a read-only opus
+  pass there costs more than it returns.</p>
+
+  <h2 id="quick-check" class="quick-check">Quick check</h2>
+
+  <details class="reveal">
+    <summary>Your auditor returns nine findings and eight are tagged <code>NO-CRITERION</code>. What
+    does that tell you to fix first?</summary>
+    <p>The spec. Eight of the nine complaints are about behavior nobody wrote down, so they are
+    preferences until a numbered criterion exists that a command can fail on.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>You added four lines to <code>CLAUDE.md</code> after an audit and the next run was
+    slower and no better. What does the net-zero rule ask of you?</summary>
+    <p>Remove four lines, the least valuable first, before the new ones stay, or move the guidance into
+    a path-scoped rule file, then re-run from a fresh copy and compare iteration counts before
+    claiming the change helped.</p>
+  </details>
+
+  <ul class="progress">
+    <li>
+      <input type="checkbox" id="d2-l3-done" data-progress="d2-l3-read">
+      <label for="d2-l3-done">Lesson 3 read, and I have read the auditor's frontmatter in the day's
+      starter folder.</label>
+    </li>
+  </ul>
+
+  <h2 id="sources">Sources</h2>
+
+  <p>Claude Code documentation, accessed 2026-09-22 against version 2.1.280, and 2026-09-23 for
+  <code>cc-core-38</code> and <code>cc-core-40</code>.</p>
+
+  <ul class="sources">
+    <li><code>cc-core-25</code>, <code>cc-core-38</code>, <code>cc-core-26</code>,
+    <code>cc-core-27</code>, <code>cc-core-28</code>, <code>cc-core-30</code> &mdash; the subagent
+    file format and its <code>.claude/agents/</code> location, the fresh, isolated context window a
+    subagent starts with (a fork excepted), the <code>model:</code> field and the values it takes,
+    the <code>tools:</code> field, explicit invocation by name, and the built-in subagent types, from
+    <a href="https://code.claude.com/docs/en/subagents" target="_blank" rel="noopener noreferrer">Subagents</a>.</li>
+    <li><code>cc-core-15</code>, <code>cc-core-40</code> &mdash;
+    <code>.claude/rules/&lt;name&gt;.md</code> with a <code>paths:</code> frontmatter list, and
+    that such a rule loads when Claude reads a matching file, from
+    <a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener noreferrer">Manage
+    Claude's memory</a>.</li>
+    <li><code>cc-automation-26</code> &mdash; <code>/model</code> with an alias or as a picker, where
+    <kbd>Enter</kbd> saves the choice as the default and <kbd>s</kbd> applies it to the session only,
+    from
+    <a href="https://code.claude.com/docs/en/model-config" target="_blank" rel="noopener noreferrer">Model
+    configuration</a>.</li>
+    <li><code>cc-core-32</code> &mdash; the version this course was checked against, from the
+    <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener noreferrer">Claude
+    Code changelog</a>.</li>
+    <li><code>context-eng-12</code> &mdash; the ablation method cited above, 2026-08-05:
+    <a href="https://www.ai.joaoqueiros.com/blog/claude-code-cut-system-prompt-boris-cherny-ablation-playbook" target="_blank" rel="noopener noreferrer">the
+    ablation playbook write-up</a>.</li>
+    <li><code>practitioners-01</code> &mdash; the reported size of the cut to Claude Code's system
+    prompt for one model generation, 2026-08-02:
+    <a href="https://www.barath.ai/learnings/boris-cherny-yc-startup-school-2026" target="_blank" rel="noopener noreferrer">notes
+    on Boris Cherny at YC Startup School 2026</a>.</li>
+  </ul>
+</main>
+
+<nav class="pager wrap" aria-label="Day 2 navigation">
+  <span class="prev"><span class="pager-label">Previous</span>
+    <a href="../exercises/01-run-change-b-with-a-runner.html">Exercise 1: Run Change B with a runner and gates</a></span>
+  <span class="next"><span class="pager-label">Next</span>
+    <a href="../exercises/02-make-it-critique-itself.html">Exercise 2: Make it critique itself</a></span>
+</nav>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Checked against Claude Code 2.1.280 on 2026-09-22. Where this page names a keystroke or a
+    settings key, keep its linked reference open.</p>
+  </div>
+</footer>
+</body>
+</html>
